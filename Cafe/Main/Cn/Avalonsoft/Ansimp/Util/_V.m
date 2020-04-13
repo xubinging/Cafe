@@ -153,6 +153,15 @@ NSString * const MINE_SYSTEMSETTING_UPDATE_USER_EXTINFO = @"edu/user/eduuserexti
 NSString * const MINE_MY_POST_LIST = @"edu/forum/eduforumpost/queryMyPostListByAccountId";
 //被点赞数
 NSString * const MINE_MY_LIKED_COUNT = @"edu/eduuserlikes/queryAllLikedCount";
+//考试成绩列表
+NSString * const MINE_MY_EXAM_SCORE_LIST = @"edu/exam/eduexamscore/queryList";
+//考试成绩详情
+NSString * const MINE_MY_EXAM_SCORE_DETAILS = @"edu/exam/eduexamscore/query?id=";
+//考试成绩添加
+NSString * const MINE_MY_EXAM_SCORE_ADD = @"edu/exam/eduexamscore/add";
+//考试成绩编辑
+NSString * const MINE_MY_EXAM_SCORE_UPDATE = @"edu/exam/eduexamscore/update";
+
 
 
 //*****【社区】*****//
