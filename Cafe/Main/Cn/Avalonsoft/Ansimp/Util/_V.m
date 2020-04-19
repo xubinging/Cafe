@@ -161,6 +161,10 @@ NSString * const MINE_MY_EXAM_SCORE_DETAILS = @"edu/exam/eduexamscore/query?id="
 NSString * const MINE_MY_EXAM_SCORE_ADD = @"edu/exam/eduexamscore/add";
 //考试成绩编辑
 NSString * const MINE_MY_EXAM_SCORE_UPDATE = @"edu/exam/eduexamscore/update";
+//奖项
+NSString * const MINE_MY_EDU_AWARD = @"eduUser/eduusercaward/queryPageList";
+//技能
+NSString * const MINE_MY_EDU_SKILL = @"eduUser/eduusercskill/queryPageList";
 
 
 
