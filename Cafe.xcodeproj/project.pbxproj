@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1FF09905244D736800F626A2 /* MineDetailRewordAndSkillTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FF09904244D736800F626A2 /* MineDetailRewordAndSkillTableViewCell.m */; };
 		B31084C6241A031800047DB6 /* _UserInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = B31084C5241A031700047DB6 /* _UserInfo.m */; };
 		B33789B723FC2FC500EF95E3 /* AvalonsoftHttpClient.m in Sources */ = {isa = PBXBuildFile; fileRef = B33789B323FC2FC500EF95E3 /* AvalonsoftHttpClient.m */; };
 		B33789B823FC2FC500EF95E3 /* AvalonsoftHasNetwork.m in Sources */ = {isa = PBXBuildFile; fileRef = B33789B623FC2FC500EF95E3 /* AvalonsoftHasNetwork.m */; };
@@ -548,6 +549,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1FF09903244D736800F626A2 /* MineDetailRewordAndSkillTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MineDetailRewordAndSkillTableViewCell.h; sourceTree = "<group>"; };
+		1FF09904244D736800F626A2 /* MineDetailRewordAndSkillTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MineDetailRewordAndSkillTableViewCell.m; sourceTree = "<group>"; };
 		B31084C4241A031700047DB6 /* _UserInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _UserInfo.h; sourceTree = "<group>"; };
 		B31084C5241A031700047DB6 /* _UserInfo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = _UserInfo.m; sourceTree = "<group>"; };
 		B33789B323FC2FC500EF95E3 /* AvalonsoftHttpClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AvalonsoftHttpClient.m; sourceTree = "<group>"; };
@@ -4152,6 +4155,8 @@
 				B3A87D65242B022F002AECE9 /* MineSkillTableViewCell.m */,
 				B3A87D66242B022F002AECE9 /* MineRewordTableViewCell.h */,
 				B3A87D64242B022F002AECE9 /* MineRewordTableViewCell.m */,
+				1FF09903244D736800F626A2 /* MineDetailRewordAndSkillTableViewCell.h */,
+				1FF09904244D736800F626A2 /* MineDetailRewordAndSkillTableViewCell.m */,
 			);
 			path = "RewordAndSkill(奖项与技能)";
 			sourceTree = "<group>";
@@ -4837,6 +4842,7 @@
 				B3A4F94323A76ABD00BBBB34 /* SDAnimatedImageView+WebCache.m in Sources */,
 				B376F01C23A10FC7004E6FBC /* ZXModulusPoly.m in Sources */,
 				B376F01223A10FC7004E6FBC /* ZXMultiFormatReader.m in Sources */,
+				1FF09905244D736800F626A2 /* MineDetailRewordAndSkillTableViewCell.m in Sources */,
 				B3DC7837242653B700B705D1 /* ZQPlayerMaskView.m in Sources */,
 				B376F08223A10FC7004E6FBC /* ZXProductResultParser.m in Sources */,
 				B3A87D79242B0230002AECE9 /* MyQRCodeViewController.m in Sources */,

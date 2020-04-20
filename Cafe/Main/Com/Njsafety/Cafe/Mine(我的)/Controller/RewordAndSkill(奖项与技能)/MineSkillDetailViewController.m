@@ -11,7 +11,7 @@
 #import "MineSkillModel.h"
 
 #import "MineDetailCommonModel.h"
-#import "MineDetailCommonTableViewCell.h"
+#import "MineDetailRewordAndSkillTableViewCell.h"
 
 @interface MineSkillDetailViewController ()<UITableViewDelegate,UITableViewDataSource>
 
@@ -26,7 +26,6 @@
 }
 
 @property (nonatomic,strong) UITableView *detailTableView;
-@property (nonatomic,strong) NSArray *detailArray;
 
 @end
 
@@ -40,7 +39,6 @@
     [self getParentVars];
     [self initNavigationView];
     [self initView];
-    [self setData];
 }
 
 #pragma mark - 初始化一些参数 -
@@ -154,80 +152,18 @@
     [_detailTableView setBackgroundColor:[UIColor clearColor]];
     _detailTableView.bounces = YES;
     _detailTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-    [_detailTableView registerClass:[MineDetailCommonTableViewCell class] forCellReuseIdentifier:@"MineDetailCommonTableViewCell"];
+    [_detailTableView registerClass:[MineDetailRewordAndSkillTableViewCell class] forCellReuseIdentifier:@"MineDetailRewordAndSkillTableViewCell"];
     _detailTableView.delegate = self;
     _detailTableView.dataSource = self;
     //这句话可以设置tableview没有数据时不显示横线
     _detailTableView.tableFooterView = [[UIView alloc]initWithFrame:CGRectZero];
     _detailTableView.showsVerticalScrollIndicator = NO;
-
 }
 
-#pragma mark - 设置参数 -
--(void)setData
-{
-    //造数据
-    _detailArray = nil;
-    NSMutableArray *tempArray = [NSMutableArray array];
-    
-    NSString *name = slctModel.skillDesc;
-    NSString *date = slctModel.skillDate;
-    NSString *level = slctModel.rankOrLevel;
-    
-    NSString *showLanguage = slctModel.showLanguage;
-    
-    for(int i=0; i<3; i++){
-        if(i==0){
-            NSString *title = @"名称:";
-            if([showLanguage isEqualToString:@"EN"]){
-                title = @"Name:";
-            }
-            
-            NSDictionary *dic = @{
-                @"title":title,
-                @"content":name
-            };
-            MineDetailCommonModel *model = [MineDetailCommonModel modelWithDict:dic];
-            [tempArray addObject:model];
-            
-        }else if(i==1){
-            NSString *title = @"日期:";
-            if([showLanguage isEqualToString:@"EN"]){
-                title = @"Date:";
-            }
-            
-            NSDictionary *dic = @{
-                @"title":title,
-                @"content":date
-            };
-            MineDetailCommonModel *model = [MineDetailCommonModel modelWithDict:dic];
-            [tempArray addObject:model];
-            
-        }else if(i==2){
-            NSString *title = @"等级程度:";
-            if([showLanguage isEqualToString:@"EN"]){
-                title = @"Level:";
-            }
-            
-            NSDictionary *dic = @{
-                @"title":title,
-                @"content":level
-            };
-            MineDetailCommonModel *model = [MineDetailCommonModel modelWithDict:dic];
-            [tempArray addObject:model];
-            
-        }
-    }
-    
-    _detailArray = [tempArray copy];
-    
-}
-
-//**********    tableView代理 begin   **********//
 #pragma mark - 设置cell行高 -
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 48;
+    return 144;
 }
 
 #pragma mark - 设置section数量 -
@@ -239,17 +175,17 @@
 #pragma mark - 设置每个section中row的数量 -
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return self.detailArray.count;
+    return 1;
 }
 
 #pragma mark - 获取cell -
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
 
-    MineDetailCommonTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"MineDetailCommonTableViewCell"];
+    MineDetailRewordAndSkillTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"MineDetailRewordAndSkillTableViewCell"];
 
     //更新cell
-    [cell updateCellWithModel:self.detailArray[indexPath.row]];
+    [cell updateCellWithModel:slctModel];
 
     return cell;
 
@@ -276,8 +212,6 @@
 {
     
 }
-
-//**********    tableView代理 end   **********//
 
 #pragma mark - 返回按钮点击 -
 -(void)backButtonClick

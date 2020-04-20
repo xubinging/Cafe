@@ -361,6 +361,7 @@
         };
 
         MineRewordDetailViewController *detailVC = [MineRewordDetailViewController new];
+        detailVC.dataDic = sendDic;
 
         //设置block回调
         [detailVC setSendValueBlock:^(NSDictionary *valueDict){
@@ -373,8 +374,6 @@
             [self.rewordTableView reloadData];
         }];
 
-        detailVC.dataDic = sendDic;
-
         [self.navigationController pushViewController:detailVC animated:YES];
         
     }else if(tableView.tag == K_SkillTableView_Tag){
@@ -385,6 +384,7 @@
         };
 
         MineSkillDetailViewController *detailVC = [MineSkillDetailViewController new];
+        detailVC.dataDic = sendDic;
 
         //设置block回调
         [detailVC setSendValueBlock:^(NSDictionary *valueDict){
@@ -397,8 +397,6 @@
 
             [self.skillTableView reloadData];
         }];
-
-        detailVC.dataDic = sendDic;
 
         [self.navigationController pushViewController:detailVC animated:YES];
         

@@ -18,6 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, copy) NSString *awardName;             //名称
 @property (nonatomic, copy) NSString *awardDate;             //日期
+@property (nonatomic, copy) NSString *rankOrLevel;           //等级
 
 @property (nonatomic, copy) NSString *showLanguage;     //CH -- 中文；EN -- 英文
 

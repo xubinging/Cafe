@@ -136,7 +136,6 @@
 
 - (void)updateCellWithModel:(MineRewordModel *)model
 {
-
     NSString *name = model.awardName;
     NSString *date = model.awardDate;
     
@@ -151,11 +150,11 @@
     }
     
     if([showLanguage isEqualToString:@"ZH"] || showLanguage.length == 0){
-        _nameTitleLabel.text = @"名称:";
-        _dateTitleLabel.text = @"日期:";
+        _nameTitleLabel.text = @"名称";
+        _dateTitleLabel.text = @"日期";
     }else{
-        _nameTitleLabel.text = @"Name:";
-         _dateTitleLabel.text = @"Date:";
+        _nameTitleLabel.text = @"Name";
+        _dateTitleLabel.text = @"Date";
     }
     
     //更新尺寸
@@ -167,9 +166,8 @@
     }];
     
     [_dateTitleLabel mas_updateConstraints:^(MASConstraintMaker *make){
-           make.size.mas_equalTo(CGSizeMake(dateTitleWidth, 22));
-       }];
-    
+        make.size.mas_equalTo(CGSizeMake(dateTitleWidth, 22));
+    }];
 }
 
 - (void)awakeFromNib {
