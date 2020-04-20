@@ -137,21 +137,25 @@
 - (void)updateCellWithModel:(MineRewordModel *)model
 {
 
-    NSString *name = model.name;
-    NSString *date = model.date;
+    NSString *name = model.awardName;
+    NSString *date = model.awardDate;
     
     NSString *showLanguage = model.showLanguage;
+    _nameLabel.text = name;
+            
+    if ([date isKindOfClass:[NSString class]]) {
+        [_dateLabel setText:date];
+    } else { // 测试发现，date有时是long类型，待平台修正返回类型
+        NSString *date2 = [ NSString stringWithFormat:@"%@",model.awardDate];
+        [_dateLabel setText:date2];
+    }
     
-    [_nameLabel setText:name];
-    [_dateLabel setText:date];
-    
-    if([showLanguage isEqualToString:@"ZH"] || showLanguage == nil || [showLanguage isEqualToString:@""]){
-        [_nameTitleLabel setText:@"名称:"];
-        [_dateTitleLabel setText:@"日期:"];
-        
+    if([showLanguage isEqualToString:@"ZH"] || showLanguage.length == 0){
+        _nameTitleLabel.text = @"名称:";
+        _dateTitleLabel.text = @"日期:";
     }else{
-        [_nameTitleLabel setText:@"Name:"];
-        [_dateTitleLabel setText:@"Date:"];
+        _nameTitleLabel.text = @"Name:";
+         _dateTitleLabel.text = @"Date:";
     }
     
     //更新尺寸

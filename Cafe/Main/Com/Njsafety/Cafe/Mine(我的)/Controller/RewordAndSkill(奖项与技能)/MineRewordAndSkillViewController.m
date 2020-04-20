@@ -37,12 +37,12 @@
 //奖项
 @property (nonatomic,strong) UIButton *rewordBtn;
 @property (nonatomic,strong) UITableView *rewordTableView;
-@property (nonatomic,strong) NSArray *rewordArray;
+@property (nonatomic,strong) NSMutableArray *rewordArray;
 
 //技能
 @property (nonatomic,strong) UIButton *skillBtn;
 @property (nonatomic,strong) UITableView *skillTableView;
-@property (nonatomic,strong) NSArray *skillArray;
+@property (nonatomic,strong) NSMutableArray *skillArray;
 
 @end
 
@@ -57,53 +57,30 @@
     [self initView];
 }
 
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    [self queryMineRewordList];
+}
+
+
+- (NSMutableArray *)rewordArray
+{
+    return _rewordArray?:(_rewordArray = [NSMutableArray array]);
+}
+
+- (NSMutableArray *)skillArray
+{
+    return _skillArray?:(_skillArray = [NSMutableArray array]);
+}
+
+
 #pragma mark - 初始化一些参数 -
 -(void)initVars
 {
     self.view.backgroundColor = RGBA_GGCOLOR(249, 249, 249, 1);
-    
     isShowChinese = YES;
-    
-    //造数据
-    _rewordArray = nil;
-    NSMutableArray *tempRewordArray = [NSMutableArray array];
-
-    for(int i=0; i<20;i++){
-        
-        NSInteger index = i + 1;
-        
-        NSDictionary *dic = @{
-            @"index":@(index),
-            @"name":[NSString stringWithFormat:@"所获奖项 %ld",index],
-            @"date":@"2019-12-28",
-            @"showLanguage":@"ZH"
-        };
-        MineRewordModel *model = [MineRewordModel modelWithDict:dic];
-        [tempRewordArray addObject:model];
-    }
-
-    _rewordArray = [tempRewordArray copy];
-    
-    _skillArray = nil;
-    NSMutableArray *tempSkillArray = [NSMutableArray array];
-
-    for(int i=0; i<20;i++){
-        
-        NSInteger index = i + 1;
-        
-        NSDictionary *dic = @{
-            @"index":@(index),
-            @"name":[NSString stringWithFormat:@"所获技能 %ld",index],
-            @"date":@"2019-12-28",
-            @"level":[NSString stringWithFormat:@"%ld级",index],
-            @"showLanguage":@"ZH"
-        };
-        MineSkillModel *model = [MineSkillModel modelWithDict:dic];
-        [tempSkillArray addObject:model];
-    }
-
-    _skillArray = [tempSkillArray copy];
-    
 }
 
 #pragma mark - 初始化数据 -
@@ -390,8 +367,8 @@
             //回调函数
             MineRewordModel *modelReturn = valueDict[@"modelReturn"];
 
-            slctModel.name = modelReturn.name;
-            slctModel.date = modelReturn.date;
+            slctModel.awardName = modelReturn.awardName;
+            slctModel.awardDate = modelReturn.awardDate;
 
             [self.rewordTableView reloadData];
         }];
@@ -414,9 +391,9 @@
             //回调函数
             MineSkillModel *modelReturn = valueDict[@"modelReturn"];
 
-            slctModel.name = modelReturn.name;
-            slctModel.date = modelReturn.date;
-            slctModel.level = modelReturn.level;
+            slctModel.skillDesc = modelReturn.skillDesc;
+            slctModel.skillDate = modelReturn.skillDate;
+            slctModel.rankOrLevel = modelReturn.rankOrLevel;
 
             [self.skillTableView reloadData];
         }];
@@ -468,6 +445,8 @@
             }
             [_skillBtn setBackgroundColor:[UIColor clearColor]];
             
+            [self queryMineRewordList];
+            
         }else{
             return;
         }
@@ -506,6 +485,8 @@
                 [layerArr[i] removeFromSuperlayer];
             }
             [_rewordBtn setBackgroundColor:[UIColor clearColor]];
+            
+            [self queryMineSkillList];
             
         }else{
             return;
@@ -624,4 +605,100 @@
     }
 }
 
+
+#pragma mark - 网络请求
+- (void)queryMineRewordList
+{
+    __weak typeof(self) weakSelf = self;
+    [AvalonsoftHasNetwork avalonsoft_hasNetwork:^(bool has) {
+        if (has) {
+            NSMutableDictionary *root = [NSMutableDictionary dictionary];
+            [root setValue:[_UserInfo accountId] forKey:@"accountId"];
+            
+            [[AvalonsoftHttpClient avalonsoftHttpClient] requestWithAction:COMMON_SERVER_URL actionName:MINE_MY_EDU_AWARD method:HttpRequestPost paramenters:root prepareExecute:^{
+                
+            } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull responseObject) {
+                __strong typeof(weakSelf) strongSelf = self;
+                
+                NSLog(@"handleNetworkRequestWithResponseObject responseObject=%@",responseObject);
+                _M *responseModel = [_M createResponseJsonObj:responseObject];
+                NSLog(@"handleNetworkRequestWithResponseObject %ld %@",responseModel.rescode,responseModel.msg);
+                
+                @try {
+                    if(responseModel.rescode == 200){
+                        NSDictionary *rspData = responseModel.data;
+                        NSArray *rspDataArray = rspData[@"dataList"];
+                       [strongSelf.rewordArray removeAllObjects];
+                       for(int i=0; i<rspDataArray.count; i++){
+                           MineRewordModel *model = [MineRewordModel modelWithDict:rspDataArray[i]];
+                           [strongSelf.rewordArray addObject:model];
+                       }
+                        
+                        [strongSelf.rewordTableView reloadData];
+                    }
+                } @catch (NSException *exception) {
+                    @throw exception;
+                    //给出提示信息
+                    [AvalonsoftMsgAlertView showWithTitle:@"信息" content:@"系统发生错误，请与平台管理员联系解决。"  buttonTitles:@[@"关闭"] buttonClickedBlock:nil];
+                }
+                
+            } failure:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error) {
+                //请求失败
+                NSLog(@"%@",error);
+            }];
+            
+        } else {
+            //没网
+            //            [AvalonsoftMsgAlertView showWithTitle:@"信息" content:@"请检查网络" buttonTitles:@[@"关闭"] buttonClickedBlock:nil];
+        }
+    }];
+}
+
+
+- (void)queryMineSkillList
+{
+    __weak typeof(self) weakSelf = self;
+    [AvalonsoftHasNetwork avalonsoft_hasNetwork:^(bool has) {
+        if (has) {
+            NSMutableDictionary *root = [NSMutableDictionary dictionary];
+            [root setValue:[_UserInfo accountId] forKey:@"accountId"];
+            
+            [[AvalonsoftHttpClient avalonsoftHttpClient] requestWithAction:COMMON_SERVER_URL actionName:MINE_MY_EDU_SKILL method:HttpRequestPost paramenters:root prepareExecute:^{
+                
+            } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull responseObject) {
+                __strong typeof(weakSelf) strongSelf = self;
+                
+                NSLog(@"handleNetworkRequestWithResponseObject responseObject=%@",responseObject);
+                _M *responseModel = [_M createResponseJsonObj:responseObject];
+                NSLog(@"handleNetworkRequestWithResponseObject %ld %@",responseModel.rescode,responseModel.msg);
+                
+                @try {
+                    if(responseModel.rescode == 200){
+                        NSDictionary *rspData = responseModel.data;
+                        NSArray *rspDataArray = rspData[@"dataList"];
+                       [strongSelf.skillArray removeAllObjects];
+                       for(int i=0; i<rspDataArray.count; i++){
+                           MineSkillModel *model = [MineSkillModel modelWithDict:rspDataArray[i]];
+                           [strongSelf.skillArray addObject:model];
+                       }
+                        
+                        [strongSelf.skillTableView reloadData];
+                    }
+                } @catch (NSException *exception) {
+                    @throw exception;
+                    //给出提示信息
+                    [AvalonsoftMsgAlertView showWithTitle:@"信息" content:@"系统发生错误，请与平台管理员联系解决。"  buttonTitles:@[@"关闭"] buttonClickedBlock:nil];
+                }
+                
+            } failure:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error) {
+                //请求失败
+                NSLog(@"%@",error);
+            }];
+            
+        } else {
+            //没网
+            //            [AvalonsoftMsgAlertView showWithTitle:@"信息" content:@"请检查网络" buttonTitles:@[@"关闭"] buttonClickedBlock:nil];
+        }
+    }];
+}
 @end

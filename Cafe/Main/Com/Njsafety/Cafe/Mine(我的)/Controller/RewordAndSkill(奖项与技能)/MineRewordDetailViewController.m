@@ -170,8 +170,8 @@
     _detailArray = nil;
     NSMutableArray *tempArray = [NSMutableArray array];
     
-    NSString *name = slctModel.name;
-    NSString *date = slctModel.date;
+    NSString *name = slctModel.awardName;
+    NSString *date = slctModel.awardDate;
     
     NSString *showLanguage = slctModel.showLanguage;
     

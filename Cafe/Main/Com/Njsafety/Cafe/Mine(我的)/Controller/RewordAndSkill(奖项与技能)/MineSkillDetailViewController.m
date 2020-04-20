@@ -170,9 +170,9 @@
     _detailArray = nil;
     NSMutableArray *tempArray = [NSMutableArray array];
     
-    NSString *name = slctModel.name;
-    NSString *date = slctModel.date;
-    NSString *level = slctModel.level;
+    NSString *name = slctModel.skillDesc;
+    NSString *date = slctModel.skillDate;
+    NSString *level = slctModel.rankOrLevel;
     
     NSString *showLanguage = slctModel.showLanguage;
     

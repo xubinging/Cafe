@@ -136,14 +136,19 @@
 
 - (void)updateCellWithModel:(MineSkillModel *)model
 {
-
-    NSString *name = model.name;
-    NSString *date = model.date;
+    NSString *name = model.skillDesc;
+    NSString *date = model.skillDate;
     
     NSString *showLanguage = model.showLanguage;
     
-    [_nameLabel setText:name];
-    [_dateLabel setText:date];
+    _nameLabel.text = name;
+    
+    if ([date isKindOfClass:[NSString class]]) {
+        [_dateLabel setText:date];
+    } else { // 测试发现，date有时是long类型，待平台修正返回类型
+        NSString *date2 = [ NSString stringWithFormat:@"%@",model.skillDate];
+        [_dateLabel setText:date2];
+    }
     
     if([showLanguage isEqualToString:@"ZH"] || showLanguage == nil || [showLanguage isEqualToString:@""]){
         [_nameTitleLabel setText:@"名称:"];
@@ -163,9 +168,8 @@
     }];
     
     [_dateTitleLabel mas_updateConstraints:^(MASConstraintMaker *make){
-           make.size.mas_equalTo(CGSizeMake(dateTitleWidth, 22));
-       }];
-    
+        make.size.mas_equalTo(CGSizeMake(dateTitleWidth, 22));
+    }];
 }
 
 - (void)awakeFromNib {

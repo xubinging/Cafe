@@ -16,9 +16,9 @@ NS_ASSUME_NONNULL_BEGIN
 //定义属性
 @property (nonatomic, assign) NSInteger index;
 
-@property (nonatomic, copy) NSString *name;             //名称
-@property (nonatomic, copy) NSString *date;             //日期
-@property (nonatomic, copy) NSString *level;            //等级
+@property (nonatomic, copy) NSString *skillDesc;             //名称
+@property (nonatomic, copy) NSString *skillDate;             //日期
+@property (nonatomic, copy) NSString *rankOrLevel;           //等级
 
 @property (nonatomic, copy) NSString *showLanguage;     //CH -- 中文；EN -- 英文
 
