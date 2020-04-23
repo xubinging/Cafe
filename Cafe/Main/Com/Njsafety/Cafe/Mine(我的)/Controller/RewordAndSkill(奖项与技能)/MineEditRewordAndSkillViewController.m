@@ -24,6 +24,7 @@
     @private NSString *name;
     @private NSString *date;
     @private NSString *level;
+    @private NSString *ID;
     @private NSString *type;
 }
 
@@ -80,6 +81,12 @@
             level = _dataDic[@"level"];
         }else{
             level = @"";
+        }
+        
+        if(_dataDic[@"id"]){
+            ID = _dataDic[@"id"];
+        }else{
+            ID = @"";
         }
         
         if(_dataDic[@"type"]){
@@ -293,9 +300,9 @@
 #pragma mark - 保存按钮点击 -
 -(void)saveButtonClick
 {
-    if ([type isEqualToString:@"award"]) {
+    if ([type isEqualToString:@"awardEdit"]) {
         [self saveMineEditRewordList];
-    } else if ([type isEqualToString:@"skill"]) {
+    } else if ([type isEqualToString:@"skillEdit"]) {
         [self saveMineEditSkillList];
     }
 }
@@ -325,9 +332,12 @@
             __weak typeof(self) weakSelf = self;
             [AvalonsoftPickerView showDatePickerWithTitle:@"" DateType:UIDatePickerModeDate DefaultSelValue:@"" MinDateStr:@"1900-01-01 00:00:00" MaxDateStr:nowStr IsAutoSelect:NO Manager:nil ResultBlock:^(NSString *selectValue){
                 __strong typeof(weakSelf) strongSelf = weakSelf;
+                ///TODO:xubing date格式不用转换，否则接口不通
+//                strongSelf->date = [selectValue stringByReplacingOccurrencesOfString:@"-" withString:@"/"];
+//                strongSelf->dateTextField.text = [selectValue stringByReplacingOccurrencesOfString:@"-" withString:@"/"];
                 
-                strongSelf->date = [selectValue stringByReplacingOccurrencesOfString:@"-" withString:@"/"];
-                strongSelf->dateTextField.text = [selectValue stringByReplacingOccurrencesOfString:@"-" withString:@"/"];
+                strongSelf->date = selectValue;
+                strongSelf->dateTextField.text = selectValue;
             }];
         }
             break;
@@ -404,6 +414,7 @@
             [root setValue:strongSelf->name forKey:@"awardName"];
             [root setValue:strongSelf->date forKey:@"awardDate"];
             [root setValue:strongSelf->level forKey:@"rankOrLevel"];
+            [root setValue:strongSelf->ID forKey:@"id"];
             
             [[AvalonsoftHttpClient avalonsoftHttpClient] requestWithAction:COMMON_SERVER_URL actionName:MINE_MY_EDU_AWARD_UPDATE method:HttpRequestPost paramenters:root prepareExecute:^{
                 
@@ -476,6 +487,7 @@
             [root setValue:strongSelf->name forKey:@"skillDesc"];
             [root setValue:strongSelf->date forKey:@"skillDate"];
             [root setValue:strongSelf->level forKey:@"rankOrLevel"];
+            [root setValue:strongSelf->ID forKey:@"id"];
             
             [[AvalonsoftHttpClient avalonsoftHttpClient] requestWithAction:COMMON_SERVER_URL actionName:MINE_MY_EDU_SKILL_UPDATE method:HttpRequestPost paramenters:root prepareExecute:^{
                 

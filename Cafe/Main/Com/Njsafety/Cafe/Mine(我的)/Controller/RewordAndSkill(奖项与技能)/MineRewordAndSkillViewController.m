@@ -510,62 +510,27 @@
 -(void)addButtonClick
 {
     MineAddRewordAndSkillViewController *showVC = [MineAddRewordAndSkillViewController new];
+    
+    NSMutableDictionary *sendDic = [NSMutableDictionary dictionary];
+    if (!self.rewordTableView.hidden) {
+         [sendDic setValue:@"awardAdd" forKey:@"addType"];
+     } else if (!self.skillTableView.hidden) {
+         [sendDic setValue:@"skillAdd" forKey:@"addType"];
+     }
+    showVC.dataDic = [sendDic copy];
+    [self.navigationController pushViewController:showVC animated:YES];
 
    //设置block回调
+    __weak typeof(self) weakSelf = self;
    [showVC setSendValueBlock:^(NSDictionary *valueDict){
-       //回调函数
-       NSString *type = valueDict[@"type"];
-       NSString *date = valueDict[@"date"];
-       NSString *location = valueDict[@"location"];
-       NSString *org = valueDict[@"org"];
-       NSString *resultL = valueDict[@"resultL"];
-       NSString *resultS = valueDict[@"resultS"];
-       NSString *resultR = valueDict[@"resultR"];
-       NSString *resultW = valueDict[@"resultW"];
-       NSString *resultScore = valueDict[@"resultScore"];
-       NSString *showLanguage = @"";
+       __strong typeof(weakSelf) strongSelf = weakSelf;
        
-       if(self->isShowChinese){
-           showLanguage = @"ZH";
-       }else{
-           showLanguage = @"EN";
+       if ([valueDict[@"addType"] isEqualToString:@"awardAdd"]) {
+           [strongSelf queryMineRewordList];
+       } else if ([valueDict[@"addType"] isEqualToString:@"skillAdd"]) {
+           [strongSelf queryMineSkillList];
        }
-       
-       NSMutableArray *tempArr = [NSMutableArray array];
-//       for(MineResultModel *model in self.resultArray){
-//           [tempArr addObject:model];
-//       }
-       
-       //把刚才新加的数据加入到数据列表中
-       NSDictionary *dic = @{
-           @"resultIndex":@(tempArr.count + 1),
-           @"resultType":type,
-           @"resultDate":date,
-           @"resultLocation":location,
-           @"resultOrg":org,
-           @"resultL":resultL,
-           @"resultS":resultS,
-           @"resultR":resultR,
-           @"resultW":resultW,
-           @"resultScore":resultScore,
-           @"showLanguage":showLanguage
-       };
-       
-//       MineResultModel *model = [MineResultModel modelWithDict:dic];
-//       [tempArr addObject:model];
-//
-//       //按照 resultIndex 进行降序排序，这里用的是描述类排序，排序字段一定要和类中写的一致
-//       NSSortDescriptor *resultIndexSortDesc = [[NSSortDescriptor alloc] initWithKey:@"resultIndex" ascending:NO];
-//       [tempArr sortUsingDescriptors:@[resultIndexSortDesc]];
-//
-//       self.resultArray = [tempArr copy];
-//
-//       [self.resultTableView reloadData];
-   }];
-   
-   showVC.dataDic = @{};
-   
-   [self.navigationController pushViewController:showVC animated:YES];
+    }];
 }
 
 #pragma mark - 右侧按钮点击 -

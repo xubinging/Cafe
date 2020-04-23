@@ -27,6 +27,7 @@
     @private NSString *name;
     @private NSString *date;
     @private NSString *level;
+    @private NSString *addType;
 }
 @end
 
@@ -40,14 +41,12 @@
     [self getParentVars];
     [self initNavigationView];
     [self initView];
-    [self setData];
 }
 
 #pragma mark - 初始化一些参数 -
 -(void)initVars
 {
     self.view.backgroundColor = RGBA_GGCOLOR(249, 249, 249, 1);
-
 }
 
 #pragma mark - 初始化数据 -
@@ -65,28 +64,10 @@
 -(void)getParentVars
 {
     if(_dataDic != nil){
-        if(_dataDic[@"type"]){
-            type = _dataDic[@"type"];
+        if(_dataDic[@"addType"]){
+            addType = _dataDic[@"addType"];
         }else{
-            type = @"";
-        }
-        
-        if(_dataDic[@"name"]){
-            name = _dataDic[@"name"];
-        }else{
-            name = @"";
-        }
-        
-        if(_dataDic[@"date"]){
-            date = _dataDic[@"date"];
-        }else{
-            date = @"";
-        }
-        
-        if(_dataDic[@"level"]){
-            level = _dataDic[@"level"];
-        }else{
-            level = @"";
+            addType = @"";
         }
     }
 }
@@ -247,6 +228,7 @@
         make.height.equalTo(@50);
     }];
     [self setTextFieldStyle:nameTextField withTag:2];
+    [nameTextField addTarget:self action:@selector(textFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
 
     UIView *nameSplitView = [UIView new];
     [contentView addSubview:nameSplitView];
@@ -327,6 +309,7 @@
         make.height.equalTo(@50);
     }];
     [self setTextFieldStyle:levelTextField withTag:4];
+    [levelTextField addTarget:self action:@selector(textFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
 
     UIView *levelSplitView = [UIView new];
     [contentView addSubview:levelSplitView];
@@ -339,15 +322,6 @@
     [levelSplitView setBackgroundColor:RGBA_GGCOLOR(238, 238, 238, 1)];
 }
 
-#pragma mark - 设置参数 -
--(void)setData
-{
-    typeTextField.text = type;
-    nameTextField.text = name;
-    dateTextField.text = date;
-    levelTextField.text = level;
-}
-
 #pragma mark - 返回按钮点击 -
 -(void)backButtonClick
 {
@@ -357,122 +331,60 @@
 #pragma mark - 保存按钮点击 -
 -(void)saveButtonClick
 {
-    if (type.length > 0 && date.length > 0 && name.length > 0 && level.length > 0) {
-        //模拟保存成功
-        [AvalonsoftToast showWithMessage:@"保存成功" image:@"login_success" duration:1];
-        //延迟推出
-        [self performSelector:@selector(saveSuccess) withObject:nil afterDelay:1.5];
-        
-    } else {
-        if (!type.length) {
-            [AvalonsoftToast showWithMessage:@"类型不能为空！"];
-        } else if (!date.length) {
-            [AvalonsoftToast showWithMessage:@"名称不能为空！"];
-        } else if (!name.length) {
-            [AvalonsoftToast showWithMessage:@"日期不能为空！"];
-        } else if (!level.length) {
-            [AvalonsoftToast showWithMessage:@"等级程度不能为空！"];
-        }
+    if ([addType isEqualToString:@"awardAdd"]) {
+        [self saveMineAddRewordList];
+    } else if ([addType isEqualToString:@"skillAdd"]) {
+        [self saveMineAddSkillList];
     }
-}
-
--(void)saveSuccess{
-    //设置回调
-    NSDictionary *sendDataDic = @{@"type":type,
-                                  @"location":name,
-                                  @"date":date,
-                                  @"org":level,
-    };
-    
-    //Block传值step 3:传值类将要传的值传入自己的block中
-    self.sendValueBlock(sendDataDic);
-    
-    [self.navigationController popViewControllerAnimated:YES];
 }
 
 #pragma mark - UITextFieldDelegate -
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
 {
-    
     NSInteger tfTag = textField.tag - TEXTFIELD_TAG;
     
     switch (tfTag) {
         case 1: {
             //类型
-            [AvalonsoftPickerView showStringPickerWithTitle:@"" DataSource:@[@"奖项", @"技能"] DefaultSelValue:@"" IsAutoSelect:NO ResultBlock:^(id selectValue, id selectRow){
-                self->type = selectValue;
-                self->typeTextField.text = selectValue;
+            [nameTextField resignFirstResponder];
+            [levelTextField resignFirstResponder];
+
+            __weak typeof(self) weakSelf = self;
+            [AvalonsoftPickerView showStringPickerWithTitle:@"" DataSource:@[@"奖项", @"技能"] DefaultSelValue:@"奖项" IsAutoSelect:NO ResultBlock:^(id selectValue, id selectRow){
+                __strong typeof(weakSelf) strongSelf = weakSelf;
+
+                strongSelf->type = selectValue;
+                strongSelf->typeTextField.text = selectValue;
             }];
         }
             break;
             
-        case 2: {
-            //名称
-            NSString *title = @"名称";
-            NSString *content = name;
-            
-            //通过字典将值传到后台
-            NSDictionary *sendDataDic = @{@"title":title,
-                                          @"content":content
-            };
-            
-            MineResultShowContentEditViewController *contentEditVC = [[MineResultShowContentEditViewController alloc] init];
-            //设置block回调
-            __weak typeof(self) weakSelf = self;
-            [contentEditVC setSendValueBlock:^(NSDictionary *valueDict){
-                __strong typeof(weakSelf) strongSelf = weakSelf;
-                //回调函数
-                NSString *returnContent = valueDict[@"content"];
-                
-                strongSelf->name = returnContent;
-                strongSelf->nameTextField.text = returnContent;;
-                
-                
-            }];
-            
-            contentEditVC.dataDic = sendDataDic;
-            [self.navigationController pushViewController:contentEditVC animated:YES];
+        case 2:
+        case 4: {
+            return YES;
         }
             break;
         
         case 3: {
             //日期
+            [nameTextField resignFirstResponder];
+            [levelTextField resignFirstResponder];
+
             NSDate *now = [NSDate date];
             NSDateFormatter *fmt = [[NSDateFormatter alloc] init];
             fmt.dateFormat = @"yyyy-MM-dd HH:mm:ss";
             NSString *nowStr = [fmt stringFromDate:now];
 
-            [AvalonsoftPickerView showDatePickerWithTitle:@"" DateType:UIDatePickerModeDate DefaultSelValue:@"" MinDateStr:@"1900-01-01 00:00:00" MaxDateStr:nowStr IsAutoSelect:NO Manager:nil ResultBlock:^(NSString *selectValue){
-                self->date = [selectValue stringByReplacingOccurrencesOfString:@"-" withString:@"/"];
-                self->dateTextField.text = [selectValue stringByReplacingOccurrencesOfString:@"-" withString:@"/"];
-            }];
-        }
-            break;
-        
-        case 4: {
-            NSString *title = @"等级程度";
-            NSString *content = level;
-            
-            //通过字典将值传到后台
-            NSDictionary *sendDataDic = @{@"title":title,
-                                          @"content":content
-            };
-            
-            MineResultShowContentEditViewController *contentEditVC = [[MineResultShowContentEditViewController alloc] init];
-            //设置block回调
             __weak typeof(self) weakSelf = self;
-            [contentEditVC setSendValueBlock:^(NSDictionary *valueDict){
+            [AvalonsoftPickerView showDatePickerWithTitle:@"" DateType:UIDatePickerModeDate DefaultSelValue:@"" MinDateStr:@"1900-01-01 00:00:00" MaxDateStr:nowStr IsAutoSelect:NO Manager:nil ResultBlock:^(NSString *selectValue){
                 __strong typeof(weakSelf) strongSelf = weakSelf;
-                //回调函数
-                NSString *returnContent = valueDict[@"content"];
-      
-                strongSelf->level = returnContent;
-                strongSelf->levelTextField.text = returnContent;;
+                ///TODO:xubing date格式不用转换，否则接口不通
+//                strongSelf->date = [selectValue stringByReplacingOccurrencesOfString:@"-" withString:@"/"];
+//                strongSelf->dateTextField.text = [selectValue stringByReplacingOccurrencesOfString:@"-" withString:@"/"];
                 
+                strongSelf->date = selectValue;
+                strongSelf->dateTextField.text = selectValue;
             }];
-            
-            contentEditVC.dataDic = sendDataDic;
-            [self.navigationController pushViewController:contentEditVC animated:YES];
         }
             break;
             
@@ -506,4 +418,136 @@
     [textField setFont:[UIFont fontWithName:@"PingFangSC-Medium" size:16]];
 }
 
+#pragma mark - 输入框监听 -
+- (void)textFieldDidChange:(UITextField*) sender {
+    NSInteger tfTag = sender.tag - TEXTFIELD_TAG;
+    switch (tfTag) {
+        case 2: {
+            name = sender.text;
+        }
+            break;
+            
+        case 4: {
+            level = sender.text;
+        }
+            break;
+            
+        default:
+            break;
+    }
+}
+
+#pragma mark - touch screen hide soft keyboard -
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+    [super touchesBegan:touches withEvent:event];
+
+    [nameTextField resignFirstResponder];
+    [levelTextField resignFirstResponder];
+}
+
+
+#pragma mark - 网络请求
+- (void)saveMineAddRewordList
+{
+    __weak typeof(self) weakSelf = self;
+    [AvalonsoftHasNetwork avalonsoft_hasNetwork:^(bool has) {
+        __strong typeof(weakSelf) strongSelf = weakSelf;
+
+        if (has) {
+            NSMutableDictionary *root = [NSMutableDictionary dictionary];
+            [root setValue:[_UserInfo accountId] forKey:@"accountId"];
+            [root setValue:strongSelf->name forKey:@"awardName"];
+            [root setValue:strongSelf->date forKey:@"awardDate"];
+            [root setValue:strongSelf->level forKey:@"rankOrLevel"];
+            
+            [[AvalonsoftHttpClient avalonsoftHttpClient] requestWithAction:COMMON_SERVER_URL actionName:MINE_MY_EDU_AWARD_ADD method:HttpRequestPost paramenters:root prepareExecute:^{
+                
+            } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull responseObject) {
+                
+                NSLog(@"handleNetworkRequestWithResponseObject responseObject=%@",responseObject);
+                _M *responseModel = [_M createResponseJsonObj:responseObject];
+                NSLog(@"handleNetworkRequestWithResponseObject %ld %@",responseModel.rescode,responseModel.msg);
+                
+                @try {
+                    if(responseModel.rescode == 200){
+                        NSMutableDictionary *sendDic = [NSMutableDictionary dictionary];
+                        [sendDic setValue:@"awardAdd" forKey:@"addType"];
+                        strongSelf.sendValueBlock(sendDic);
+                        
+                        //保存成功
+                        [AvalonsoftToast showWithMessage:@"保存成功" image:@"login_success" duration:1];
+                        [strongSelf.navigationController popViewControllerAnimated:YES];
+                    }
+                } @catch (NSException *exception) {
+                    @throw exception;
+                    //给出提示信息
+                    [AvalonsoftMsgAlertView showWithTitle:@"信息" content:@"系统发生错误，请与平台管理员联系解决。"  buttonTitles:@[@"关闭"] buttonClickedBlock:nil];
+                    [strongSelf.navigationController popViewControllerAnimated:YES];
+                }
+                
+            } failure:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error) {
+                //请求失败
+                NSLog(@"%@",error);
+                [strongSelf.navigationController popViewControllerAnimated:YES];
+            }];
+            
+        } else {
+            //没网
+            //            [AvalonsoftMsgAlertView showWithTitle:@"信息" content:@"请检查网络" buttonTitles:@[@"关闭"] buttonClickedBlock:nil];
+            [strongSelf.navigationController popViewControllerAnimated:YES];
+        }
+    }];
+}
+
+- (void)saveMineAddSkillList
+{
+    __weak typeof(self) weakSelf = self;
+    [AvalonsoftHasNetwork avalonsoft_hasNetwork:^(bool has) {
+        __strong typeof(weakSelf) strongSelf = weakSelf;
+
+        if (has) {
+            NSMutableDictionary *root = [NSMutableDictionary dictionary];
+            [root setValue:[_UserInfo accountId] forKey:@"accountId"];
+            [root setValue:strongSelf->name forKey:@"skillDesc"];
+            [root setValue:strongSelf->date forKey:@"skillDate"];
+            [root setValue:strongSelf->level forKey:@"rankOrLevel"];
+            
+            [[AvalonsoftHttpClient avalonsoftHttpClient] requestWithAction:COMMON_SERVER_URL actionName:MINE_MY_EDU_SKILL_ADD method:HttpRequestPost paramenters:root prepareExecute:^{
+                
+            } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull responseObject) {
+                
+                NSLog(@"handleNetworkRequestWithResponseObject responseObject=%@",responseObject);
+                _M *responseModel = [_M createResponseJsonObj:responseObject];
+                NSLog(@"handleNetworkRequestWithResponseObject %ld %@",responseModel.rescode,responseModel.msg);
+                
+                @try {
+                    if(responseModel.rescode == 200){
+                        NSMutableDictionary *sendDic = [NSMutableDictionary dictionary];
+                        [sendDic setValue:@"skillAdd" forKey:@"addType"];
+                        strongSelf.sendValueBlock(sendDic);
+                        
+                        //保存成功
+                        [AvalonsoftToast showWithMessage:@"保存成功" image:@"login_success" duration:1];
+                        [strongSelf.navigationController popViewControllerAnimated:YES];
+                    }
+                } @catch (NSException *exception) {
+                    @throw exception;
+                    //给出提示信息
+                    [AvalonsoftMsgAlertView showWithTitle:@"信息" content:@"系统发生错误，请与平台管理员联系解决。"  buttonTitles:@[@"关闭"] buttonClickedBlock:nil];
+                    [strongSelf.navigationController popViewControllerAnimated:YES];
+                }
+                
+            } failure:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error) {
+                //请求失败
+                NSLog(@"%@",error);
+                [strongSelf.navigationController popViewControllerAnimated:YES];
+            }];
+            
+        } else {
+            //没网
+            //            [AvalonsoftMsgAlertView showWithTitle:@"信息" content:@"请检查网络" buttonTitles:@[@"关闭"] buttonClickedBlock:nil];
+            [strongSelf.navigationController popViewControllerAnimated:YES];
+        }
+    }];
+}
 @end

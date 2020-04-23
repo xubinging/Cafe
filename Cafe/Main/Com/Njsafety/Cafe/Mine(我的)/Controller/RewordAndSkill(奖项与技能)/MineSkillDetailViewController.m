@@ -249,8 +249,11 @@
     if (slctModel.rankOrLevel) {
         [sendDic setValue:slctModel.rankOrLevel forKey:@"level"];
     }
+    if (slctModel.ID) {
+        [sendDic setValue:slctModel.ID forKey:@"id"];
+    }
     
-    [sendDic setValue:@"skill" forKey:@"type"];
+    [sendDic setValue:@"skillEdit" forKey:@"type"];
 
     MineEditRewordAndSkillViewController *showVC = [MineEditRewordAndSkillViewController new];
     showVC.dataDic = [sendDic copy];
@@ -265,6 +268,7 @@
         model.skillDesc = valueDict[@"name"];
         model.skillDate = valueDict[@"date"];
         model.rankOrLevel = valueDict[@"level"];
+        model.ID = valueDict[@"id"];
 
         strongSelf->slctModel = model;
         [self.detailTableView reloadData];
