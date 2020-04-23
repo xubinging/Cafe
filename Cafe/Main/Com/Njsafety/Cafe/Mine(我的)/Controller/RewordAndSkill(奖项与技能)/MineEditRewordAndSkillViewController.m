@@ -426,28 +426,7 @@
                 
                 @try {
                     if(responseModel.rescode == 200){
-                        NSDictionary *rspData = responseModel.data;
                         NSMutableDictionary *sendDic = [NSMutableDictionary dictionary];
-                        NSString *curName = rspData[@"awardName"];
-                        NSString *curDate = rspData[@"awardDate"];
-                        NSString *curLevel = rspData[@"rankOrLevel"];
-                        
-                        if (curName) {
-                            [sendDic setValue:curName forKey:@"name"];
-                        }
-                        
-                        ///TODO:xubing curDate可能是long类型
-                        if (![curDate isKindOfClass:[NSString class]]) {
-                            curDate = [NSString stringWithFormat:@"%@",curDate];;
-                        }
-                        
-                        if (curDate) {
-                            [sendDic setValue:curDate forKey:@"date"];
-                        }
-                        
-                        if (curLevel) {
-                            [sendDic setValue:curLevel forKey:@"level"];
-                        }
                         strongSelf.sendValueBlock(sendDic);
                         
                         //保存成功
@@ -499,28 +478,7 @@
                 
                 @try {
                     if(responseModel.rescode == 200){
-                        NSDictionary *rspData = responseModel.data;
                         NSMutableDictionary *sendDic = [NSMutableDictionary dictionary];
-                        NSString *curName = rspData[@"skillDesc"];
-                        NSString *curDate = rspData[@"skillDate"];
-                        NSString *curLevel = rspData[@"rankOrLevel"];
-                        
-                        if (curName) {
-                            [sendDic setValue:curName forKey:@"name"];
-                        }
-                        
-                        ///TODO:xubing curDate可能是long类型
-                        if (![curDate isKindOfClass:[NSString class]]) {
-                            curDate = [NSString stringWithFormat:@"%@",curDate];;
-                        }
-                        
-                        if (curDate) {
-                            [sendDic setValue:curDate forKey:@"date"];
-                        }
-                        
-                        if (curLevel) {
-                            [sendDic setValue:curLevel forKey:@"level"];
-                        }
                         strongSelf.sendValueBlock(sendDic);
                         
                         //保存成功

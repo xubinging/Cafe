@@ -40,12 +40,6 @@
     [self getParentVars];
     [self initNavigationView];
     [self initView];
-}
-
-- (void)viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear:animated];
-    
     [self queryMineSkillDetails];
 }
 
@@ -54,7 +48,6 @@
 -(void)initVars
 {
     self.view.backgroundColor = RGBA_GGCOLOR(249, 249, 249, 1);
-    
 }
 
 #pragma mark - 初始化数据 -
@@ -263,15 +256,8 @@
     __weak typeof(self) weakSelf = self;
     [showVC setSendValueBlock:^(NSDictionary *valueDict){
         __strong typeof(weakSelf) strongSelf = weakSelf;
-        //回调函数
-        MineSkillModel *model = [MineSkillModel new];
-        model.skillDesc = valueDict[@"name"];
-        model.skillDate = valueDict[@"date"];
-        model.rankOrLevel = valueDict[@"level"];
-        model.ID = valueDict[@"id"];
-
-        strongSelf->slctModel = model;
-        [self.detailTableView reloadData];
+        
+        [strongSelf queryMineSkillDetails];
     }];
 }
 

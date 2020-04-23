@@ -510,14 +510,6 @@
 -(void)addButtonClick
 {
     MineAddRewordAndSkillViewController *showVC = [MineAddRewordAndSkillViewController new];
-    
-    NSMutableDictionary *sendDic = [NSMutableDictionary dictionary];
-    if (!self.rewordTableView.hidden) {
-         [sendDic setValue:@"awardAdd" forKey:@"addType"];
-     } else if (!self.skillTableView.hidden) {
-         [sendDic setValue:@"skillAdd" forKey:@"addType"];
-     }
-    showVC.dataDic = [sendDic copy];
     [self.navigationController pushViewController:showVC animated:YES];
 
    //设置block回调
@@ -525,9 +517,9 @@
    [showVC setSendValueBlock:^(NSDictionary *valueDict){
        __strong typeof(weakSelf) strongSelf = weakSelf;
        
-       if ([valueDict[@"addType"] isEqualToString:@"awardAdd"]) {
+       if ([valueDict[@"type"] isEqualToString:@"奖项"]) {
            [strongSelf queryMineRewordList];
-       } else if ([valueDict[@"addType"] isEqualToString:@"skillAdd"]) {
+       } else if ([valueDict[@"type"] isEqualToString:@"技能"]) {
            [strongSelf queryMineSkillList];
        }
     }];

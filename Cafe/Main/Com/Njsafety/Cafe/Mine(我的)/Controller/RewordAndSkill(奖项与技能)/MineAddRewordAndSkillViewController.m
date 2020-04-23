@@ -27,7 +27,6 @@
     @private NSString *name;
     @private NSString *date;
     @private NSString *level;
-    @private NSString *addType;
 }
 @end
 
@@ -38,7 +37,6 @@
     
     [self initVars];
     [self initSharedPreferences];
-    [self getParentVars];
     [self initNavigationView];
     [self initView];
 }
@@ -57,18 +55,6 @@
     } @catch (NSException *exception) {
         @throw exception;
         
-    }
-}
-
-#pragma mark - 获取父页面参数 -
--(void)getParentVars
-{
-    if(_dataDic != nil){
-        if(_dataDic[@"addType"]){
-            addType = _dataDic[@"addType"];
-        }else{
-            addType = @"";
-        }
     }
 }
 
@@ -331,10 +317,12 @@
 #pragma mark - 保存按钮点击 -
 -(void)saveButtonClick
 {
-    if ([addType isEqualToString:@"awardAdd"]) {
+    if ([type isEqualToString:@"奖项"]) {
         [self saveMineAddRewordList];
-    } else if ([addType isEqualToString:@"skillAdd"]) {
+    } else if ([type isEqualToString:@"技能"]) {
         [self saveMineAddSkillList];
+    } else {
+        [AvalonsoftToast showWithMessage:@"类型不能为空！"];
     }
 }
 
@@ -471,7 +459,7 @@
                 @try {
                     if(responseModel.rescode == 200){
                         NSMutableDictionary *sendDic = [NSMutableDictionary dictionary];
-                        [sendDic setValue:@"awardAdd" forKey:@"addType"];
+                        [sendDic setValue:@"奖项" forKey:@"type"];
                         strongSelf.sendValueBlock(sendDic);
                         
                         //保存成功
@@ -523,7 +511,7 @@
                 @try {
                     if(responseModel.rescode == 200){
                         NSMutableDictionary *sendDic = [NSMutableDictionary dictionary];
-                        [sendDic setValue:@"skillAdd" forKey:@"addType"];
+                        [sendDic setValue:@"技能" forKey:@"type"];
                         strongSelf.sendValueBlock(sendDic);
                         
                         //保存成功
