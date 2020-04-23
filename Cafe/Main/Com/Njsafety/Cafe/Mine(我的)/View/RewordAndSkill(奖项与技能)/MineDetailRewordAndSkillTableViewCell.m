@@ -171,9 +171,8 @@
     
     if ([date isKindOfClass:[NSString class]]) {
         _dateLabel.text = date;
-    } else { // 测试发现，date有时是long类型，待平台修正返回类型
-        NSString *date2 = [ NSString stringWithFormat:@"%@",date];
-        _dateLabel.text = date2;
+    } else { ///TODO:xubing 测试发现，date有时是long类型，待平台修正返回类型
+        _dateLabel.text = [NSString stringWithFormat:@"%@",date];;
     }
     
     if([showLanguage isEqualToString:@"ZH"] || showLanguage.length == 0){

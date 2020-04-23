@@ -143,10 +143,9 @@
     _nameLabel.text = name;
             
     if ([date isKindOfClass:[NSString class]]) {
-        [_dateLabel setText:date];
-    } else { // 测试发现，date有时是long类型，待平台修正返回类型
-        NSString *date2 = [ NSString stringWithFormat:@"%@",model.awardDate];
-        [_dateLabel setText:date2];
+        _dateLabel.text = date;
+    } else { ///TODO:xubing 测试发现，date有时是long类型，待平台修正返回类型
+        _dateLabel.text = [NSString stringWithFormat:@"%@",model.awardDate];
     }
     
     if([showLanguage isEqualToString:@"ZH"] || showLanguage.length == 0){

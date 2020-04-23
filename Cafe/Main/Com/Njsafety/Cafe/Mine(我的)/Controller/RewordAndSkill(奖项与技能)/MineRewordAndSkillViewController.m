@@ -7,15 +7,14 @@
 //
 
 #import "MineRewordAndSkillViewController.h"
-
 #import "MineRewordModel.h"
 #import "MineRewordTableViewCell.h" //奖项
-
 #import "MineSkillModel.h"
 #import "MineSkillTableViewCell.h"  //技能
-
 #import "MineRewordDetailViewController.h"  //奖项详情
 #import "MineSkillDetailViewController.h"   //技能详情
+#import "MineAddRewordAndSkillViewController.h"
+#import "UIScrollView+AvalonsoftMJRefresh.h"
 
 #define K_RewordBtn_Tag         10000
 #define K_SkillBtn_Tag          20000
@@ -55,15 +54,9 @@
     [self initSharedPreferences];
     [self initNavigationView];
     [self initView];
-}
-
-- (void)viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear:animated];
-    
     [self queryMineRewordList];
+    [self addPullRefreshRewordList];
 }
-
 
 - (NSMutableArray *)rewordArray
 {
@@ -93,6 +86,28 @@
         
     }
 }
+
+#pragma mark - 下拉刷新
+- (void)addPullRefreshRewordList
+{
+    __weak typeof(self) weakSelf = self;
+    [self.rewordTableView addHeaderWithHeaderWithBeginRefresh:NO animation:YES refreshBlock:^(NSInteger pageIndex) {
+        __strong typeof(weakSelf) strongSelf = weakSelf;
+        
+        [strongSelf queryMineRewordList];
+    }];
+}
+
+- (void)addPullRefreshSkillList
+{
+    __weak typeof(self) weakSelf = self;
+   [self.skillTableView addHeaderWithHeaderWithBeginRefresh:NO animation:YES refreshBlock:^(NSInteger pageIndex) {
+       __strong typeof(weakSelf) strongSelf = weakSelf;
+
+       [strongSelf queryMineSkillList];
+   }];
+}
+
 
 #pragma mark - 初始化导航视图 -
 -(void)initNavigationView
@@ -364,14 +379,11 @@
         detailVC.dataDic = sendDic;
 
         //设置block回调
+        __weak typeof(self) weakSelf = self;
         [detailVC setSendValueBlock:^(NSDictionary *valueDict){
-            //回调函数
-            MineRewordModel *modelReturn = valueDict[@"modelReturn"];
+            __strong typeof(weakSelf) strongSelf = weakSelf;
 
-            slctModel.awardName = modelReturn.awardName;
-            slctModel.awardDate = modelReturn.awardDate;
-
-            [self.rewordTableView reloadData];
+            [strongSelf queryMineRewordList];
         }];
 
         [self.navigationController pushViewController:detailVC animated:YES];
@@ -387,15 +399,11 @@
         detailVC.dataDic = sendDic;
 
         //设置block回调
+        __weak typeof(self) weakSelf = self;
         [detailVC setSendValueBlock:^(NSDictionary *valueDict){
-            //回调函数
-            MineSkillModel *modelReturn = valueDict[@"modelReturn"];
+            __strong typeof(weakSelf) strongSelf = weakSelf;
 
-            slctModel.skillDesc = modelReturn.skillDesc;
-            slctModel.skillDate = modelReturn.skillDate;
-            slctModel.rankOrLevel = modelReturn.rankOrLevel;
-
-            [self.skillTableView reloadData];
+            [strongSelf queryMineSkillList];
         }];
 
         [self.navigationController pushViewController:detailVC animated:YES];
@@ -444,7 +452,7 @@
             [_skillBtn setBackgroundColor:[UIColor clearColor]];
             
             [self queryMineRewordList];
-            
+            [self addPullRefreshRewordList];
         }else{
             return;
         }
@@ -485,7 +493,7 @@
             [_rewordBtn setBackgroundColor:[UIColor clearColor]];
             
             [self queryMineSkillList];
-            
+            [self addPullRefreshSkillList];
         }else{
             return;
         }
@@ -501,64 +509,63 @@
 #pragma mark - 添加按钮 -
 -(void)addButtonClick
 {
-//    MineResultShowViewController *showVC = [MineResultShowViewController new];
+    MineAddRewordAndSkillViewController *showVC = [MineAddRewordAndSkillViewController new];
+
+   //设置block回调
+   [showVC setSendValueBlock:^(NSDictionary *valueDict){
+       //回调函数
+       NSString *type = valueDict[@"type"];
+       NSString *date = valueDict[@"date"];
+       NSString *location = valueDict[@"location"];
+       NSString *org = valueDict[@"org"];
+       NSString *resultL = valueDict[@"resultL"];
+       NSString *resultS = valueDict[@"resultS"];
+       NSString *resultR = valueDict[@"resultR"];
+       NSString *resultW = valueDict[@"resultW"];
+       NSString *resultScore = valueDict[@"resultScore"];
+       NSString *showLanguage = @"";
+       
+       if(self->isShowChinese){
+           showLanguage = @"ZH";
+       }else{
+           showLanguage = @"EN";
+       }
+       
+       NSMutableArray *tempArr = [NSMutableArray array];
+//       for(MineResultModel *model in self.resultArray){
+//           [tempArr addObject:model];
+//       }
+       
+       //把刚才新加的数据加入到数据列表中
+       NSDictionary *dic = @{
+           @"resultIndex":@(tempArr.count + 1),
+           @"resultType":type,
+           @"resultDate":date,
+           @"resultLocation":location,
+           @"resultOrg":org,
+           @"resultL":resultL,
+           @"resultS":resultS,
+           @"resultR":resultR,
+           @"resultW":resultW,
+           @"resultScore":resultScore,
+           @"showLanguage":showLanguage
+       };
+       
+//       MineResultModel *model = [MineResultModel modelWithDict:dic];
+//       [tempArr addObject:model];
 //
-//    //设置block回调
-//    [showVC setSendValueBlock:^(NSDictionary *valueDict){
-//        //回调函数
-//        NSString *type = valueDict[@"type"];
-//        NSString *date = valueDict[@"date"];
-//        NSString *location = valueDict[@"location"];
-//        NSString *org = valueDict[@"org"];
-//        NSString *resultL = valueDict[@"resultL"];
-//        NSString *resultS = valueDict[@"resultS"];
-//        NSString *resultR = valueDict[@"resultR"];
-//        NSString *resultW = valueDict[@"resultW"];
-//        NSString *resultScore = valueDict[@"resultScore"];
-//        NSString *showLanguage = @"";
+//       //按照 resultIndex 进行降序排序，这里用的是描述类排序，排序字段一定要和类中写的一致
+//       NSSortDescriptor *resultIndexSortDesc = [[NSSortDescriptor alloc] initWithKey:@"resultIndex" ascending:NO];
+//       [tempArr sortUsingDescriptors:@[resultIndexSortDesc]];
 //
-//        if(self->isShowChinese){
-//            showLanguage = @"ZH";
-//        }else{
-//            showLanguage = @"EN";
-//        }
+//       self.resultArray = [tempArr copy];
 //
-//        NSMutableArray *tempArr = [NSMutableArray array];
-//        for(MineResultModel *model in self.resultArray){
-//            [tempArr addObject:model];
-//        }
-//
-//        //把刚才新加的数据加入到数据列表中
-//        NSDictionary *dic = @{
-//            @"resultIndex":@(tempArr.count + 1),
-//            @"resultType":type,
-//            @"resultDate":date,
-//            @"resultLocation":location,
-//            @"resultOrg":org,
-//            @"resultL":resultL,
-//            @"resultS":resultS,
-//            @"resultR":resultR,
-//            @"resultW":resultW,
-//            @"resultScore":resultScore,
-//            @"showLanguage":showLanguage
-//        };
-//
-//        MineResultModel *model = [MineResultModel modelWithDict:dic];
-//        [tempArr addObject:model];
-//
-//        //按照 resultIndex 进行降序排序，这里用的是描述类排序，排序字段一定要和类中写的一致
-//        NSSortDescriptor *resultIndexSortDesc = [[NSSortDescriptor alloc] initWithKey:@"resultIndex" ascending:NO];
-//        [tempArr sortUsingDescriptors:@[resultIndexSortDesc]];
-//
-//        self.resultArray = [tempArr copy];
-//
-//        [self.resultTableView reloadData];
-//
-//    }];
-//
-//    showVC.dataDic = @{};
-//
-//    [self.navigationController pushViewController:showVC animated:YES];
+//       [self.resultTableView reloadData];
+   }];
+   
+   showVC.dataDic = @{};
+   
+   [self.navigationController pushViewController:showVC animated:YES];
 }
 
 #pragma mark - 右侧按钮点击 -
@@ -616,7 +623,7 @@
             [[AvalonsoftHttpClient avalonsoftHttpClient] requestWithAction:COMMON_SERVER_URL actionName:MINE_MY_EDU_AWARD method:HttpRequestPost paramenters:root prepareExecute:^{
                 
             } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull responseObject) {
-                __strong typeof(weakSelf) strongSelf = self;
+                __strong typeof(weakSelf) strongSelf = weakSelf;
                 
                 NSLog(@"handleNetworkRequestWithResponseObject responseObject=%@",responseObject);
                 _M *responseModel = [_M createResponseJsonObj:responseObject];
@@ -664,7 +671,7 @@
             [[AvalonsoftHttpClient avalonsoftHttpClient] requestWithAction:COMMON_SERVER_URL actionName:MINE_MY_EDU_SKILL method:HttpRequestPost paramenters:root prepareExecute:^{
                 
             } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull responseObject) {
-                __strong typeof(weakSelf) strongSelf = self;
+                __strong typeof(weakSelf) strongSelf = weakSelf;
                 
                 NSLog(@"handleNetworkRequestWithResponseObject responseObject=%@",responseObject);
                 _M *responseModel = [_M createResponseJsonObj:responseObject];

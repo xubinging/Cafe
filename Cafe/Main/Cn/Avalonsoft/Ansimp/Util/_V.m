@@ -165,6 +165,18 @@ NSString * const MINE_MY_EXAM_SCORE_UPDATE = @"edu/exam/eduexamscore/update";
 NSString * const MINE_MY_EDU_AWARD = @"eduUser/eduusercaward/queryPageList";
 //技能
 NSString * const MINE_MY_EDU_SKILL = @"eduUser/eduusercskill/queryPageList";
+//奖项详情
+NSString * const MINE_MY_EDU_AWARD_DETAILS = @"eduUser/eduusercaward/query?id";
+//技能详情
+NSString * const MINE_MY_EDU_SKILL_DETAILS = @"eduUser/eduusercskill/query?id";
+//奖项新增
+NSString * const MINE_MY_EDU_AWARD_ADD = @"eduUser/eduusercaward/add";
+//技能新增
+NSString * const MINE_MY_EDU_SKILL_ADD = @"eduUser/eduusercskill/add";
+//奖项编辑
+NSString * const MINE_MY_EDU_AWARD_UPDATE = @"eduUser/eduusercaward/update";
+//技能编辑
+NSString * const MINE_MY_EDU_SKILL_UPDATE = @"eduUser/eduusercskill/update";
 
 
 
