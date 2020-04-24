@@ -177,6 +177,15 @@ NSString * const MINE_MY_EDU_SKILL_ADD = @"eduUser/eduusercskill/add";
 NSString * const MINE_MY_EDU_AWARD_UPDATE = @"eduUser/eduusercaward/update";
 //技能编辑
 NSString * const MINE_MY_EDU_SKILL_UPDATE = @"eduUser/eduusercskill/update";
+//课外活动列表
+NSString * const MINE_MY_ACTIVITY_LIST = @"eduUser/eduuserclife/queryPageList";
+//课外活动详情
+NSString * const MINE_MY_ACTIVITY_DETAILS = @"eduUser/eduuserclife/query?id";
+//课外活动新增
+NSString * const MINE_MY_ACTIVITY_ADD = @"eduUser/eduuserclife/add";
+//课外活动编辑
+NSString * const MINE_MY_ACTIVITY_UPDATE = @"eduUser/eduuserclife/update";
+
 
 
 
