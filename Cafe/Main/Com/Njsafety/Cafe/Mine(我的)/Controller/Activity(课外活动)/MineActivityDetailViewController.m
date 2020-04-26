@@ -9,7 +9,7 @@
 #import "MineActivityDetailViewController.h"
 
 #import "MineActivityModel.h"
-
+#import "MineEditActivityViewController.h"
 #import "MineDetailCommonModel.h"
 #import "MineDetailCommonTableViewCell.h"
 
@@ -43,6 +43,7 @@
     [self initNavigationView];
     [self initView];
     [self setData];
+    [self queryMineActivityDetails];
 }
 
 #pragma mark - 初始化一些参数 -
@@ -186,11 +187,11 @@
     _detailArray = nil;
     NSMutableArray *tempArray = [NSMutableArray array];
     
-    NSString *name = slctModel.name;
+    NSString *name = slctModel.eventName;
     NSString *role = slctModel.role;
-    NSString *startTime = slctModel.startTime;
-    NSString *endTime = slctModel.endTime;
-    NSString *content = slctModel.content;
+    NSString *startTime = slctModel.eventStartDate;
+    NSString *endTime = slctModel.eventEndDate;
+    NSString *content = slctModel.eventDescription;
     
     NSString *showLanguage = slctModel.showLanguage;
     
@@ -337,41 +338,69 @@
 #pragma mark - 编辑按钮点击 -
 -(void)rightButtonClick
 {
-//    NSDictionary *sendDic = @{
-//        @"type":type,
-//        @"date":date,
-//        @"location":location,
-//        @"org":org,
-//        @"resultL":resultL,
-//        @"resultS":resultS,
-//        @"resultR":resultR,
-//        @"resultW":resultW,
-//        @"resultScore":resultScore
-//    };
-//
-//    MineResultShowViewController *showVC = [MineResultShowViewController new];
-//
-//    //设置block回调
-//    [showVC setSendValueBlock:^(NSDictionary *valueDict){
-//
-//        //回调函数
-//        self->type = valueDict[@"type"];
-//        self->date = valueDict[@"date"];
-//        self->location = valueDict[@"location"];
-//        self->org = valueDict[@"org"];
-//        self->resultL = valueDict[@"resultL"];
-//        self->resultS = valueDict[@"resultS"];
-//        self->resultR = valueDict[@"resultR"];
-//        self->resultW = valueDict[@"resultW"];
-//        self->resultScore = valueDict[@"resultScore"];
-//
-//        [self setData];
-//
-//    }];
-//
-//    showVC.dataDic = sendDic;
-//
-//    [self.navigationController pushViewController:showVC animated:YES];
+    NSMutableDictionary *sendDic = [NSMutableDictionary dictionary];    
+    if (slctModel) {
+        [sendDic setValue:slctModel forKey:@"slctModel"];
+    }
+    
+    MineEditActivityViewController *showVC = [MineEditActivityViewController new];
+    showVC.dataDic = [sendDic copy];
+    [self.navigationController pushViewController:showVC animated:YES];
+
+    //设置block回调
+    __weak typeof(self) weakSelf = self;
+    [showVC setSendValueBlock:^(NSDictionary *valueDict){
+        __strong typeof(weakSelf) strongSelf = weakSelf;
+        
+        [strongSelf queryMineActivityDetails];
+    }];
 }
+
+
+#pragma mark - 网络请求
+-(void)queryMineActivityDetails
+{
+    __weak typeof(self) weakSelf = self;
+    [AvalonsoftHasNetwork avalonsoft_hasNetwork:^(bool has) {
+        __strong typeof(weakSelf) strongSelf = weakSelf;
+
+        if (has) {
+            NSMutableDictionary *root = [NSMutableDictionary dictionary];
+            NSString *url = [[NSString alloc] init];
+            NSString *ID = strongSelf->slctModel.ID;
+            ///TODO:xubing 代码中，参数拼接形式发请求时，采用如下格式stringByAppendingFormat:@"/%@\%@"，接口报错201，故使用stringByAppendingFormat:@"/%@=%@"
+            url = [COMMON_SERVER_URL stringByAppendingFormat:@"/%@=%@",MINE_MY_ACTIVITY_DETAILS, ID];
+            
+            [[AvalonsoftHttpClient avalonsoftHttpClient] requestWithActionUrlAndParam:url method:HttpRequestPost paramenters:root prepareExecute:^{
+            } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull responseObject) {
+                //处理网络请求结果
+                NSLog(@"handleNetworkRequestWithResponseObject responseObject=%@",responseObject);
+                _M *responseModel = [_M createResponseJsonObj:responseObject];
+                NSLog(@"handleNetworkRequestWithResponseObject %ld %@",responseModel.rescode,responseModel.msg);
+                
+                @try {
+                    if(responseModel.rescode == 200){
+                        NSDictionary *rspData = responseModel.data;
+                        strongSelf->slctModel = [MineActivityModel modelWithDict:rspData];
+                        [strongSelf setData];
+                        [strongSelf.detailTableView reloadData];
+                    }
+                } @catch (NSException *exception) {
+                    @throw exception;
+                    //给出提示信息
+                    [AvalonsoftMsgAlertView showWithTitle:@"信息" content:@"系统发生错误，请与平台管理员联系解决。"  buttonTitles:@[@"关闭"] buttonClickedBlock:nil];
+                }
+            } failure:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error) {
+                //请求失败
+                NSLog(@"%@",error);
+            }];
+            
+        } else {
+            //没网
+            //            [AvalonsoftMsgAlertView showWithTitle:@"信息" content:@"请检查网络" buttonTitles:@[@"关闭"] buttonClickedBlock:nil];
+        }
+    }];
+}
+
 
 @end

@@ -86,9 +86,17 @@
     }];
     
     //赋值
-    [_titleLabel setText:title];
-    [_contentLabel setText:content];
+    if ([title isKindOfClass:[NSString class]]) {
+        _titleLabel.text = title;
+    } else {
+        _titleLabel.text = [NSString stringWithFormat:@"%@",title];;
+    }
     
+    if ([content isKindOfClass:[NSString class]]) {
+        _contentLabel.text = content;
+    } else {
+        _contentLabel.text = [NSString stringWithFormat:@"%@",content];;
+    }
 }
 
 - (void)awakeFromNib {

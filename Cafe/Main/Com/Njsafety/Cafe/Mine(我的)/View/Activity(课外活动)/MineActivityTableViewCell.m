@@ -176,24 +176,33 @@
 - (void)updateCellWithModel:(MineActivityModel *)model
 {
 
-    NSString *name = model.name;
-    NSString *startTime = model.startTime;
-    NSString *endTime = model.endTime;
+    NSString *name = model.eventName;
+    NSString *startTime = model.eventStartDate;
+    NSString *endTime = model.eventEndDate;
     NSString *showLanguage = model.showLanguage;
     
-    [_nameLabel setText:name];
-    [_startTimeLabel setText:startTime];
-    [_endTimeLabel setText:endTime];
+    _nameLabel.text = name;
     
-    if([showLanguage isEqualToString:@"ZH"] || showLanguage == nil || [showLanguage isEqualToString:@""]){
-        [_nameTitleLabel setText:@"社团/项目/活动名称:"];
-        [_startTimeTitleLabel setText:@"开始时间:"];
-        [_endTimeTitleLabel setText:@"结束时间:"];
+    if ([startTime isKindOfClass:[NSString class]]) {
+        _startTimeLabel.text = startTime;
+    } else { ///TODO:xubing 测试发现，startTime有时是long类型，待平台修正返回类型
+        _startTimeLabel.text = [NSString stringWithFormat:@"%@",startTime];;
+    }
+    
+    if ([endTime isKindOfClass:[NSString class]]) {
+         _endTimeLabel.text = endTime;
+     } else { ///TODO:xubing 测试发现，endTime有时是long类型，待平台修正返回类型
+         _endTimeLabel.text = [NSString stringWithFormat:@"%@",endTime];;
+    }
         
+    if([showLanguage isEqualToString:@"ZH"] || showLanguage.length == 0){
+        _nameTitleLabel.text = @"社团/项目/活动名称:";
+        _startTimeTitleLabel.text = @"开始时间:";
+        _endTimeTitleLabel.text = @"结束时间:";
     }else{
-        [_nameTitleLabel setText:@"Activity Name:"];
-        [_startTimeTitleLabel setText:@"Start Time:"];
-        [_endTimeTitleLabel setText:@"End Time:"];
+        _nameTitleLabel.text = @"Activity Name:";
+         _startTimeTitleLabel.text = @"Start Time:";
+         _endTimeTitleLabel.text = @"End Time:";
     }
     
     //更新尺寸

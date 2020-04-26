@@ -14,8 +14,6 @@ NS_ASSUME_NONNULL_BEGIN
 @interface MineSkillModel : NSObject
 
 //定义属性
-@property (nonatomic, assign) NSInteger index;
-
 @property (nonatomic, copy) NSString *skillDesc;             //名称
 @property (nonatomic, copy) NSString *skillDate;             //日期
 @property (nonatomic, copy) NSString *rankOrLevel;           //等级
