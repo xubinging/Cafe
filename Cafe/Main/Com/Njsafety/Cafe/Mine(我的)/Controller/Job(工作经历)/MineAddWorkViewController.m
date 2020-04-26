@@ -1,12 +1,12 @@
 //
-//  MineEditActivityViewController.m
+//  MineAddWorkViewController.m
 //  Cafe
 //
-//  Created by migu on 2020/4/24.
+//  Created by migu on 2020/4/26.
 //  Copyright © 2020 leo. All rights reserved.
 //
 
-#import "MineEditActivityViewController.h"
+#import "MineAddWorkViewController.h"
 #import "MineActivityModel.h"
 
 #import "MineDetailCommonModel.h"
@@ -14,26 +14,26 @@
 
 #define TEXTFIELD_TAG 10000
 
-@interface MineEditActivityViewController () <UITextFieldDelegate, UITextViewDelegate>
+@interface MineAddWorkViewController () <UITextFieldDelegate, UITextViewDelegate>
 {
     @private UIButton *backButton;
     @private UIView *navigationView;
    
     @private UIView *contentView;
     @private UIButton *saveButton;
-    @private UITextField *nameTextField;
-    @private UITextField *roleTextField;
+    @private UITextField *companyNameTextField;
+    @private UITextField *locationTextField;
+    @private UITextField *positionTextField;
     @private UITextField *startDateTextField;
     @private UITextField *endDateTextField;
     @private UITextView *contentTextView;
    
-    @private NSString *name;
-    @private NSString *role;
+    @private NSString *companyName;
+    @private NSString *location;
+    @private NSString *position;
     @private NSString *startDate;
     @private NSString *endDate;
-    @private NSString *description;
-    @private NSString *ID;
-    @private MineActivityModel *slctModel;
+    @private NSString *Description;
 }
 
 @property (nonatomic,strong) UITableView *detailTableView;
@@ -42,18 +42,15 @@
 
 @end
 
-
-@implementation MineEditActivityViewController
+@implementation MineAddWorkViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     
     [self initVars];
     [self initSharedPreferences];
-    [self getParentVars];
     [self initNavigationView];
     [self initView];
-    [self setData];
 }
 
 #pragma mark - 初始化一些参数 -
@@ -61,45 +58,6 @@
 {
     self.view.backgroundColor = RGBA_GGCOLOR(249, 249, 249, 1);
 }
-
-
-#pragma mark - 获取父页面参数 -
--(void)getParentVars
-{
-    if(_dataDic != nil){
-        slctModel = _dataDic[@"slctModel"];
-    }
-}
-
-#pragma mark - 设置参数 -
--(void)setData
-{
-    name = slctModel.eventName;
-    nameTextField.text = name;
-    
-    role = slctModel.role;
-    roleTextField.text = role;
-    
-    startDate = slctModel.eventStartDate;
-    if ([startDate isKindOfClass:[NSString class]]) {
-        startDateTextField.text = startDate;
-    } else {
-        startDateTextField.text = [NSString stringWithFormat:@"%@",startDate];;
-    }
-
-    endDate = slctModel.eventEndDate;
-    if ([endDate isKindOfClass:[NSString class]]) {
-        endDateTextField.text = endDate;
-    } else {
-        endDateTextField.text = [NSString stringWithFormat:@"%@",endDate];;
-    }
-
-    description = slctModel.eventDescription;
-    contentTextView.text = description;
-    
-    ID = slctModel.ID;
-}
-
 
 #pragma mark - 初始化数据 -
 -(void)initSharedPreferences
@@ -137,20 +95,20 @@
     backButton.adjustsImageWhenHighlighted = NO;
     [backButton setBackgroundImage:[UIImage imageNamed:@"home_foreign_back"] forState:UIControlStateNormal];
     [backButton addTarget:self action:@selector(backButtonClick) forControlEvents:UIControlEventTouchUpInside];
-        
-    //右上角保存按钮
-    saveButton = [UIButton new];
-    [navigationView addSubview:saveButton];
-    [saveButton mas_makeConstraints:^(MASConstraintMaker *make){
-        make.right.equalTo(navigationView).offset(-10);
-        make.bottom.equalTo(navigationView).offset(-12);
-        make.size.mas_equalTo(CGSizeMake(28, 20));
+    
+    //标题
+    UILabel *titleLabel = [UILabel new];
+    [navigationView addSubview:titleLabel];
+    [titleLabel mas_makeConstraints:^(MASConstraintMaker *make){
+        make.left.equalTo(navigationView).offset((SCREEN_WIDTH-150)/2);
+        make.bottom.equalTo(navigationView).offset(-10);
+        make.size.mas_equalTo(CGSizeMake(150, 24));
     }];
-    //设置点击不变色
-    saveButton.adjustsImageWhenHighlighted = NO;
-    NSMutableAttributedString *saveButtonString = [[NSMutableAttributedString alloc] initWithString:@"保存"attributes: @{NSFontAttributeName: [UIFont fontWithName:@"PingFangSC-Regular" size: 14],NSForegroundColorAttributeName: [UIColor colorWithRed:32/255.0 green:188/255.0 blue:255/255.0 alpha:1.0]}];
-    [saveButton setAttributedTitle:saveButtonString forState:UIControlStateNormal];
-    [saveButton addTarget:self action:@selector(saveButtonClick) forControlEvents:UIControlEventTouchUpInside];
+    titleLabel.numberOfLines = 0;
+    titleLabel.textAlignment = NSTextAlignmentCenter;
+    titleLabel.alpha = 1.0;
+    NSMutableAttributedString *titleLabelString = [[NSMutableAttributedString alloc] initWithString:@"添加"attributes: @{NSFontAttributeName: [UIFont fontWithName:@"PingFangSC-Medium" size: 17],NSForegroundColorAttributeName: [UIColor colorWithRed:34/255.0 green:34/255.0 blue:34/255.0 alpha:1.0]}];
+    titleLabel.attributedText = titleLabelString;
 }
 
 #pragma mark - 初始化视图 -
@@ -163,7 +121,7 @@
         make.top.equalTo(navigationView.mas_bottom).offset(10);
         make.left.equalTo(self.view).offset(10);
         make.right.equalTo(self.view).offset(-10);
-        make.bottom.equalTo(self.view).offset(-30-TabbarSafeBottomMargin);
+        make.bottom.equalTo(self.view).offset(-10-TabbarSafeBottomMargin);
     }];
     contentView.layer.backgroundColor = [UIColor colorWithRed:255/255.0 green:255/255.0 blue:255/255.0 alpha:1.0].CGColor;
     contentView.layer.cornerRadius = 8;
@@ -171,90 +129,164 @@
     contentView.layer.shadowOffset = CGSizeMake(0,0);
     contentView.layer.shadowOpacity = 1;
     contentView.layer.shadowRadius = 10;
-        
-    //*****  社团/项目/活动名称  *****//
-    UILabel *nameLabel = [[UILabel alloc] initWithFrame:CGRectMake(15, 28, SCREEN_WIDTH - 20 - 30, 20)];
-    [contentView addSubview:nameLabel];
-    [self setTitleLabelStyle:nameLabel withName:@"社团/项目/活动名称"];
+    
+    //保存按钮
+    saveButton = [UIButton new];
+    [contentView addSubview:saveButton];
+    [saveButton mas_makeConstraints:^(MASConstraintMaker *make){
+        make.bottom.equalTo(contentView).offset(-10);
+        make.left.equalTo(contentView).offset(15);
+        make.right.equalTo(contentView).offset(-15);
+        make.height.mas_equalTo(@46);
+    }];
+    saveButton.layer.cornerRadius = 23;
+    saveButton.layer.shadowColor = [UIColor colorWithRed:32/255.0 green:188/255.0 blue:255/255.0 alpha:0.3].CGColor;
+    saveButton.layer.shadowOffset = CGSizeMake(0,5);
+    saveButton.layer.shadowOpacity = 1;
+    saveButton.layer.shadowRadius = 15;
+    
+    //设置文字
+    NSMutableAttributedString *clickableOperateButtonString = [[NSMutableAttributedString alloc] initWithString:@"保存" attributes: @{NSFontAttributeName: [UIFont fontWithName:@"PingFangSC-Regular" size: 16],NSForegroundColorAttributeName: [UIColor colorWithRed:255/255.0 green:255/255.0 blue:255/255.0 alpha:1.0]}];
+    [saveButton setAttributedTitle:clickableOperateButtonString forState:UIControlStateNormal];
+    
+    [self.view layoutIfNeeded];
+    
+    // gradient
+    CAGradientLayer *gl = [CAGradientLayer layer];
+    gl.frame = saveButton.bounds;
+    gl.startPoint = CGPointMake(0.92, 0.13);
+    gl.endPoint = CGPointMake(0, 0.96);
+    gl.colors = @[(__bridge id)[UIColor colorWithRed:32/255.0 green:188/255.0 blue:255/255.0 alpha:1.0].CGColor, (__bridge id)[UIColor colorWithRed:0/255.0 green:154/255.0 blue:255/255.0 alpha:1.0].CGColor];
+    gl.locations = @[@(0), @(1.0f)];
+    gl.cornerRadius = 23;
+    //添加到最底层，否则会覆盖文字
+    [saveButton.layer insertSublayer:gl atIndex:0];
+    [saveButton addTarget:self action:@selector(saveButtonClick) forControlEvents:UIControlEventTouchUpInside];
+    
+    //*****  公司/机构名称  *****//
+    UILabel *companyNameLabel = [[UILabel alloc] initWithFrame:CGRectMake(15, 18, SCREEN_WIDTH - 20 - 30, 20)];
+    [contentView addSubview:companyNameLabel];
+    [self setTitleLabelStyle:companyNameLabel withName:@"公司/机构名称"];
 
-    UIImageView *nameNextStep = [UIImageView new];
-    [contentView addSubview:nameNextStep];
-    [nameNextStep mas_makeConstraints:^(MASConstraintMaker *make){
-        make.top.equalTo(nameLabel.mas_bottom).offset(10);
-        make.right.equalTo(nameLabel);
+    UIImageView *companyNameNextStep = [UIImageView new];
+    [contentView addSubview:companyNameNextStep];
+    [companyNameNextStep mas_makeConstraints:^(MASConstraintMaker *make){
+        make.top.equalTo(companyNameLabel.mas_bottom).offset(10);
+        make.right.equalTo(companyNameLabel);
         make.size.mas_equalTo(CGSizeMake(7, 15));
     }];
-    [nameNextStep setImage:[UIImage imageNamed:@"mine_nextstep"]];
+    [companyNameNextStep setImage:[UIImage imageNamed:@"mine_nextstep"]];
 
-    nameTextField = [UITextField new];
-    [contentView addSubview:nameTextField];
-    [nameTextField mas_makeConstraints:^(MASConstraintMaker *make){
-        make.top.equalTo(nameLabel.mas_bottom).offset(1);
-        make.left.equalTo(nameLabel);
-        make.right.equalTo(nameNextStep.mas_left).offset(-15);
+    companyNameTextField = [UITextField new];
+    [contentView addSubview:companyNameTextField];
+    [companyNameTextField mas_makeConstraints:^(MASConstraintMaker *make){
+        make.top.equalTo(companyNameLabel.mas_bottom).offset(1);
+        make.left.equalTo(companyNameLabel);
+        make.right.equalTo(companyNameNextStep.mas_left).offset(-15);
         make.height.equalTo(@30);
     }];
-    [self setTextFieldStyle:nameTextField withTag:1];
-    [nameTextField addTarget:self action:@selector(textFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
+    [self setTextFieldStyle:companyNameTextField withTag:1];
+    [companyNameTextField addTarget:self action:@selector(textFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
 
-    UIView *nameSplitView = [UIView new];
-    [contentView addSubview:nameSplitView];
-    [nameSplitView mas_makeConstraints:^(MASConstraintMaker *make){
-        make.top.equalTo(nameTextField.mas_bottom).offset(1);
-        make.left.equalTo(nameLabel).offset(-5);
-        make.right.equalTo(nameLabel).offset(5);
+    UIView *companyNameSplitView = [UIView new];
+    [contentView addSubview:companyNameSplitView];
+    [companyNameSplitView mas_makeConstraints:^(MASConstraintMaker *make){
+        make.top.equalTo(companyNameTextField.mas_bottom).offset(1);
+        make.left.equalTo(companyNameLabel).offset(-5);
+        make.right.equalTo(companyNameLabel).offset(5);
         make.height.mas_equalTo(@1);
     }];
-    [nameSplitView setBackgroundColor:RGBA_GGCOLOR(238, 238, 238, 1)];
+    [companyNameSplitView setBackgroundColor:RGBA_GGCOLOR(238, 238, 238, 1)];
 
     
-    //***** 社团/项目/活动角色 *****//
-    UILabel *roleLabel = [UILabel new];
-    [contentView addSubview:roleLabel];
-    [roleLabel mas_makeConstraints:^(MASConstraintMaker *make){
-        make.top.equalTo(nameSplitView.mas_bottom).offset(15);
-        make.left.equalTo(nameSplitView).offset(5);
+    //***** 公司所在地 *****//
+    UILabel *locationLabel = [UILabel new];
+    [contentView addSubview:locationLabel];
+    [locationLabel mas_makeConstraints:^(MASConstraintMaker *make){
+        make.top.equalTo(companyNameSplitView.mas_bottom).offset(15);
+        make.left.equalTo(companyNameSplitView).offset(5);
         make.size.mas_equalTo(CGSizeMake(SCREEN_WIDTH - 20 - 30, 20));
     }];
-    [self setTitleLabelStyle:roleLabel withName:@"社团/项目/活动角色"];
+    [self setTitleLabelStyle:locationLabel withName:@"公司所在地"];
 
-    UIImageView *roleNextStep = [UIImageView new];
-    [contentView addSubview:roleNextStep];
-    [roleNextStep mas_makeConstraints:^(MASConstraintMaker *make){
-        make.top.equalTo(roleLabel.mas_bottom).offset(10);
-        make.right.equalTo(roleLabel);
+    UIImageView *locationNextStep = [UIImageView new];
+    [contentView addSubview:locationNextStep];
+    [locationNextStep mas_makeConstraints:^(MASConstraintMaker *make){
+        make.top.equalTo(locationLabel.mas_bottom).offset(10);
+        make.right.equalTo(locationLabel);
         make.size.mas_equalTo(CGSizeMake(7, 15));
     }];
-    [roleNextStep setImage:[UIImage imageNamed:@"mine_nextstep"]];
+    [locationNextStep setImage:[UIImage imageNamed:@"mine_nextstep"]];
 
-    roleTextField = [UITextField new];
-    [contentView addSubview:roleTextField];
-    [roleTextField mas_makeConstraints:^(MASConstraintMaker *make){
-        make.top.equalTo(roleLabel.mas_bottom).offset(1);
-        make.left.equalTo(roleLabel);
-        make.right.equalTo(roleNextStep.mas_left).offset(-15);
+    locationTextField = [UITextField new];
+    [contentView addSubview:locationTextField];
+    [locationTextField mas_makeConstraints:^(MASConstraintMaker *make){
+        make.top.equalTo(locationLabel.mas_bottom).offset(1);
+        make.left.equalTo(locationLabel);
+        make.right.equalTo(locationNextStep.mas_left).offset(-15);
         make.height.equalTo(@30);
     }];
-    [self setTextFieldStyle:roleTextField withTag:2];
-    [roleTextField addTarget:self action:@selector(textFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
+    [self setTextFieldStyle:locationTextField withTag:2];
+    [locationTextField addTarget:self action:@selector(textFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
 
-    UIView *roleSplitView = [UIView new];
-    [contentView addSubview:roleSplitView];
-    [roleSplitView mas_makeConstraints:^(MASConstraintMaker *make){
-        make.top.equalTo(roleTextField.mas_bottom).offset(1);
-        make.left.equalTo(roleLabel).offset(-5);
-        make.right.equalTo(roleLabel).offset(5);
+    UIView *locationSplitView = [UIView new];
+    [contentView addSubview:locationSplitView];
+    [locationSplitView mas_makeConstraints:^(MASConstraintMaker *make){
+        make.top.equalTo(locationTextField.mas_bottom).offset(1);
+        make.left.equalTo(locationLabel).offset(-5);
+        make.right.equalTo(locationLabel).offset(5);
         make.height.mas_equalTo(@1);
     }];
-    [roleSplitView setBackgroundColor:RGBA_GGCOLOR(238, 238, 238, 1)];
+    [locationSplitView setBackgroundColor:RGBA_GGCOLOR(238, 238, 238, 1)];
+    
+    
+    //***** 职位 *****//
+    UILabel *positionLabel = [UILabel new];
+    [contentView addSubview:positionLabel];
+    [positionLabel mas_makeConstraints:^(MASConstraintMaker *make){
+        make.top.equalTo(locationSplitView.mas_bottom).offset(15);
+        make.left.equalTo(locationSplitView).offset(5);
+        make.size.mas_equalTo(CGSizeMake(SCREEN_WIDTH - 20 - 30, 20));
+    }];
+    [self setTitleLabelStyle:positionLabel withName:@"职位"];
+
+    UIImageView *positionNextStep = [UIImageView new];
+    [contentView addSubview:positionNextStep];
+    [positionNextStep mas_makeConstraints:^(MASConstraintMaker *make){
+        make.top.equalTo(positionLabel.mas_bottom).offset(10);
+        make.right.equalTo(positionLabel);
+        make.size.mas_equalTo(CGSizeMake(7, 15));
+    }];
+    [positionNextStep setImage:[UIImage imageNamed:@"mine_nextstep"]];
+
+    positionTextField = [UITextField new];
+    [contentView addSubview:positionTextField];
+    [positionTextField mas_makeConstraints:^(MASConstraintMaker *make){
+        make.top.equalTo(positionLabel.mas_bottom).offset(1);
+        make.left.equalTo(positionLabel);
+        make.right.equalTo(positionNextStep.mas_left).offset(-15);
+        make.height.equalTo(@30);
+    }];
+    [self setTextFieldStyle:positionTextField withTag:3];
+    [positionTextField addTarget:self action:@selector(textFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
+
+    UIView *positionSplitView = [UIView new];
+    [contentView addSubview:positionSplitView];
+    [positionSplitView mas_makeConstraints:^(MASConstraintMaker *make){
+        make.top.equalTo(positionTextField.mas_bottom).offset(1);
+        make.left.equalTo(positionLabel).offset(-5);
+        make.right.equalTo(positionLabel).offset(5);
+        make.height.mas_equalTo(@1);
+    }];
+    [positionSplitView setBackgroundColor:RGBA_GGCOLOR(238, 238, 238, 1)];
     
     
     //***** 开始时间 *****//
     UILabel *stratDateLabel = [UILabel new];
     [contentView addSubview:stratDateLabel];
     [stratDateLabel mas_makeConstraints:^(MASConstraintMaker *make){
-        make.top.equalTo(roleSplitView.mas_bottom).offset(15);
-        make.left.equalTo(roleSplitView).offset(5);
+        make.top.equalTo(positionSplitView.mas_bottom).offset(15);
+        make.left.equalTo(positionSplitView).offset(5);
         make.size.mas_equalTo(CGSizeMake(SCREEN_WIDTH - 20 - 30, 20));
     }];
     [self setTitleLabelStyle:stratDateLabel withName:@"开始时间"];
@@ -276,7 +308,7 @@
         make.right.equalTo(startDateNextStep.mas_left).offset(-15);
         make.height.equalTo(@30);
     }];
-    [self setTextFieldStyle:startDateTextField withTag:3];
+    [self setTextFieldStyle:startDateTextField withTag:4];
 
     UIView *startDateSplitView = [UIView new];
     [contentView addSubview:startDateSplitView];
@@ -316,7 +348,7 @@
         make.right.equalTo(endDateNextStep.mas_left).offset(-15);
         make.height.equalTo(@30);
     }];
-    [self setTextFieldStyle:endDateTextField withTag:4];
+    [self setTextFieldStyle:endDateTextField withTag:5];
 
     UIView *endDateSplitView = [UIView new];
     [contentView addSubview:endDateSplitView];
@@ -344,7 +376,7 @@
         make.top.equalTo(descripLabel.mas_bottom).offset(10);
         make.left.equalTo(contentView).offset(15);
         make.right.equalTo(contentView).offset(-15);
-        make.height.mas_equalTo(@(150));
+        make.height.mas_equalTo(@(120));
     }];
     contentTextView.layer.backgroundColor = [UIColor colorWithRed:249/255.0 green:249/255.0 blue:249/255.0 alpha:1.0].CGColor;
     contentTextView.layer.cornerRadius = 8;
@@ -362,7 +394,21 @@
 #pragma mark - 保存按钮点击 -
 -(void)saveButtonClick
 {
-    [self saveMineEditActivityList];
+    if (!companyName.length) {
+        [AvalonsoftToast showWithMessage:@"公司名称不能为空！"];
+    } else if (!location.length) {
+        [AvalonsoftToast showWithMessage:@"公司所在地不能为空！"];
+    } else if (!position.length) {
+        [AvalonsoftToast showWithMessage:@"职位不能为空！"];
+    } else if (!startDate.length) {
+        [AvalonsoftToast showWithMessage:@"开始时间不能为空！"];
+    } else if (!endDate.length) {
+        [AvalonsoftToast showWithMessage:@"结束时间不能为空！"];
+    } else if (!Description.length) {
+        [AvalonsoftToast showWithMessage:@"活动描述不能为空！"];
+    } else {
+        [self saveMineAddWorkList];
+    }
 }
 
 #pragma mark - UITextFieldDelegate -
@@ -372,15 +418,17 @@
     
     switch (tfTag) {
         case 1:
-        case 2: {
+        case 2:
+        case 3: {
             return YES;
         }
             break;
         
-        case 3:
-        case 4: {
-            [roleTextField resignFirstResponder];
-            [nameTextField resignFirstResponder];
+        case 4:
+        case 5: {
+            [companyNameTextField resignFirstResponder];
+            [locationTextField resignFirstResponder];
+            [positionTextField resignFirstResponder];
 
             NSDate *now = [NSDate date];
             NSDateFormatter *fmt = [[NSDateFormatter alloc] init];
@@ -391,10 +439,10 @@
             [AvalonsoftPickerView showDatePickerWithTitle:@"" DateType:UIDatePickerModeDate DefaultSelValue:@"" MinDateStr:@"1900-01-01 00:00:00" MaxDateStr:nowStr IsAutoSelect:NO Manager:nil ResultBlock:^(NSString *selectValue){
                 __strong typeof(weakSelf) strongSelf = weakSelf;
 
-                if (tfTag == 3) {
+                if (tfTag == 4) {
                     strongSelf->startDate = selectValue;
                     strongSelf->startDateTextField.text = selectValue;
-                } else if (tfTag == 4) {
+                } else if (tfTag == 5) {
                     strongSelf->endDate = selectValue;
                     strongSelf->endDateTextField.text = selectValue;
                 }
@@ -437,12 +485,17 @@
     NSInteger tfTag = sender.tag - TEXTFIELD_TAG;
     switch (tfTag) {
         case 1: {
-            name = sender.text;
+            companyName = sender.text;
         }
             break;
 
         case 2: {
-            role = sender.text;
+            location = sender.text;
+        }
+            break;
+            
+        case 3: {
+            position = sender.text;
         }
             break;
                     
@@ -455,17 +508,18 @@
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
     [super touchesBegan:touches withEvent:event];
 
-    [nameTextField resignFirstResponder];
-    [roleTextField resignFirstResponder];
+    [companyNameTextField resignFirstResponder];
+    [locationTextField resignFirstResponder];
+    [positionTextField resignFirstResponder];
 }
 
 - (void)textViewDidChange:(UITextView *)textView
 {
-    description = textView.text;
+    Description = textView.text;
 }
 
 #pragma mark - 网络请求
-- (void)saveMineEditActivityList
+- (void)saveMineAddWorkList
 {
     __weak typeof(self) weakSelf = self;
     [AvalonsoftHasNetwork avalonsoft_hasNetwork:^(bool has) {
@@ -474,15 +528,15 @@
         if (has) {
             NSMutableDictionary *root = [NSMutableDictionary dictionary];
             [root setValue:[_UserInfo accountId] forKey:@"accountId"];
-            [root setValue:strongSelf->name forKey:@"eventName"];
-            [root setValue:strongSelf->role forKey:@"role"];
-            [root setValue:strongSelf->startDate forKey:@"eventStartDate"];
-            [root setValue:strongSelf->endDate forKey:@"eventEndDate"];
-            [root setValue:strongSelf->description forKey:@"eventDescription"];
-            [root setValue:strongSelf->ID forKey:@"id"];
+            [root setValue:strongSelf->companyName forKey:@"companyName"];
+            [root setValue:strongSelf->location forKey:@"location"];
+            [root setValue:strongSelf->position forKey:@"position"];
+            [root setValue:strongSelf->startDate forKey:@"workStartDate"];
+            [root setValue:strongSelf->endDate forKey:@"workEndDate"];
+            [root setValue:strongSelf->Description forKey:@"description"];
 
             
-            [[AvalonsoftHttpClient avalonsoftHttpClient] requestWithAction:COMMON_SERVER_URL actionName:MINE_MY_ACTIVITY_UPDATE method:HttpRequestPost paramenters:root prepareExecute:^{
+            [[AvalonsoftHttpClient avalonsoftHttpClient] requestWithAction:COMMON_SERVER_URL actionName:MINE_MY_WORK_ADD method:HttpRequestPost paramenters:root prepareExecute:^{
                 
             } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull responseObject) {
                 
@@ -496,7 +550,7 @@
                         strongSelf.sendValueBlock(sendDic);
                         
                         //保存成功
-                        [AvalonsoftToast showWithMessage:@"修改成功" image:@"login_success" duration:1];
+                        [AvalonsoftToast showWithMessage:@"保存成功" image:@"login_success" duration:1];
                         [strongSelf.navigationController popViewControllerAnimated:YES];
                     }
                 } @catch (NSException *exception) {

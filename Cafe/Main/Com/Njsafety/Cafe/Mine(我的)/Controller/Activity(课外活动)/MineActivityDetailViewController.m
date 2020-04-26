@@ -177,7 +177,6 @@
     contentTextView.layer.cornerRadius = 8;
     [contentTextView setTextColor:[UIColor colorWithRed:102/255.0 green:102/255.0 blue:102/255.0 alpha:1.0]];
     [contentTextView setFont:[UIFont fontWithName:@"PingFangSC-Regular" size:16]];
-
 }
 
 #pragma mark - 设置参数 -
@@ -262,7 +261,6 @@
         [contentTextView setAttributedText:string];
         
     }
-    
 }
 
 //**********    tableView代理 begin   **********//
@@ -401,6 +399,5 @@
         }
     }];
 }
-
 
 @end

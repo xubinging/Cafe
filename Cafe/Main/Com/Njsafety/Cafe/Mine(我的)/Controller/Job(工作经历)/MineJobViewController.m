@@ -10,7 +10,7 @@
 
 #import "MineJobModel.h"
 #import "MineJobTableViewCell.h"
-
+#import "MineAddWorkViewController.h"
 #import "MineJobDetailViewController.h"     //详情页
 
 @interface MineJobViewController ()<UITableViewDelegate,UITableViewDataSource>
@@ -26,7 +26,7 @@
 }
 
 @property (nonatomic,strong) UITableView *jobTableView;
-@property (nonatomic,strong) NSArray *jobArray;
+@property (nonatomic,strong) NSMutableArray *jobArray;
 
 @end
 
@@ -39,42 +39,19 @@
     [self initSharedPreferences];
     [self initNavigationView];
     [self initView];
+    [self queryMineWorkList];
+}
+
+- (NSMutableArray *)jobArray
+{
+    return _jobArray?:(_jobArray = [NSMutableArray array]);
 }
 
 #pragma mark - 初始化一些参数 -
 -(void)initVars
 {
     self.view.backgroundColor = RGBA_GGCOLOR(249, 249, 249, 1);
-    
     isShowChinese = YES;
-    
-    //造数据
-    _jobArray = nil;
-    NSMutableArray *tempArray = [NSMutableArray array];
-
-    for(int i=0; i<20; i++){
-
-        NSString *showLanguage = @"ZH";
-        NSInteger index = i+1;
-        
-        NSDictionary *dic = @{
-            @"index":@(index),
-            @"name":[NSString stringWithFormat:@"培根教育 %ld",index],
-            @"location":[NSString stringWithFormat:@"南京 %ld",index],
-            @"position":[NSString stringWithFormat:@"员工 %ld",index],
-            @"startTime":@"2019-12-19",
-            @"endTime":@"2019-12-19",
-            @"content":@"培根教育培根教育培根教育培根教育培根教育培根教育培根教育培根教育培根教育培根教育培根教育培根教育",
-            @"showLanguage":showLanguage
-        };
-        
-        MineJobModel *model = [MineJobModel modelWithDict:dic];
-        [tempArray addObject:model];
-
-    }
-
-    _jobArray = [tempArray copy];
-    
 }
 
 #pragma mark - 初始化数据 -
@@ -251,25 +228,18 @@
     };
 
     MineJobDetailViewController *detailVC = [MineJobDetailViewController new];
+    detailVC.dataDic = sendDic;
+    [self.navigationController pushViewController:detailVC animated:YES];
 
     //设置block回调
+    __weak typeof(self) weakSelf = self;
     [detailVC setSendValueBlock:^(NSDictionary *valueDict){
-        //回调函数
-        MineJobModel *modelReturn = valueDict[@"modelReturn"];
-        
-        slctModel.name = modelReturn.name;
-        slctModel.location = modelReturn.location;
-        slctModel.position = modelReturn.position;
-        slctModel.startTime = modelReturn.startTime;
-        slctModel.endTime = modelReturn.endTime;
-        slctModel.content = modelReturn.content;
-
-        [self.jobTableView reloadData];
+       __strong typeof(weakSelf) strongSelf = weakSelf;
+       
+       [strongSelf queryMineWorkList];
     }];
 
-    detailVC.dataDic = sendDic;
 
-    [self.navigationController pushViewController:detailVC animated:YES];
     
 }
 
@@ -284,64 +254,16 @@
 #pragma mark - 添加按钮 -
 -(void)addButtonClick
 {
-//    MineResultShowViewController *showVC = [MineResultShowViewController new];
-//
-//    //设置block回调
-//    [showVC setSendValueBlock:^(NSDictionary *valueDict){
-//        //回调函数
-//        NSString *type = valueDict[@"type"];
-//        NSString *date = valueDict[@"date"];
-//        NSString *location = valueDict[@"location"];
-//        NSString *org = valueDict[@"org"];
-//        NSString *resultL = valueDict[@"resultL"];
-//        NSString *resultS = valueDict[@"resultS"];
-//        NSString *resultR = valueDict[@"resultR"];
-//        NSString *resultW = valueDict[@"resultW"];
-//        NSString *resultScore = valueDict[@"resultScore"];
-//        NSString *showLanguage = @"";
-//
-//        if(self->isShowChinese){
-//            showLanguage = @"ZH";
-//        }else{
-//            showLanguage = @"EN";
-//        }
-//
-//        NSMutableArray *tempArr = [NSMutableArray array];
-//        for(MineResultModel *model in self.resultArray){
-//            [tempArr addObject:model];
-//        }
-//
-//        //把刚才新加的数据加入到数据列表中
-//        NSDictionary *dic = @{
-//            @"resultIndex":@(tempArr.count + 1),
-//            @"resultType":type,
-//            @"resultDate":date,
-//            @"resultLocation":location,
-//            @"resultOrg":org,
-//            @"resultL":resultL,
-//            @"resultS":resultS,
-//            @"resultR":resultR,
-//            @"resultW":resultW,
-//            @"resultScore":resultScore,
-//            @"showLanguage":showLanguage
-//        };
-//
-//        MineResultModel *model = [MineResultModel modelWithDict:dic];
-//        [tempArr addObject:model];
-//
-//        //按照 resultIndex 进行降序排序，这里用的是描述类排序，排序字段一定要和类中写的一致
-//        NSSortDescriptor *resultIndexSortDesc = [[NSSortDescriptor alloc] initWithKey:@"resultIndex" ascending:NO];
-//        [tempArr sortUsingDescriptors:@[resultIndexSortDesc]];
-//
-//        self.resultArray = [tempArr copy];
-//
-//        [self.resultTableView reloadData];
-//
-//    }];
-//
-//    showVC.dataDic = @{};
-//
-//    [self.navigationController pushViewController:showVC animated:YES];
+    MineAddWorkViewController *showVC = [MineAddWorkViewController new];
+    [self.navigationController pushViewController:showVC animated:YES];
+
+    //设置block回调
+    __weak typeof(self) weakSelf = self;
+    [showVC setSendValueBlock:^(NSDictionary *valueDict){
+        __strong typeof(weakSelf) strongSelf = weakSelf;
+ 
+        [strongSelf queryMineWorkList];
+    }];
 }
 
 #pragma mark - 右侧按钮点击 -
@@ -374,6 +296,55 @@
         [self.jobTableView reloadData];
         
     }
+}
+
+
+#pragma mark - 网络请求
+- (void)queryMineWorkList
+{
+    __weak typeof(self) weakSelf = self;
+    [AvalonsoftHasNetwork avalonsoft_hasNetwork:^(bool has) {
+        if (has) {
+            NSMutableDictionary *root = [NSMutableDictionary dictionary];
+            [root setValue:[_UserInfo accountId] forKey:@"accountId"];
+            
+            [[AvalonsoftHttpClient avalonsoftHttpClient] requestWithAction:COMMON_SERVER_URL actionName:MINE_MY_WORK_LIST method:HttpRequestPost paramenters:root prepareExecute:^{
+                
+            } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull responseObject) {
+                __strong typeof(weakSelf) strongSelf = weakSelf;
+                
+                NSLog(@"handleNetworkRequestWithResponseObject responseObject=%@",responseObject);
+                _M *responseModel = [_M createResponseJsonObj:responseObject];
+                NSLog(@"handleNetworkRequestWithResponseObject %ld %@",responseModel.rescode,responseModel.msg);
+                
+                @try {
+                    if(responseModel.rescode == 200){
+                        NSDictionary *rspData = responseModel.data;
+                        NSArray *rspDataArray = rspData[@"dataList"];
+                       [strongSelf.jobArray removeAllObjects];
+                       for(int i=0; i<rspDataArray.count; i++){
+                           MineJobModel *model = [MineJobModel modelWithDict:rspDataArray[i]];
+                           [strongSelf.jobArray addObject:model];
+                       }
+                        
+                        [strongSelf.jobTableView reloadData];
+                    }
+                } @catch (NSException *exception) {
+                    @throw exception;
+                    //给出提示信息
+                    [AvalonsoftMsgAlertView showWithTitle:@"信息" content:@"系统发生错误，请与平台管理员联系解决。"  buttonTitles:@[@"关闭"] buttonClickedBlock:nil];
+                }
+                
+            } failure:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error) {
+                //请求失败
+                NSLog(@"%@",error);
+            }];
+            
+        } else {
+            //没网
+            //            [AvalonsoftMsgAlertView showWithTitle:@"信息" content:@"请检查网络" buttonTitles:@[@"关闭"] buttonClickedBlock:nil];
+        }
+    }];
 }
 
 @end

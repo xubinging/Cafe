@@ -9,7 +9,7 @@
 #import "MineJobDetailViewController.h"
 
 #import "MineJobModel.h"
-
+#import "MineEditWorkViewController.h"
 #import "MineDetailCommonModel.h"
 #import "MineDetailCommonTableViewCell.h"
 
@@ -43,13 +43,13 @@
     [self initNavigationView];
     [self initView];
     [self setData];
+    [self queryMineWorkDetails];
 }
 
 #pragma mark - 初始化一些参数 -
 -(void)initVars
 {
     self.view.backgroundColor = RGBA_GGCOLOR(249, 249, 249, 1);
-    
 }
 
 #pragma mark - 初始化数据 -
@@ -176,7 +176,6 @@
     contentTextView.layer.cornerRadius = 8;
     [contentTextView setTextColor:[UIColor colorWithRed:102/255.0 green:102/255.0 blue:102/255.0 alpha:1.0]];
     [contentTextView setFont:[UIFont fontWithName:@"PingFangSC-Regular" size:16]];
-
 }
 
 #pragma mark - 设置参数 -
@@ -186,74 +185,74 @@
     _detailArray = nil;
     NSMutableArray *tempArray = [NSMutableArray array];
     
-    NSString *name = slctModel.name;
+    NSString *name = slctModel.companyName;
     NSString *location = slctModel.location;
     NSString *position = slctModel.position;
-    NSString *startTime = slctModel.startTime;
-    NSString *endTime = slctModel.endTime;
-    NSString *content = slctModel.content;
-    
+    NSString *startTime = slctModel.workStartDate;
+    NSString *endTime = slctModel.workEndDate;
+    NSString *content = slctModel.Description;
+
     NSString *showLanguage = slctModel.showLanguage;
-    
+
     for(int i=0; i<5; i++){
         if(i==0){
             NSString *title = @"公司/机构名称:";
             if([showLanguage isEqualToString:@"EN"]){
                 title = @"Company:";
             }
-            
+
             NSDictionary *dic = @{
                 @"title":title,
                 @"content":name
             };
             MineDetailCommonModel *model = [MineDetailCommonModel modelWithDict:dic];
             [tempArray addObject:model];
-            
+
         }else if(i==1){
             NSString *title = @"公司所在地:";
             if([showLanguage isEqualToString:@"EN"]){
                 title = @"Location:";
             }
-            
+
             NSDictionary *dic = @{
                 @"title":title,
                 @"content":location
             };
             MineDetailCommonModel *model = [MineDetailCommonModel modelWithDict:dic];
             [tempArray addObject:model];
-            
+
         }else if(i==2){
             NSString *title = @"职位:";
             if([showLanguage isEqualToString:@"EN"]){
                 title = @"Position:";
             }
-            
+
             NSDictionary *dic = @{
                 @"title":title,
                 @"content":position
             };
             MineDetailCommonModel *model = [MineDetailCommonModel modelWithDict:dic];
             [tempArray addObject:model];
-            
+
         }else if(i==3){
             NSString *title = @"开始时间:";
             if([showLanguage isEqualToString:@"EN"]){
                 title = @"Start Time:";
             }
-            
+
             NSDictionary *dic = @{
                 @"title":title,
                 @"content":startTime
             };
             MineDetailCommonModel *model = [MineDetailCommonModel modelWithDict:dic];
             [tempArray addObject:model];
-            
+
         }else if(i==4){
             NSString *title = @"结束时间:";
             if([showLanguage isEqualToString:@"EN"]){
                 title = @"End Time:";
             }
-            
+
             NSDictionary *dic = @{
                 @"title":title,
                 @"content":endTime
@@ -262,20 +261,19 @@
             [tempArray addObject:model];
         }
     }
-    
+
     _detailArray = [tempArray copy];
 
     //设置内容
     if(![content isEqualToString:@""]){
         NSMutableAttributedString *string = [[NSMutableAttributedString alloc] initWithString:content attributes: @{NSFontAttributeName: [UIFont fontWithName:@"PingFangSC-Regular" size: 16],NSForegroundColorAttributeName: [UIColor colorWithRed:102/255.0 green:102/255.0 blue:102/255.0 alpha:1.0]}];
         [contentTextView setAttributedText:string];
-        
+
     }else{
         NSMutableAttributedString *string = [[NSMutableAttributedString alloc] initWithString:@"您可以在这里输入内容…"attributes: @{NSFontAttributeName: [UIFont fontWithName:@"PingFangSC-Regular" size: 16],NSForegroundColorAttributeName: [UIColor colorWithRed:203/255.0 green:207/255.0 blue:217/255.0 alpha:1.0]}];
         [contentTextView setAttributedText:string];
-        
+
     }
-    
 }
 
 //**********    tableView代理 begin   **********//
@@ -351,41 +349,67 @@
 #pragma mark - 编辑按钮点击 -
 -(void)rightButtonClick
 {
-//    NSDictionary *sendDic = @{
-//        @"type":type,
-//        @"date":date,
-//        @"location":location,
-//        @"org":org,
-//        @"resultL":resultL,
-//        @"resultS":resultS,
-//        @"resultR":resultR,
-//        @"resultW":resultW,
-//        @"resultScore":resultScore
-//    };
-//
-//    MineResultShowViewController *showVC = [MineResultShowViewController new];
-//
-//    //设置block回调
-//    [showVC setSendValueBlock:^(NSDictionary *valueDict){
-//
-//        //回调函数
-//        self->type = valueDict[@"type"];
-//        self->date = valueDict[@"date"];
-//        self->location = valueDict[@"location"];
-//        self->org = valueDict[@"org"];
-//        self->resultL = valueDict[@"resultL"];
-//        self->resultS = valueDict[@"resultS"];
-//        self->resultR = valueDict[@"resultR"];
-//        self->resultW = valueDict[@"resultW"];
-//        self->resultScore = valueDict[@"resultScore"];
-//
-//        [self setData];
-//
-//    }];
-//
-//    showVC.dataDic = sendDic;
-//
-//    [self.navigationController pushViewController:showVC animated:YES];
+    NSMutableDictionary *sendDic = [NSMutableDictionary dictionary];
+    if (slctModel) {
+       [sendDic setValue:slctModel forKey:@"slctModel"];
+    }
+
+    MineEditWorkViewController *showVC = [MineEditWorkViewController new];
+    showVC.dataDic = [sendDic copy];
+    [self.navigationController pushViewController:showVC animated:YES];
+
+    //设置block回调
+    __weak typeof(self) weakSelf = self;
+    [showVC setSendValueBlock:^(NSDictionary *valueDict){
+       __strong typeof(weakSelf) strongSelf = weakSelf;
+       
+       [strongSelf queryMineWorkDetails];
+    }];
+}
+
+#pragma mark - 网络请求
+-(void)queryMineWorkDetails
+{
+    __weak typeof(self) weakSelf = self;
+    [AvalonsoftHasNetwork avalonsoft_hasNetwork:^(bool has) {
+        __strong typeof(weakSelf) strongSelf = weakSelf;
+
+        if (has) {
+            NSMutableDictionary *root = [NSMutableDictionary dictionary];
+            NSString *url = [[NSString alloc] init];
+            NSString *ID = strongSelf->slctModel.ID;
+            ///TODO:xubing 代码中，参数拼接形式发请求时，采用如下格式stringByAppendingFormat:@"/%@\%@"，接口报错201，故使用stringByAppendingFormat:@"/%@=%@"
+            url = [COMMON_SERVER_URL stringByAppendingFormat:@"/%@=%@",MINE_MY_WORK_DETAILS, ID];
+            
+            [[AvalonsoftHttpClient avalonsoftHttpClient] requestWithActionUrlAndParam:url method:HttpRequestPost paramenters:root prepareExecute:^{
+            } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull responseObject) {
+                //处理网络请求结果
+                NSLog(@"handleNetworkRequestWithResponseObject responseObject=%@",responseObject);
+                _M *responseModel = [_M createResponseJsonObj:responseObject];
+                NSLog(@"handleNetworkRequestWithResponseObject %ld %@",responseModel.rescode,responseModel.msg);
+                
+                @try {
+                    if(responseModel.rescode == 200){
+                        NSDictionary *rspData = responseModel.data;
+                        strongSelf->slctModel = [MineJobModel modelWithDict:rspData];
+                        [strongSelf setData];
+                        [strongSelf.detailTableView reloadData];
+                    }
+                } @catch (NSException *exception) {
+                    @throw exception;
+                    //给出提示信息
+                    [AvalonsoftMsgAlertView showWithTitle:@"信息" content:@"系统发生错误，请与平台管理员联系解决。"  buttonTitles:@[@"关闭"] buttonClickedBlock:nil];
+                }
+            } failure:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error) {
+                //请求失败
+                NSLog(@"%@",error);
+            }];
+            
+        } else {
+            //没网
+            //            [AvalonsoftMsgAlertView showWithTitle:@"信息" content:@"请检查网络" buttonTitles:@[@"关闭"] buttonClickedBlock:nil];
+        }
+    }];
 }
 
 @end

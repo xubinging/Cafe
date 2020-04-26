@@ -15,12 +15,13 @@ NS_ASSUME_NONNULL_BEGIN
 //定义属性
 @property (nonatomic, assign) NSInteger index;
 
-@property (nonatomic, copy) NSString *name;             //公司/机构名称
+@property (nonatomic, copy) NSString *companyName;             //公司/机构名称
 @property (nonatomic, copy) NSString *location;         //公司所在地
 @property (nonatomic, copy) NSString *position;         //职位
-@property (nonatomic, copy) NSString *startTime;        //开始时间
-@property (nonatomic, copy) NSString *endTime;          //结束时间
-@property (nonatomic, copy) NSString *content;          //内容
+@property (nonatomic, copy) NSString *workStartDate;        //开始时间
+@property (nonatomic, copy) NSString *workEndDate;          //结束时间
+@property (nonatomic, copy) NSString *Description;          //内容
+@property (nonatomic, copy) NSString *ID;
 
 @property (nonatomic, copy) NSString *showLanguage;     //CH -- 中文；EN -- 英文
 
@@ -30,3 +31,4 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 NS_ASSUME_NONNULL_END
+

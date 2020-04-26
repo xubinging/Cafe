@@ -176,14 +176,14 @@
 - (void)updateCellWithModel:(MineJobModel *)model
 {
     
-    NSString *name = model.name;
+    NSString *name = model.companyName;
     NSString *location = model.location;
     NSString *position = model.position;
     NSString *showLanguage = model.showLanguage;
     
-    [_nameLabel setText:name];
-    [_locationLabel setText:location];
-    [_positionLabel setText:position];
+    _nameLabel.text = name;
+    _locationLabel.text = location;
+    _positionLabel.text = position;
     
     if([showLanguage isEqualToString:@"ZH"] || showLanguage == nil || [showLanguage isEqualToString:@""]){
         [_nameTitleLabel setText:@"公司/机构名称:"];

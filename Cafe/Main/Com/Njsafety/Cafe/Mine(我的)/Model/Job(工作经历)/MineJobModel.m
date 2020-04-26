@@ -22,6 +22,18 @@
     //对model进行批量赋值，将dict传入
     [model setValuesForKeysWithDictionary:dict];
     
+    ///TODO:xubing 建议平台不要使用 id 字段，可用大写 ID，同时下发的数据类型，建议用字符串
+    NSString *ID = dict[@"id"];
+    if ([ID isKindOfClass:[NSString class]]) {
+        model.ID = ID;
+    } else {
+        model.ID = [NSString stringWithFormat:@"%@",ID];
+    }
+    
+    ///TODO:xubing 建议平台不要使用description字段
+    NSString *Description = dict[@"description"];
+    model.Description = Description;
+    
     return model;
 }
 

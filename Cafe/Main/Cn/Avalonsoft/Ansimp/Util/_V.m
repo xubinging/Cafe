@@ -185,6 +185,14 @@ NSString * const MINE_MY_ACTIVITY_DETAILS = @"eduUser/eduuserclife/query?id";
 NSString * const MINE_MY_ACTIVITY_ADD = @"eduUser/eduuserclife/add";
 //课外活动编辑
 NSString * const MINE_MY_ACTIVITY_UPDATE = @"eduUser/eduuserclife/update";
+//工作经历列表
+NSString * const MINE_MY_WORK_LIST = @"eduUser/eduusercwork/queryPageList";
+//工作经历详情
+NSString * const MINE_MY_WORK_DETAILS = @"eduUser/eduusercwork/query?id";
+//工作经历新增
+NSString * const MINE_MY_WORK_ADD = @"eduUser/eduusercwork/add";
+//工作经历编辑
+NSString * const MINE_MY_WORK_UPDATE = @"eduUser/eduusercwork/update";
 
 
 

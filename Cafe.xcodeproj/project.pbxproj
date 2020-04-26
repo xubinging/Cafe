@@ -11,6 +11,8 @@
 		1F186154244FDAD6009977B1 /* MineEditRewordAndSkillViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F186153244FDAD6009977B1 /* MineEditRewordAndSkillViewController.m */; };
 		1F5911A92452AB74003E15BD /* MineAddActivityViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F5911A82452AB74003E15BD /* MineAddActivityViewController.m */; };
 		1F5911AC2452AB8E003E15BD /* MineEditActivityViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F5911AB2452AB8E003E15BD /* MineEditActivityViewController.m */; };
+		1F5911B22455D293003E15BD /* MineAddWorkViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F5911B12455D293003E15BD /* MineAddWorkViewController.m */; };
+		1F5911B52455E2C0003E15BD /* MineEditWorkViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F5911B42455E2C0003E15BD /* MineEditWorkViewController.m */; };
 		1FF09905244D736800F626A2 /* MineDetailRewordAndSkillTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FF09904244D736800F626A2 /* MineDetailRewordAndSkillTableViewCell.m */; };
 		B31084C6241A031800047DB6 /* _UserInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = B31084C5241A031700047DB6 /* _UserInfo.m */; };
 		B33789B723FC2FC500EF95E3 /* AvalonsoftHttpClient.m in Sources */ = {isa = PBXBuildFile; fileRef = B33789B323FC2FC500EF95E3 /* AvalonsoftHttpClient.m */; };
@@ -561,6 +563,10 @@
 		1F5911A82452AB74003E15BD /* MineAddActivityViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MineAddActivityViewController.m; sourceTree = "<group>"; };
 		1F5911AA2452AB8E003E15BD /* MineEditActivityViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MineEditActivityViewController.h; sourceTree = "<group>"; };
 		1F5911AB2452AB8E003E15BD /* MineEditActivityViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MineEditActivityViewController.m; sourceTree = "<group>"; };
+		1F5911B02455D293003E15BD /* MineAddWorkViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MineAddWorkViewController.h; sourceTree = "<group>"; };
+		1F5911B12455D293003E15BD /* MineAddWorkViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MineAddWorkViewController.m; sourceTree = "<group>"; };
+		1F5911B32455E2C0003E15BD /* MineEditWorkViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MineEditWorkViewController.h; sourceTree = "<group>"; };
+		1F5911B42455E2C0003E15BD /* MineEditWorkViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MineEditWorkViewController.m; sourceTree = "<group>"; };
 		1FF09903244D736800F626A2 /* MineDetailRewordAndSkillTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MineDetailRewordAndSkillTableViewCell.h; sourceTree = "<group>"; };
 		1FF09904244D736800F626A2 /* MineDetailRewordAndSkillTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MineDetailRewordAndSkillTableViewCell.m; sourceTree = "<group>"; };
 		B31084C4241A031700047DB6 /* _UserInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _UserInfo.h; sourceTree = "<group>"; };
@@ -3366,6 +3372,10 @@
 				B3A87C5E242B022E002AECE9 /* MineJobViewController.m */,
 				B3A87C61242B022F002AECE9 /* MineJobDetailViewController.h */,
 				B3A87C5F242B022F002AECE9 /* MineJobDetailViewController.m */,
+				1F5911B02455D293003E15BD /* MineAddWorkViewController.h */,
+				1F5911B12455D293003E15BD /* MineAddWorkViewController.m */,
+				1F5911B32455E2C0003E15BD /* MineEditWorkViewController.h */,
+				1F5911B42455E2C0003E15BD /* MineEditWorkViewController.m */,
 			);
 			path = "Job(工作经历)";
 			sourceTree = "<group>";
@@ -4470,7 +4480,9 @@
 				B373CBFA23A3298500EDDAB7 /* UILabel+ChangeLineSpaceAndWordSpace.m in Sources */,
 				B376EFEC23A10FC7004E6FBC /* ZXQRCodeDataMask.m in Sources */,
 				B376EFFC23A10FC7004E6FBC /* ZXStringUtils.m in Sources */,
+				1F5911B22455D293003E15BD /* MineAddWorkViewController.m in Sources */,
 				B376F03E23A10FC7004E6FBC /* ZXDataMatrixDetector.m in Sources */,
+				1F5911B52455E2C0003E15BD /* MineEditWorkViewController.m in Sources */,
 				B3A87DA0242B0230002AECE9 /* MyLikeStudyAbroadTrainModel.m in Sources */,
 				B376F05D23A10FC7004E6FBC /* ZXRSSExpandedGeneralAppIdDecoder.m in Sources */,
 				B376F06C23A10FC7004E6FBC /* ZXCode128Writer.m in Sources */,
