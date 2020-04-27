@@ -215,9 +215,9 @@
 - (void)updateCellWithModel:(MineOfferModel *)model
 {
     NSString *country = model.country;
-    NSString *school = model.school;
-    NSString *stage = model.stage;
-    NSString *major = model.major;
+    NSString *school = model.schoolNameEn;
+    NSString *stage = model.level;
+    NSString *major = model.majorName;
     NSString *showLanguage = model.showLanguage;
     
     [_countryLabel setText:country];

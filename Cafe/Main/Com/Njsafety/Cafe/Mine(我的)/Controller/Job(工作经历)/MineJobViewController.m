@@ -238,9 +238,6 @@
        
        [strongSelf queryMineWorkList];
     }];
-
-
-    
 }
 
 //**********    tableView代理 end   **********//

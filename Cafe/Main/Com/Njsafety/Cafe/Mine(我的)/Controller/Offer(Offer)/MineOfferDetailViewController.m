@@ -296,11 +296,11 @@
     NSMutableArray *tempArray = [NSMutableArray array];
     
     NSString *country = slctModel.country;
-    NSString *school = slctModel.school;
-    NSString *stage = slctModel.stage;
-    NSString *major = slctModel.major;
-    NSString *agentCompany = slctModel.agentCompany;
-    NSString *internationalSchool = slctModel.internationalSchool;
+    NSString *school = slctModel.schoolNameEn;
+    NSString *stage = slctModel.level;
+    NSString *major = slctModel.majorName;
+    NSString *agentCompany = slctModel.agencyCompanyName;
+    NSString *internationalSchool = slctModel.internationalSchoolName;
     
     NSString *showLanguage = slctModel.showLanguage;
     
@@ -389,12 +389,12 @@
     
     
     //score
-    NSDictionary *TOEFLDic = slctModel.TOEFLDic;
-    NSDictionary *IELTSDic = slctModel.IELTSDic;
-    NSDictionary *GREDic = slctModel.GREDic;
-    NSDictionary *GMATDic = slctModel.GMATDic;
-    NSDictionary *SATDic = slctModel.SATDic;
-    NSDictionary *ACTDic = slctModel.ACTDic;
+    NSDictionary *TOEFLDic = slctModel.examScorea;
+    NSDictionary *IELTSDic = slctModel.examScoreb;
+    NSDictionary *GREDic = slctModel.examScorec;
+    NSDictionary *GMATDic = slctModel.examScored;
+    NSDictionary *SATDic = slctModel.examScoree;
+    NSDictionary *ACTDic = slctModel.examScoreg;
     
     _scoreArray = nil;
     NSMutableArray *tempScoreArray = [NSMutableArray array];
@@ -740,7 +740,7 @@
     [self.scoreTableView reloadData];
     
     //GPA数据
-    NSString *gpa = slctModel.gpa;
+    NSString *gpa = slctModel.gpaScore;
     [GPALabel setText:gpa];
 
     //content
