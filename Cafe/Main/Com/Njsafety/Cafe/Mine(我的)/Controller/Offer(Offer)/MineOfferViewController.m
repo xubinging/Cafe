@@ -10,7 +10,7 @@
 
 #import "MineOfferModel.h"
 #import "MineOfferTableViewCell.h"
-
+#import "MineAddOfferViewController.h"
 #import "MineOfferDetailViewController.h"   //Offer详情
 
 @interface MineOfferViewController ()<UITableViewDelegate,UITableViewDataSource>
@@ -251,16 +251,16 @@
 #pragma mark - 添加按钮 -
 -(void)addButtonClick
 {
-//    MineAddWorkViewController *showVC = [MineAddWorkViewController new];
-//    [self.navigationController pushViewController:showVC animated:YES];
-//
-//    //设置block回调
-//    __weak typeof(self) weakSelf = self;
-//    [showVC setSendValueBlock:^(NSDictionary *valueDict){
-//       __strong typeof(weakSelf) strongSelf = weakSelf;
-//
-//       [strongSelf queryMineWorkList];
-//    }];
+    MineAddOfferViewController *showVC = [MineAddOfferViewController new];
+    [self.navigationController pushViewController:showVC animated:YES];
+
+    //设置block回调
+    __weak typeof(self) weakSelf = self;
+    [showVC setSendValueBlock:^(NSDictionary *valueDict){
+       __strong typeof(weakSelf) strongSelf = weakSelf;
+
+       [strongSelf queryMineOfferList];
+    }];
 }
 
 #pragma mark - 右侧按钮点击 -
