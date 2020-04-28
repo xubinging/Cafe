@@ -23,7 +23,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) NSString *internationalSchoolName;      //就读国际学校
 
 
-///TODO:xubing 此处平台下发的是字符串类型，不符，应下发字典类型数据。
 @property (nonatomic, copy) NSDictionary *toeflScore;                //TOEFL
 @property (nonatomic, copy) NSDictionary *ieltsScore;                //IELTS
 @property (nonatomic, copy) NSDictionary *greScore;                  //GRE

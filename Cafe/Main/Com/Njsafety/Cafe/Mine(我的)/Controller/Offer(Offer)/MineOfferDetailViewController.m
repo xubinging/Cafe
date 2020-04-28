@@ -500,6 +500,11 @@
             scoreFour = TOEFLDic[@"scoreD"];
         }
         
+        if(TOEFLDic[@"scoreFile"] != nil){
+           NSString *scoreFile = TOEFLDic[@"scoreFile"];
+           [contentImageView sd_setImageWithURL:[NSURL URLWithString:[_F createFileLoadUrl:scoreFile]]];
+        }
+        
         NSDictionary *dic = @{
             @"scoreType":scoreType,
             @"totalScoreTitle":totalScoreTitle,
@@ -557,6 +562,11 @@
             scoreFour = IELTSDic[@"scoreD"];
         }
         
+        if(TOEFLDic[@"scoreFile"] != nil){
+           NSString *scoreFile = TOEFLDic[@"scoreFile"];
+           [contentImageView sd_setImageWithURL:[NSURL URLWithString:[_F createFileLoadUrl:scoreFile]]];
+        }
+        
         NSDictionary *dic = @{
             @"scoreType":scoreType,
             @"totalScoreTitle":totalScoreTitle,
@@ -607,6 +617,11 @@
         if(GREDic[@"scoreC"] != nil){
             scoreThreeTitle = @"AW";
             scoreThree = GREDic[@"scoreC"];
+        }
+        
+        if(TOEFLDic[@"scoreFile"] != nil){
+           NSString *scoreFile = TOEFLDic[@"scoreFile"];
+           [contentImageView sd_setImageWithURL:[NSURL URLWithString:[_F createFileLoadUrl:scoreFile]]];
         }
         
         NSDictionary *dic = @{
@@ -666,6 +681,11 @@
             scoreFour = GMATDic[@"scoreD"];
         }
         
+        if(TOEFLDic[@"scoreFile"] != nil){
+           NSString *scoreFile = TOEFLDic[@"scoreFile"];
+           [contentImageView sd_setImageWithURL:[NSURL URLWithString:[_F createFileLoadUrl:scoreFile]]];
+        }
+        
         NSDictionary *dic = @{
             @"scoreType":scoreType,
             @"totalScoreTitle":totalScoreTitle,
@@ -723,6 +743,11 @@
             scoreFour = SATDic[@"scoreD"];
         }
         
+        if(TOEFLDic[@"scoreFile"] != nil){
+           NSString *scoreFile = TOEFLDic[@"scoreFile"];
+           [contentImageView sd_setImageWithURL:[NSURL URLWithString:[_F createFileLoadUrl:scoreFile]]];
+        }
+        
         NSDictionary *dic = @{
             @"scoreType":scoreType,
             @"totalScoreTitle":totalScoreTitle,
@@ -778,6 +803,11 @@
         if(ACTDic[@"scoreD"] != nil){
             scoreFourTitle = @"S";
             scoreFour = ACTDic[@"scoreD"];
+        }
+        
+        if(TOEFLDic[@"scoreFile"] != nil){
+           NSString *scoreFile = TOEFLDic[@"scoreFile"];
+           [contentImageView sd_setImageWithURL:[NSURL URLWithString:[_F createFileLoadUrl:scoreFile]]];
         }
         
         NSDictionary *dic = @{
