@@ -196,7 +196,7 @@ NSString * const MINE_MY_WORK_UPDATE = @"eduUser/eduusercwork/update";
 //offer列表
 NSString * const MINE_MY_OFFER_LIST = @"cuser/eduuseroffer/queryPageList";
 //offer详情
-NSString * const MINE_MY_OFFER_DETAILS = @"cuser/eduuseroffer/query?id=";
+NSString * const MINE_MY_OFFER_DETAILS = @"cuser/eduuseroffer/query?id";
 //offer新增
 NSString * const MINE_MY_OFFER_ADD = @"cuser/eduuseroffer/add";
 //offer编辑

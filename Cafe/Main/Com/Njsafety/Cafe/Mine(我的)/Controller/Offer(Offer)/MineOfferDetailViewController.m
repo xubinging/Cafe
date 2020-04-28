@@ -31,16 +31,17 @@
     @private UIScrollView *contentView;     //内容
     
     @private UILabel *GPALabel;             //平均分标签
+    @private UIImageView *contentImageView;
     @private UITextView *contentTextView;
     
     @private MineOfferModel *slctModel;
 }
 
 @property (nonatomic,strong) UITableView *detailTableView;
-@property (nonatomic,strong) NSArray *detailArray;
+@property (nonatomic,strong) NSMutableArray *detailArray;
 
 @property (nonatomic,strong) UITableView *scoreTableView;
-@property (nonatomic,strong) NSArray *scoreArray;
+@property (nonatomic,strong) NSMutableArray *scoreArray;
 
 @end
 
@@ -55,14 +56,23 @@
     [self initNavigationView];
     [self initView];
     [self setData];
-    [self resetSize];
+    [self queryMineOfferDetails];
+}
+
+- (NSMutableArray *)detailArray
+{
+    return _detailArray?:(_detailArray = [NSMutableArray array]);
+}
+
+- (NSMutableArray *)scoreArray
+{
+    return _scoreArray?:(_scoreArray = [NSMutableArray array]);
 }
 
 #pragma mark - 初始化一些参数 -
 -(void)initVars
 {
     self.view.backgroundColor = RGBA_GGCOLOR(249, 249, 249, 1);
-    
 }
 
 #pragma mark - 初始化数据 -
@@ -157,7 +167,7 @@
     //列表
     _detailTableView = [UITableView new];
     [contentView addSubview:_detailTableView];
-    _detailTableView.frame = CGRectMake(10, 10, SCREEN_WIDTH - 20, 6*K_DetailTableView_CellHeight);
+    _detailTableView.frame = CGRectMake(10, 10, SCREEN_WIDTH - 20, 7*K_DetailTableView_CellHeight);
     
     _detailTableView.tag = K_DetailTableView_Tag;
     _detailTableView.bounces = NO;
@@ -168,6 +178,7 @@
     //这句话可以设置tableview没有数据时不显示横线
     _detailTableView.tableFooterView = [[UIView alloc]initWithFrame:CGRectZero];
     _detailTableView.showsVerticalScrollIndicator = NO;
+    _detailTableView.scrollEnabled = NO;
     
     _detailTableView.layer.backgroundColor = [UIColor colorWithRed:255/255.0 green:255/255.0 blue:255/255.0 alpha:1.0].CGColor;
     _detailTableView.layer.cornerRadius = 10;
@@ -260,146 +271,196 @@
     _scoreTableView.tableFooterView = [[UIView alloc]initWithFrame:CGRectZero];
     _scoreTableView.showsVerticalScrollIndicator = NO;
     _scoreTableView.layer.cornerRadius = 10;
+    _scoreTableView.scrollEnabled = NO;
     
+    //图片
+    contentImageView = [UIImageView new];
+    [contentView addSubview:contentImageView];
+    [contentImageView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(_scoreTableView.mas_bottom).offset(15);
+        make.left.equalTo(gpaView);
+        make.right.equalTo(gpaView);
+        make.height.mas_equalTo(@(150));
+    }];
+//    contentImageView.layer.backgroundColor = [UIColor colorWithRed:249/255.0 green:249/255.0 blue:249/255.0 alpha:1.0].CGColor;
+    [contentImageView setBackgroundColor:[UIColor whiteColor]];
+    contentImageView.layer.cornerRadius = 8;
+
     
     //内容视图
-    UIView *contentTextViewParent = [UIView new];
-    [contentView addSubview:contentTextViewParent];
-    [contentTextViewParent mas_makeConstraints:^(MASConstraintMaker *make){
-        make.top.equalTo(_scoreTableView.mas_bottom).offset(10);
-        make.left.equalTo(gpaView).offset(-10);
-        make.right.equalTo(gpaView).offset(10);
-        make.height.mas_equalTo(@(200));
+    UIView *contentView2 = [UIView new];
+    [contentView addSubview:contentView2];
+    [contentView2 mas_makeConstraints:^(MASConstraintMaker *make){
+        make.top.equalTo(contentImageView.mas_bottom).offset(10);
+        make.left.equalTo(gpaView);
+        make.right.equalTo(gpaView);
+        make.height.mas_equalTo(@(250));
     }];
-    [contentTextViewParent setBackgroundColor:[UIColor whiteColor]];
-
+    [contentView2 setBackgroundColor:[UIColor whiteColor]];
+    
     //内容
     contentTextView = [UITextView new];
-    [contentTextViewParent addSubview:contentTextView];
+    [contentView2 addSubview:contentTextView];
     [contentTextView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(contentTextViewParent).offset(15);
-        make.left.equalTo(contentTextViewParent).offset(10);
-        make.right.equalTo(contentTextViewParent).offset(-10);
-        make.bottom.equalTo(contentTextViewParent).offset(-10);
+        make.top.equalTo(contentView2).offset(15);
+        make.left.equalTo(contentView2).offset(10);
+        make.right.equalTo(contentView2).offset(-10);
+        make.height.mas_equalTo(@(150));
     }];
     contentTextView.layer.backgroundColor = [UIColor colorWithRed:249/255.0 green:249/255.0 blue:249/255.0 alpha:1.0].CGColor;
     contentTextView.layer.cornerRadius = 8;
     contentTextView.editable = NO;
-    
 }
 
 #pragma mark - 设置参数 -
 -(void)setData
 {
     //detail
-    _detailArray = nil;
-    NSMutableArray *tempArray = [NSMutableArray array];
-    
     NSString *country = slctModel.country;
     NSString *school = slctModel.schoolNameEn;
     NSString *stage = slctModel.level;
     NSString *major = slctModel.majorName;
     NSString *agentCompany = slctModel.agencyCompanyName;
     NSString *internationalSchool = slctModel.internationalSchoolName;
+    NSString *internationalTime = slctModel.gpaDate;
     
     NSString *showLanguage = slctModel.showLanguage;
     
-    for(int i=0; i<6; i++){
-        if(i==0){
-            NSString *title = @"国家:";
-            if([showLanguage isEqualToString:@"EN"]){
-                title = @"Country:";
+    for(int i=0; i<7; i++){
+        switch (i) {
+            case 0: {
+                NSString *title = @"国家:";
+                if([showLanguage isEqualToString:@"EN"]){
+                    title = @"Country:";
+                }
+
+                NSMutableDictionary *dic = [NSMutableDictionary dictionary];
+                [dic setValue:title forKey:@"title"];
+                if (country) {
+                    [dic setValue:country forKey:@"content"];
+                }
+                
+                MineDetailCommonModel *model = [MineDetailCommonModel modelWithDict:dic];
+                [_detailArray addObject:model];
             }
+                break;
             
-            NSDictionary *dic = @{
-                @"title":title,
-                @"content":country
-            };
-            MineDetailCommonModel *model = [MineDetailCommonModel modelWithDict:dic];
-            [tempArray addObject:model];
-            
-        }else if(i==1){
-            NSString *title = @"学校名称(英文):";
-            if([showLanguage isEqualToString:@"EN"]){
-                title = @"School Name(EN):";
+            case 1: {
+                NSString *title = @"学校名称(英文):";
+                if([showLanguage isEqualToString:@"EN"]){
+                    title = @"School Name(EN):";
+                }
+
+                NSMutableDictionary *dic = [NSMutableDictionary dictionary];
+                [dic setValue:title forKey:@"title"];
+                if (school) {
+                    [dic setValue:school forKey:@"content"];
+                }
+                
+                MineDetailCommonModel *model = [MineDetailCommonModel modelWithDict:dic];
+                [_detailArray addObject:model];
             }
-            
-            NSDictionary *dic = @{
-                @"title":title,
-                @"content":school
-            };
-            MineDetailCommonModel *model = [MineDetailCommonModel modelWithDict:dic];
-            [tempArray addObject:model];
-            
-        }else if(i==2){
-            NSString *title = @"就读阶段:";
-            if([showLanguage isEqualToString:@"EN"]){
-                title = @"Study Stage:";
+                break;
+                
+            case 2: {
+                NSString *title = @"就读阶段:";
+                if([showLanguage isEqualToString:@"EN"]){
+                    title = @"Study Stage:";
+                }
+
+                NSMutableDictionary *dic = [NSMutableDictionary dictionary];
+                [dic setValue:title forKey:@"title"];
+                if (stage) {
+                    [dic setValue:stage forKey:@"content"];
+                }
+                
+                MineDetailCommonModel *model = [MineDetailCommonModel modelWithDict:dic];
+                [_detailArray addObject:model];
             }
-            
-            NSDictionary *dic = @{
-                @"title":title,
-                @"content":stage
-            };
-            MineDetailCommonModel *model = [MineDetailCommonModel modelWithDict:dic];
-            [tempArray addObject:model];
-            
-        }else if(i==3){
-            NSString *title = @"专业:";
-            if([showLanguage isEqualToString:@"EN"]){
-                title = @"major:";
+                break;
+                
+            case 3: {
+                NSString *title = @"专业:";
+                if([showLanguage isEqualToString:@"EN"]){
+                    title = @"major:";
+                }
+
+                NSMutableDictionary *dic = [NSMutableDictionary dictionary];
+                [dic setValue:title forKey:@"title"];
+                if (major) {
+                    [dic setValue:major forKey:@"content"];
+                }
+                
+                MineDetailCommonModel *model = [MineDetailCommonModel modelWithDict:dic];
+                [_detailArray addObject:model];
             }
-            
-            NSDictionary *dic = @{
-                @"title":title,
-                @"content":major
-            };
-            MineDetailCommonModel *model = [MineDetailCommonModel modelWithDict:dic];
-            [tempArray addObject:model];
-            
-        }else if(i==4){
-            NSString *title = @"代办留学公司:";
-            if([showLanguage isEqualToString:@"EN"]){
-                title = @"Agent Company:";
+                break;
+                
+            case 4: {
+                NSString *title = @"代办留学公司:";
+                if([showLanguage isEqualToString:@"EN"]){
+                    title = @"Agent Company:";
+                }
+
+                NSMutableDictionary *dic = [NSMutableDictionary dictionary];
+                [dic setValue:title forKey:@"title"];
+                if (agentCompany) {
+                    [dic setValue:agentCompany forKey:@"content"];
+                }
+                
+                MineDetailCommonModel *model = [MineDetailCommonModel modelWithDict:dic];
+                [_detailArray addObject:model];
             }
-            
-            NSDictionary *dic = @{
-                @"title":title,
-                @"content":agentCompany
-            };
-            MineDetailCommonModel *model = [MineDetailCommonModel modelWithDict:dic];
-            [tempArray addObject:model];
-            
-        }else if(i==5){
-            NSString *title = @"就读国际学校:";
-            if([showLanguage isEqualToString:@"EN"]){
-                title = @"International School:";
+                break;
+                
+            case 5: {
+                NSString *title = @"就读国际学校:";
+                if([showLanguage isEqualToString:@"EN"]){
+                    title = @"International Date:";
+                }
+
+                NSMutableDictionary *dic = [NSMutableDictionary dictionary];
+                [dic setValue:title forKey:@"title"];
+                if (internationalSchool) {
+                    [dic setValue:internationalSchool forKey:@"content"];
+                }
+                
+                MineDetailCommonModel *model = [MineDetailCommonModel modelWithDict:dic];
+                [_detailArray addObject:model];
             }
-            
-            NSDictionary *dic = @{
-                @"title":title,
-                @"content":internationalSchool
-            };
-            MineDetailCommonModel *model = [MineDetailCommonModel modelWithDict:dic];
-            [tempArray addObject:model];
-            
+                break;
+
+            case 6: {
+                NSString *title = @"就读时间:";
+                if([showLanguage isEqualToString:@"EN"]){
+                    title = @"International School:";
+                }
+
+                NSMutableDictionary *dic = [NSMutableDictionary dictionary];
+                [dic setValue:title forKey:@"title"];
+                if (internationalTime) {
+                    [dic setValue:internationalTime forKey:@"content"];
+                }
+                
+                MineDetailCommonModel *model = [MineDetailCommonModel modelWithDict:dic];
+                [_detailArray addObject:model];
+            }
+                break;
+                
+            default:
+                break;
         }
     }
-    _detailArray = [tempArray copy];
-    
     
     //score
-    NSDictionary *TOEFLDic = slctModel.examScorea;
-    NSDictionary *IELTSDic = slctModel.examScoreb;
-    NSDictionary *GREDic = slctModel.examScorec;
-    NSDictionary *GMATDic = slctModel.examScored;
-    NSDictionary *SATDic = slctModel.examScoree;
-    NSDictionary *ACTDic = slctModel.examScoreg;
-    
-    _scoreArray = nil;
-    NSMutableArray *tempScoreArray = [NSMutableArray array];
-    
-    //TOEFL
+    NSDictionary *TOEFLDic = slctModel.toeflScore;
+    NSDictionary *IELTSDic = slctModel.ieltsScore;
+    NSDictionary *GREDic = slctModel.greScore;
+    NSDictionary *GMATDic = slctModel.gmatScore;
+    NSDictionary *SATDic = slctModel.satScore;
+    NSDictionary *ACTDic = slctModel.actScore;
+        
+    //TOEF
     if(TOEFLDic != nil){
         NSString *scoreType = @"";            //分数类别
         NSString *totalScoreTitle = @"";      //总分
@@ -414,29 +475,29 @@
         NSString *scoreFour = @"";
         
         scoreType = @"TOEFL";
-        if(TOEFLDic[@"总分"] != nil){
+        if(TOEFLDic[@"examScore"] != nil){
             totalScoreTitle = @"总分";
-            totalScore = TOEFLDic[@"总分"];
+            totalScore = TOEFLDic[@"examScore"];
         }
         
-        if(TOEFLDic[@"L"] != nil){
+        if(TOEFLDic[@"scoreA"] != nil){
             scoreOneTitle = @"L";
-            scoreOne = TOEFLDic[@"L"];
+            scoreOne = TOEFLDic[@"scoreA"];
         }
         
-        if(TOEFLDic[@"S"] != nil){
+        if(TOEFLDic[@"scoreB"] != nil){
             scoreTwoTitle = @"S";
-            scoreTwo = TOEFLDic[@"S"];
+            scoreTwo = TOEFLDic[@"scoreB"];
         }
         
-        if(TOEFLDic[@"R"] != nil){
+        if(TOEFLDic[@"scoreC"] != nil){
             scoreThreeTitle = @"R";
-            scoreThree = TOEFLDic[@"R"];
+            scoreThree = TOEFLDic[@"scoreC"];
         }
         
-        if(TOEFLDic[@"W"] != nil){
+        if(TOEFLDic[@"scoreD"] != nil){
             scoreFourTitle = @"W";
-            scoreFour = TOEFLDic[@"W"];
+            scoreFour = TOEFLDic[@"scoreD"];
         }
         
         NSDictionary *dic = @{
@@ -453,7 +514,7 @@
             @"scoreFour":scoreFour
         };
         MineOfferScoreModel *model = [MineOfferScoreModel modelWithDict:dic];
-        [tempScoreArray addObject:model];
+        [_scoreArray addObject:model];
     }
     
     //IELTS
@@ -471,29 +532,29 @@
         NSString *scoreFour = @"";
         
         scoreType = @"IELTS";
-        if(IELTSDic[@"总分"] != nil){
+        if(IELTSDic[@"examScore"] != nil){
             totalScoreTitle = @"总分";
-            totalScore = IELTSDic[@"总分"];
+            totalScore = IELTSDic[@"examScore"];
         }
         
-        if(IELTSDic[@"L"] != nil){
+        if(IELTSDic[@"scoreA"] != nil){
             scoreOneTitle = @"L";
-            scoreOne = IELTSDic[@"L"];
+            scoreOne = IELTSDic[@"scoreA"];
         }
         
-        if(IELTSDic[@"S"] != nil){
+        if(IELTSDic[@"scoreB"] != nil){
             scoreTwoTitle = @"S";
-            scoreTwo = IELTSDic[@"S"];
+            scoreTwo = IELTSDic[@"scoreB"];
         }
         
-        if(IELTSDic[@"R"] != nil){
+        if(IELTSDic[@"scoreC"] != nil){
             scoreThreeTitle = @"R";
-            scoreThree = IELTSDic[@"R"];
+            scoreThree = IELTSDic[@"scoreC"];
         }
         
-        if(IELTSDic[@"W"] != nil){
+        if(IELTSDic[@"scoreD"] != nil){
             scoreFourTitle = @"W";
-            scoreFour = IELTSDic[@"W"];
+            scoreFour = IELTSDic[@"scoreD"];
         }
         
         NSDictionary *dic = @{
@@ -510,7 +571,7 @@
             @"scoreFour":scoreFour
         };
         MineOfferScoreModel *model = [MineOfferScoreModel modelWithDict:dic];
-        [tempScoreArray addObject:model];
+        [_scoreArray addObject:model];
     }
     
     //GRE
@@ -528,24 +589,24 @@
         NSString *scoreFour = @"";
         
         scoreType = @"GRE";
-        if(GREDic[@"总分"] != nil){
+        if(GREDic[@"examScore"] != nil){
             totalScoreTitle = @"总分";
-            totalScore = GREDic[@"总分"];
+            totalScore = GREDic[@"examScore"];
         }
         
-        if(GREDic[@"L"] != nil){
+        if(GREDic[@"scoreA"] != nil){
             scoreOneTitle = @"L";
-            scoreOne = GREDic[@"L"];
+            scoreOne = GREDic[@"scoreA"];
         }
         
-        if(GREDic[@"Q"] != nil){
+        if(GREDic[@"scoreB"] != nil){
             scoreTwoTitle = @"Q";
-            scoreTwo = GREDic[@"Q"];
+            scoreTwo = GREDic[@"scoreB"];
         }
         
-        if(GREDic[@"AW"] != nil){
+        if(GREDic[@"scoreC"] != nil){
             scoreThreeTitle = @"AW";
-            scoreThree = GREDic[@"AW"];
+            scoreThree = GREDic[@"scoreC"];
         }
         
         NSDictionary *dic = @{
@@ -562,7 +623,7 @@
             @"scoreFour":scoreFour
         };
         MineOfferScoreModel *model = [MineOfferScoreModel modelWithDict:dic];
-        [tempScoreArray addObject:model];
+        [_scoreArray addObject:model];
     }
     
     //GMAT
@@ -580,29 +641,29 @@
         NSString *scoreFour = @"";
         
         scoreType = @"GMAT";
-        if(GMATDic[@"总分"] != nil){
+        if(GMATDic[@"examScore"] != nil){
             totalScoreTitle = @"总分";
-            totalScore = GMATDic[@"总分"];
+            totalScore = GMATDic[@"examScore"];
         }
         
-        if(GMATDic[@"V"] != nil){
+        if(GMATDic[@"scoreA"] != nil){
             scoreOneTitle = @"V";
-            scoreOne = GMATDic[@"V"];
+            scoreOne = GMATDic[@"scoreA"];
         }
         
-        if(GMATDic[@"Q"] != nil){
+        if(GMATDic[@"scoreB"] != nil){
             scoreTwoTitle = @"Q";
-            scoreTwo = GMATDic[@"Q"];
+            scoreTwo = GMATDic[@"scoreB"];
         }
         
-        if(GMATDic[@"AW"] != nil){
+        if(GMATDic[@"scoreC"] != nil){
             scoreThreeTitle = @"AW";
-            scoreThree = GMATDic[@"AW"];
+            scoreThree = GMATDic[@"scoreC"];
         }
         
-        if(GMATDic[@"IR"] != nil){
+        if(GMATDic[@"scoreD"] != nil){
             scoreFourTitle = @"IR";
-            scoreFour = GMATDic[@"IR"];
+            scoreFour = GMATDic[@"scoreD"];
         }
         
         NSDictionary *dic = @{
@@ -619,7 +680,7 @@
             @"scoreFour":scoreFour
         };
         MineOfferScoreModel *model = [MineOfferScoreModel modelWithDict:dic];
-        [tempScoreArray addObject:model];
+        [_scoreArray addObject:model];
     }
     
     //SAT
@@ -637,29 +698,29 @@
         NSString *scoreFour = @"";
         
         scoreType = @"SAT";
-        if(SATDic[@"总分"] != nil){
+        if(SATDic[@"examScore"] != nil){
             totalScoreTitle = @"总分";
-            totalScore = SATDic[@"总分"];
+            totalScore = SATDic[@"examScore"];
         }
         
-        if(SATDic[@"EBRW"] != nil){
+        if(SATDic[@"scoreA"] != nil){
             scoreOneTitle = @"EBRW";
-            scoreOne = SATDic[@"EBRW"];
+            scoreOne = SATDic[@"scoreA"];
         }
         
-        if(SATDic[@"M"] != nil){
+        if(SATDic[@"scoreB"] != nil){
             scoreTwoTitle = @"M";
-            scoreTwo = SATDic[@"M"];
+            scoreTwo = SATDic[@"scoreB"];
         }
         
-        if(SATDic[@"ER"] != nil){
+        if(SATDic[@"scoreC"] != nil){
             scoreThreeTitle = @"ER";
-            scoreThree = SATDic[@"ER"];
+            scoreThree = SATDic[@"scoreC"];
         }
         
-        if(SATDic[@"EA"] != nil){
+        if(SATDic[@"scoreD"] != nil){
             scoreFourTitle = @"EA";
-            scoreFour = SATDic[@"EA"];
+            scoreFour = SATDic[@"scoreD"];
         }
         
         NSDictionary *dic = @{
@@ -676,7 +737,7 @@
             @"scoreFour":scoreFour
         };
         MineOfferScoreModel *model = [MineOfferScoreModel modelWithDict:dic];
-        [tempScoreArray addObject:model];
+        [_scoreArray addObject:model];
     }
     
     //ACT
@@ -694,29 +755,29 @@
         NSString *scoreFour = @"";
         
         scoreType = @"ACT";
-        if(ACTDic[@"总分"] != nil){
+        if(ACTDic[@"examScore"] != nil){
             totalScoreTitle = @"总分";
-            totalScore = ACTDic[@"总分"];
+            totalScore = ACTDic[@"examScore"];
         }
         
-        if(ACTDic[@"R"] != nil){
+        if(ACTDic[@"scoreA"] != nil){
             scoreOneTitle = @"R";
-            scoreOne = ACTDic[@"R"];
+            scoreOne = ACTDic[@"scoreA"];
         }
         
-        if(ACTDic[@"E"] != nil){
+        if(ACTDic[@"scoreB"] != nil){
             scoreTwoTitle = @"E";
-            scoreTwo = ACTDic[@"E"];
+            scoreTwo = ACTDic[@"scoreB"];
         }
         
-        if(ACTDic[@"M"] != nil){
+        if(ACTDic[@"scoreC"] != nil){
             scoreThreeTitle = @"M";
-            scoreThree = ACTDic[@"M"];
+            scoreThree = ACTDic[@"scoreC"];
         }
         
-        if(ACTDic[@"S"] != nil){
+        if(ACTDic[@"scoreD"] != nil){
             scoreFourTitle = @"S";
-            scoreFour = ACTDic[@"S"];
+            scoreFour = ACTDic[@"scoreD"];
         }
         
         NSDictionary *dic = @{
@@ -733,12 +794,9 @@
             @"scoreFour":scoreFour
         };
         MineOfferScoreModel *model = [MineOfferScoreModel modelWithDict:dic];
-        [tempScoreArray addObject:model];
+        [_scoreArray addObject:model];
     }
-    
-    _scoreArray = [tempScoreArray copy];
-    [self.scoreTableView reloadData];
-    
+        
     //GPA数据
     NSString *gpa = slctModel.gpaScore;
     [GPALabel setText:gpa];
@@ -755,6 +813,7 @@
 
     }
     
+    [self resetSize];
 }
 
 -(void)resetSize
@@ -769,7 +828,7 @@
     }];
     
     //设置内容视图尺寸
-    [contentView setContentSize:CGSizeMake(SCREEN_WIDTH, 10 + 6*K_DetailTableView_CellHeight + 10 + 42 + scoreTableViewHeight + 10 + 200)];
+    [contentView setContentSize:CGSizeMake(SCREEN_WIDTH, 10 + 6*K_DetailTableView_CellHeight + 10 + 42 + scoreTableViewHeight + 10 + 150 + 250)];
     
 }
 
@@ -924,4 +983,50 @@
 //    [self.navigationController pushViewController:showVC animated:YES];
 }
 
+
+#pragma mark - 网络请求
+-(void)queryMineOfferDetails
+{
+    __weak typeof(self) weakSelf = self;
+    [AvalonsoftHasNetwork avalonsoft_hasNetwork:^(bool has) {
+        __strong typeof(weakSelf) strongSelf = weakSelf;
+
+        if (has) {
+            NSMutableDictionary *root = [NSMutableDictionary dictionary];
+            NSString *url = [[NSString alloc] init];
+            NSString *ID = strongSelf->slctModel.ID;
+            ///TODO:xubing 代码中，参数拼接形式发请求时，采用如下格式stringByAppendingFormat:@"/%@\%@"，接口报错201，故使用stringByAppendingFormat:@"/%@=%@"
+            url = [COMMON_SERVER_URL stringByAppendingFormat:@"/%@=%@",MINE_MY_OFFER_DETAILS, ID];
+            
+            [[AvalonsoftHttpClient avalonsoftHttpClient] requestWithActionUrlAndParam:url method:HttpRequestPost paramenters:root prepareExecute:^{
+            } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull responseObject) {
+                //处理网络请求结果
+                NSLog(@"handleNetworkRequestWithResponseObject responseObject=%@",responseObject);
+                _M *responseModel = [_M createResponseJsonObj:responseObject];
+                NSLog(@"handleNetworkRequestWithResponseObject %ld %@",responseModel.rescode,responseModel.msg);
+                
+                @try {
+                    if(responseModel.rescode == 200){
+                        NSDictionary *rspData = responseModel.data;
+                        strongSelf->slctModel = [MineOfferModel modelWithDict:rspData];
+                        [strongSelf setData];
+                        [strongSelf.detailTableView reloadData];
+                        [strongSelf.scoreTableView reloadData];
+                    }
+                } @catch (NSException *exception) {
+                    @throw exception;
+                    //给出提示信息
+                    [AvalonsoftMsgAlertView showWithTitle:@"信息" content:@"系统发生错误，请与平台管理员联系解决。"  buttonTitles:@[@"关闭"] buttonClickedBlock:nil];
+                }
+            } failure:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error) {
+                //请求失败
+                NSLog(@"%@",error);
+            }];
+            
+        } else {
+            //没网
+            //            [AvalonsoftMsgAlertView showWithTitle:@"信息" content:@"请检查网络" buttonTitles:@[@"关闭"] buttonClickedBlock:nil];
+        }
+    }];
+}
 @end
