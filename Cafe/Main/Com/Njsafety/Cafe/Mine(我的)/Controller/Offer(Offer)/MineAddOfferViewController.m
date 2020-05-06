@@ -11,6 +11,7 @@
 #import "TZImagePickerController.h"
 #import <AssetsLibrary/AssetsLibrary.h>
 #import "UIImage+shareManager.h"
+#import "AvalonsoftImagePicker.h"
 
 #define TEXTFIELD_TAG 10000
 #define K_ScoreTableView_CellHeight     114
@@ -33,10 +34,20 @@
     @private UITextField *internationalDateTextField1;
     @private UITextField *internationalDateTextField2;
     @private UITextField *gpaTextField;
+    @private UIView *splitView7;
     @private UIButton *uploadOfferButton;
     @private UITextView *contentTextView;
     @private MineOfferScoreModel *offerScoreModel;
 
+    
+    @private NSString *country;
+    @private NSString *studyStage;
+    @private NSString *internationalDate1;
+    @private NSString *internationalDate2;
+
+    
+
+    
     
     
     
@@ -505,10 +516,10 @@
       make.right.equalTo(gpaView).offset(15);
       make.height.equalTo(@40);
     }];
-    [self setTextFieldStyle:internationalSchoolTextField withTag:7];
+    [self setTextFieldStyle:gpaTextField withTag:9];
     [gpaTextField addTarget:self action:@selector(textFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
 
-    UIView *splitView7 = [UIView new];
+    splitView7 = [UIView new];
     [gpaView addSubview:splitView7];
     [splitView7 mas_makeConstraints:^(MASConstraintMaker *make){
       make.top.equalTo(gpaTextField.mas_bottom);
@@ -796,19 +807,43 @@
     NSInteger tfTag = textField.tag - TEXTFIELD_TAG;
     
     switch (tfTag) {
-        case 1:
+        case 1: {
+            [self resignFirstResponderForTextFields];
+
+            __weak typeof(self) weakSelf = self;
+            [AvalonsoftPickerView showStringPickerWithTitle:@"" DataSource:@[@"澳洲", @"加拿大", @"爱尔兰", @"新西兰", @"新加坡", @"英国", @"美国", @"其他欧洲国家", @"其他亚洲国家与地区", @"其他"] DefaultSelValue:@"澳洲" IsAutoSelect:NO ResultBlock:^(id selectValue, id selectRow){
+             __strong typeof(weakSelf) strongSelf = weakSelf;
+
+             strongSelf->country = selectValue;
+             strongSelf->countryTextField.text = selectValue;
+            }];
+        }
+            break;
+        
         case 2:
-        case 3: {
+        case 4:
+        case 5:
+        case 6: {
             return YES;
         }
             break;
         
-        case 4:
-        case 5: {
-            [countryTextField resignFirstResponder];
-            [locationTextField resignFirstResponder];
-            [positionTextField resignFirstResponder];
+        case 3: {
+            [self resignFirstResponderForTextFields];
 
+            __weak typeof(self) weakSelf = self;
+            [AvalonsoftPickerView showStringPickerWithTitle:@"" DataSource:@[@"文凭/本科：普通 UnderGraduate(University)", @"文凭/本科:艺术 UnderGraduate(Art school)", @"研究生:普通 Graduate(University)", @"研究生:艺术 Graduate(Art school)", @"MBA:普通 MBA(University)", @"MBA:艺术 MBA(Art school)"] DefaultSelValue:@"文凭/本科：普通 UnderGraduate(University)" IsAutoSelect:NO ResultBlock:^(id selectValue, id selectRow){
+            __strong typeof(weakSelf) strongSelf = weakSelf;
+
+            strongSelf->studyStage = selectValue;
+            strongSelf->studyStageTextField.text = selectValue;
+            }];
+        }
+            break;
+            
+        case 7: {
+            [self resignFirstResponderForTextFields];
+            
             NSDate *now = [NSDate date];
             NSDateFormatter *fmt = [[NSDateFormatter alloc] init];
             fmt.dateFormat = @"yyyy-MM-dd HH:mm:ss";
@@ -817,15 +852,32 @@
             __weak typeof(self) weakSelf = self;
             [AvalonsoftPickerView showDatePickerWithTitle:@"" DateType:UIDatePickerModeDate DefaultSelValue:@"" MinDateStr:@"1900-01-01 00:00:00" MaxDateStr:nowStr IsAutoSelect:NO Manager:nil ResultBlock:^(NSString *selectValue){
                 __strong typeof(weakSelf) strongSelf = weakSelf;
-
-                if (tfTag == 4) {
-                    strongSelf->startDate = selectValue;
-                    strongSelf->startDateTextField.text = selectValue;
-                } else if (tfTag == 5) {
-                    strongSelf->endDate = selectValue;
-                    strongSelf->endDateTextField.text = selectValue;
-                }
+                
+                strongSelf->internationalDate1 = selectValue;
+                strongSelf->internationalDateTextField1.text = selectValue;
             }];
+        }
+            break;
+            
+        case 8: {
+            [self resignFirstResponderForTextFields];
+
+            AvalonsoftActionSheet *actionSheet = [[AvalonsoftActionSheet alloc] initSheetWithTitle:@"" style:AvalonsoftSheetStyleDefault itemTitles:@[@"春季班",@"秋季班"]];
+            actionSheet.itemTextColor = RGBA_GGCOLOR(102, 102, 102, 1);
+
+            __weak typeof(self) weakSelf = self;
+            [actionSheet didFinishSelectIndex:^(NSInteger index, NSString *title) {
+                __strong typeof(weakSelf) strongSelf = weakSelf;
+
+                strongSelf->internationalDate2 = title;
+                strongSelf->internationalDateTextField2.text = title;
+            }];
+        }
+            break;
+
+        case 9: {
+            self->splitView7.hidden = NO;
+            return YES;
         }
             break;
             
@@ -887,14 +939,23 @@
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
     [super touchesBegan:touches withEvent:event];
 
-    [countryTextField resignFirstResponder];
-    [locationTextField resignFirstResponder];
-    [positionTextField resignFirstResponder];
+    [self resignFirstResponderForTextFields];
 }
 
 - (void)textViewDidChange:(UITextView *)textView
 {
     Description = textView.text;
+}
+
+- (void)resignFirstResponderForTextFields
+{
+    self->splitView7.hidden = YES;
+
+    [schoolTextField resignFirstResponder];
+    [majorTextField resignFirstResponder];
+    [agentCompanyTextField resignFirstResponder];
+    [internationalSchoolTextField resignFirstResponder];
+    [gpaTextField resignFirstResponder];
 }
 
 #pragma mark - 网络请求
@@ -957,37 +1018,45 @@
 #pragma mark - 上传图片
 - (void)uploadOffer
 {
-    BOOL haveNoAuthorization = NO;
-    ALAuthorizationStatus author = [ALAssetsLibrary authorizationStatus];
-    haveNoAuthorization = author == ALAuthorizationStatusRestricted || author == ALAuthorizationStatusDenied;
+    [AvalonsoftImagePicker showImagePickerFromViewController:self allowsEditing:YES finishAction:^(UIImage *image) {
+        if (image) {
+//            model.cellImage = image;
+//            [self->_menuTableView reloadData];
+            [uploadOfferButton setImage:image forState:UIControlStateNormal];
+        }
+    }];
     
-    //没有相应权限，给出提示
-    if (haveNoAuthorization) {
-        [AvalonsoftToast showWithMessage:@"请开启相册访问权限！"];
-        return;
-    }
-    
-    TZImagePickerController *tzImagePickerVc = [[TZImagePickerController alloc] initWithMaxImagesCount:1 delegate:self];
-    tzImagePickerVc.naviBgColor = [UIColor whiteColor];
-    tzImagePickerVc.barItemTextColor = [UIColor colorWithRed:55.0/255.0 green:120.0/255.0 blue:255.0/255.0 alpha:1];
-    tzImagePickerVc.barItemTextFont = [UIFont systemFontOfSize:14];
-    tzImagePickerVc.oKButtonTitleColorNormal = [UIColor colorWithRed:55.0/255.0 green:120.0/255.0 blue:255.0/255.0 alpha:1];
-    tzImagePickerVc.oKButtonTitleColorDisabled = [UIColor colorWithRed:195.0/255.0 green:206.0/255.0 blue:217.0/255.0 alpha:1];
-    tzImagePickerVc.allowTakePicture = NO; // NO,在内部不显示拍照按钮
-    tzImagePickerVc.allowPickingVideo = NO;
-    tzImagePickerVc.allowPickingGif = NO;
-    tzImagePickerVc.allowPickingImage = YES;
-    tzImagePickerVc.allowPickingOriginalPhoto = NO;
-    tzImagePickerVc.alwaysEnableDoneBtn = YES;
-    tzImagePickerVc.allowPreview = NO;
-    tzImagePickerVc.photoWidth = 750;//单位：像素
-    tzImagePickerVc.autoDismiss = NO;
-    tzImagePickerVc.showSelectBtn = NO;
-    tzImagePickerVc.allowCrop = YES;
-    tzImagePickerVc.cropRect = CGRectMake(0,(SCREEN_HEIGHT - SCREEN_WIDTH) * 0.5, SCREEN_WIDTH, SCREEN_WIDTH);
-    [tzImagePickerVc setDidFinishPickingPhotosHandle:nil];
-    tzImagePickerVc.modalPresentationStyle = UIModalPresentationFullScreen;
-    [self presentViewController:tzImagePickerVc animated:YES completion:nil];
+//    BOOL haveNoAuthorization = NO;
+//    ALAuthorizationStatus author = [ALAssetsLibrary authorizationStatus];
+//    haveNoAuthorization = author == ALAuthorizationStatusRestricted || author == ALAuthorizationStatusDenied;
+//
+//    //没有相应权限，给出提示
+//    if (haveNoAuthorization) {
+//        [AvalonsoftToast showWithMessage:@"请开启相册访问权限！"];
+//        return;
+//    }
+//
+//    TZImagePickerController *tzImagePickerVc = [[TZImagePickerController alloc] initWithMaxImagesCount:1 delegate:self];
+//    tzImagePickerVc.naviBgColor = [UIColor whiteColor];
+//    tzImagePickerVc.barItemTextColor = [UIColor colorWithRed:55.0/255.0 green:120.0/255.0 blue:255.0/255.0 alpha:1];
+//    tzImagePickerVc.barItemTextFont = [UIFont systemFontOfSize:14];
+//    tzImagePickerVc.oKButtonTitleColorNormal = [UIColor colorWithRed:55.0/255.0 green:120.0/255.0 blue:255.0/255.0 alpha:1];
+//    tzImagePickerVc.oKButtonTitleColorDisabled = [UIColor colorWithRed:195.0/255.0 green:206.0/255.0 blue:217.0/255.0 alpha:1];
+//    tzImagePickerVc.allowTakePicture = NO; // NO,在内部不显示拍照按钮
+//    tzImagePickerVc.allowPickingVideo = NO;
+//    tzImagePickerVc.allowPickingGif = NO;
+//    tzImagePickerVc.allowPickingImage = YES;
+//    tzImagePickerVc.allowPickingOriginalPhoto = NO;
+//    tzImagePickerVc.alwaysEnableDoneBtn = YES;
+//    tzImagePickerVc.allowPreview = NO;
+//    tzImagePickerVc.photoWidth = 750;//单位：像素
+//    tzImagePickerVc.autoDismiss = NO;
+//    tzImagePickerVc.showSelectBtn = NO;
+//    tzImagePickerVc.allowCrop = YES;
+//    tzImagePickerVc.cropRect = CGRectMake(0,(SCREEN_HEIGHT - SCREEN_WIDTH) * 0.5, SCREEN_WIDTH, SCREEN_WIDTH);
+//    [tzImagePickerVc setDidFinishPickingPhotosHandle:nil];
+//    tzImagePickerVc.modalPresentationStyle = UIModalPresentationFullScreen;
+//    [self presentViewController:tzImagePickerVc animated:YES completion:nil];
 }
 
 #pragma mark - TZImagePickerControllerDelegate
