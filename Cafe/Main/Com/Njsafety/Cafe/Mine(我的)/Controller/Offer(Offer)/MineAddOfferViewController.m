@@ -8,9 +8,7 @@
 
 #import "MineAddOfferViewController.h"
 #import "MineAddOfferScoreTableViewCell.h"
-#import "TZImagePickerController.h"
 #import <AssetsLibrary/AssetsLibrary.h>
-#import "UIImage+shareManager.h"
 #import "AvalonsoftImagePicker.h"
 
 #define TEXTFIELD_TAG 10000
@@ -18,7 +16,7 @@
 #define K_NumberOfSections              6
 #define K_HeightForHeaderInSection      20
 
-@interface MineAddOfferViewController () <UITextFieldDelegate, UITextViewDelegate,UITableViewDelegate,UITableViewDataSource,TZImagePickerControllerDelegate>
+@interface MineAddOfferViewController () <UITextFieldDelegate, UITextViewDelegate,UITableViewDelegate,UITableViewDataSource>
 {
     @private UIButton *backButton;
     @private UIButton *saveButton;
@@ -1018,65 +1016,14 @@
 #pragma mark - 上传图片
 - (void)uploadOffer
 {
+    __weak typeof(self) weakSelf = self;
     [AvalonsoftImagePicker showImagePickerFromViewController:self allowsEditing:YES finishAction:^(UIImage *image) {
+        __strong typeof(weakSelf) strongSelf = weakSelf;
+
         if (image) {
-//            model.cellImage = image;
-//            [self->_menuTableView reloadData];
-            [uploadOfferButton setImage:image forState:UIControlStateNormal];
+            [strongSelf->uploadOfferButton setImage:image forState:UIControlStateNormal];
         }
     }];
-    
-//    BOOL haveNoAuthorization = NO;
-//    ALAuthorizationStatus author = [ALAssetsLibrary authorizationStatus];
-//    haveNoAuthorization = author == ALAuthorizationStatusRestricted || author == ALAuthorizationStatusDenied;
-//
-//    //没有相应权限，给出提示
-//    if (haveNoAuthorization) {
-//        [AvalonsoftToast showWithMessage:@"请开启相册访问权限！"];
-//        return;
-//    }
-//
-//    TZImagePickerController *tzImagePickerVc = [[TZImagePickerController alloc] initWithMaxImagesCount:1 delegate:self];
-//    tzImagePickerVc.naviBgColor = [UIColor whiteColor];
-//    tzImagePickerVc.barItemTextColor = [UIColor colorWithRed:55.0/255.0 green:120.0/255.0 blue:255.0/255.0 alpha:1];
-//    tzImagePickerVc.barItemTextFont = [UIFont systemFontOfSize:14];
-//    tzImagePickerVc.oKButtonTitleColorNormal = [UIColor colorWithRed:55.0/255.0 green:120.0/255.0 blue:255.0/255.0 alpha:1];
-//    tzImagePickerVc.oKButtonTitleColorDisabled = [UIColor colorWithRed:195.0/255.0 green:206.0/255.0 blue:217.0/255.0 alpha:1];
-//    tzImagePickerVc.allowTakePicture = NO; // NO,在内部不显示拍照按钮
-//    tzImagePickerVc.allowPickingVideo = NO;
-//    tzImagePickerVc.allowPickingGif = NO;
-//    tzImagePickerVc.allowPickingImage = YES;
-//    tzImagePickerVc.allowPickingOriginalPhoto = NO;
-//    tzImagePickerVc.alwaysEnableDoneBtn = YES;
-//    tzImagePickerVc.allowPreview = NO;
-//    tzImagePickerVc.photoWidth = 750;//单位：像素
-//    tzImagePickerVc.autoDismiss = NO;
-//    tzImagePickerVc.showSelectBtn = NO;
-//    tzImagePickerVc.allowCrop = YES;
-//    tzImagePickerVc.cropRect = CGRectMake(0,(SCREEN_HEIGHT - SCREEN_WIDTH) * 0.5, SCREEN_WIDTH, SCREEN_WIDTH);
-//    [tzImagePickerVc setDidFinishPickingPhotosHandle:nil];
-//    tzImagePickerVc.modalPresentationStyle = UIModalPresentationFullScreen;
-//    [self presentViewController:tzImagePickerVc animated:YES completion:nil];
-}
-
-#pragma mark - TZImagePickerControllerDelegate
-- (void)tz_imagePickerControllerDidCancel:(TZImagePickerController *)picker {
-    [picker dismissViewControllerAnimated:YES completion:nil];
-}
-
-- (void)imagePickerController:(TZImagePickerController *)picker didFinishPickingPhotos:(NSArray *)photos sourceAssets:(NSArray *)assets isSelectOriginalPhoto:(BOOL)isSelectOriginalPhoto {
-
-    UIImage *image = (UIImage *)[photos lastObject];
-    CGRect r = AVMakeRectWithAspectRatioInsideRect(image.size,CGRectMake(0, 0, 10000, 750));
-    UIImage *selectPhoto = [image scaleToSize:r.size];
-    selectPhoto = [selectPhoto scaleToSize:CGSizeMake(250, 250)];
-    [self didFinishPickingWithPhoto:selectPhoto];
-    [picker dismissViewControllerAnimated:YES completion:nil];
-}
-
-- (void)didFinishPickingWithPhoto:(UIImage *)image
-{
-    [uploadOfferButton setImage:image forState:UIControlStateNormal];
 }
 
 @end
