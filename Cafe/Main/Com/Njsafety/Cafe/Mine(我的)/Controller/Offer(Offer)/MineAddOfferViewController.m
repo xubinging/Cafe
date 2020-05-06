@@ -30,6 +30,8 @@
     @private UITextField *internationalDateTextField1;
     @private UITextField *internationalDateTextField2;
     @private UITextField *gpaTextField;
+    @private UIButton *uploadOfferButton;
+    @private UITextView *contentTextView;
     @private MineOfferScoreModel *offerScoreModel;
 
     
@@ -44,7 +46,6 @@
     @private UITextField *positionTextField;
     @private UITextField *startDateTextField;
     @private UITextField *endDateTextField;
-    @private UITextView *contentTextView;
    
     @private NSString *companyName;
     @private NSString *location;
@@ -539,33 +540,63 @@
     
     
     
+    //上传offer
+    UIView *uploadOfferView = [UIView new];
+    [contentView addSubview:uploadOfferView];
+    [uploadOfferView mas_makeConstraints:^(MASConstraintMaker *make){
+       make.top.equalTo(_scoreTableView.mas_bottom).offset(20);
+       make.left.equalTo(_scoreTableView);
+       make.right.equalTo(_scoreTableView);
+       make.height.mas_equalTo(@(150));
+    }];
+    uploadOfferView.backgroundColor = [UIColor whiteColor];
+    uploadOfferView.layer.cornerRadius = 10;
+    uploadOfferView.layer.masksToBounds = YES;
+
+    UILabel *label9 = [UILabel new];
+    [uploadOfferView addSubview:label9];
+    [label9 mas_makeConstraints:^(MASConstraintMaker *make){
+       make.top.equalTo(uploadOfferView).offset(10);
+       make.left.equalTo(uploadOfferView).offset(10);
+       make.width.mas_equalTo(@(80));
+       make.height.mas_equalTo(@(40));
+    }];
+    label9.text = @"上传Offer";
     
+    uploadOfferButton = [UIButton new];
+    [uploadOfferView addSubview:uploadOfferButton];
+    [uploadOfferButton mas_makeConstraints:^(MASConstraintMaker *make){
+        make.top.equalTo(label9.mas_bottom).offset(10);
+        make.left.equalTo(label9);
+        make.size.mas_equalTo(CGSizeMake(78, 78));
+    }];
+    [uploadOfferButton setImage:[UIImage imageNamed:@"mine_upload_file"] forState:UIControlStateNormal];
+    [uploadOfferButton setAdjustsImageWhenHighlighted:NO];
+
     
-    
-    
-//    //内容
-//    UILabel *descripLabel = [UILabel new];
-//    [contentView addSubview:descripLabel];
-//    [descripLabel mas_makeConstraints:^(MASConstraintMaker *make){
-//        make.top.equalTo(endDateSplitView.mas_bottom).offset(15);
-//        make.left.equalTo(endDateSplitView).offset(5);
-//        make.size.mas_equalTo(CGSizeMake(SCREEN_WIDTH - 20 - 30, 20));
-//    }];
-//    [self setTitleLabelStyle:descripLabel withName:@"描述"];
-//
-//    contentTextView = [UITextView new];
-//    [contentView addSubview:contentTextView];
-//    [contentTextView mas_makeConstraints:^(MASConstraintMaker *make) {
-//        make.top.equalTo(descripLabel.mas_bottom).offset(10);
-//        make.left.equalTo(contentView).offset(15);
-//        make.right.equalTo(contentView).offset(-15);
-//        make.height.mas_equalTo(@(120));
-//    }];
-//    contentTextView.layer.backgroundColor = [UIColor colorWithRed:249/255.0 green:249/255.0 blue:249/255.0 alpha:1.0].CGColor;
-//    contentTextView.layer.cornerRadius = 8;
-//    [contentTextView setTextColor:[UIColor colorWithRed:102/255.0 green:102/255.0 blue:102/255.0 alpha:1.0]];
-//    [contentTextView setFont:[UIFont fontWithName:@"PingFangSC-Regular" size:16]];
-//    contentTextView.delegate = self;
+    //内容
+    contentTextView = [UITextView new];
+    [contentView addSubview:contentTextView];
+    [contentTextView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(uploadOfferView.mas_bottom).offset(10);
+        make.left.equalTo(uploadOfferView);
+        make.right.equalTo(uploadOfferView);
+        make.height.mas_equalTo(@(120));
+    }];
+    // contentTextView 占位符
+    UILabel *placeHolderLabel = [[UILabel alloc] init];
+    placeHolderLabel.text = @"您可以在这里输入内容...";
+    placeHolderLabel.numberOfLines = 0;
+    placeHolderLabel.textColor = [UIColor lightGrayColor];
+    [placeHolderLabel sizeToFit];
+    [contentTextView addSubview:placeHolderLabel];
+    placeHolderLabel.font = contentTextView.font;
+    [contentTextView setValue:placeHolderLabel forKey:@"_placeholderLabel"];
+    contentTextView.layer.backgroundColor = [UIColor colorWithRed:249/255.0 green:249/255.0 blue:249/255.0 alpha:1.0].CGColor;
+    contentTextView.layer.cornerRadius = 8;
+    [contentTextView setTextColor:[UIColor colorWithRed:102/255.0 green:102/255.0 blue:102/255.0 alpha:1.0]];
+    [contentTextView setFont:[UIFont fontWithName:@"PingFangSC-Regular" size:16]];
+    contentTextView.delegate = self;
 }
 
 #pragma mark - 设置参数 -
