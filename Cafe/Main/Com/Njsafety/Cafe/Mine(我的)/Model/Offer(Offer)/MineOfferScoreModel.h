@@ -30,6 +30,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) NSString *scoreFourTitle;       //分数四
 @property (nonatomic, copy) NSString *scoreFour;
 
+@property (nonatomic, copy) NSString *scoreFiveTitle;       //分数五
+@property (nonatomic, copy) NSString *scoreFive;
+
 //工厂方法，需要传入字典。可以完成model的创建和属性的b批量赋值。
 +(instancetype)modelWithDict:(NSDictionary *)dict;
 

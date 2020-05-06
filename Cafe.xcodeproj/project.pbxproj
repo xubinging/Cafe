@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1F0768C72462F0F800B37831 /* MineAddOfferScoreTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F0768C62462F0F800B37831 /* MineAddOfferScoreTableViewCell.m */; };
 		1F186151244D954C009977B1 /* MineAddRewordAndSkillViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F186150244D954C009977B1 /* MineAddRewordAndSkillViewController.m */; };
 		1F186154244FDAD6009977B1 /* MineEditRewordAndSkillViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F186153244FDAD6009977B1 /* MineEditRewordAndSkillViewController.m */; };
 		1F5911A92452AB74003E15BD /* MineAddActivityViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F5911A82452AB74003E15BD /* MineAddActivityViewController.m */; };
@@ -556,6 +557,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1F0768C52462F0F800B37831 /* MineAddOfferScoreTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MineAddOfferScoreTableViewCell.h; sourceTree = "<group>"; };
+		1F0768C62462F0F800B37831 /* MineAddOfferScoreTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MineAddOfferScoreTableViewCell.m; sourceTree = "<group>"; };
 		1F18614F244D954C009977B1 /* MineAddRewordAndSkillViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MineAddRewordAndSkillViewController.h; sourceTree = "<group>"; };
 		1F186150244D954C009977B1 /* MineAddRewordAndSkillViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MineAddRewordAndSkillViewController.m; sourceTree = "<group>"; };
 		1F186152244FDAD6009977B1 /* MineEditRewordAndSkillViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MineEditRewordAndSkillViewController.h; sourceTree = "<group>"; };
@@ -4029,6 +4032,8 @@
 				B3A87D33242B022F002AECE9 /* MineOfferTableViewCell.m */,
 				B3A87D35242B022F002AECE9 /* MineOfferScoreTableViewCell.h */,
 				B3A87D32242B022F002AECE9 /* MineOfferScoreTableViewCell.m */,
+				1F0768C52462F0F800B37831 /* MineAddOfferScoreTableViewCell.h */,
+				1F0768C62462F0F800B37831 /* MineAddOfferScoreTableViewCell.m */,
 			);
 			path = "Offer(Offer)";
 			sourceTree = "<group>";
@@ -4567,6 +4572,7 @@
 				B3DC7839242653B700B705D1 /* ZQUtil.m in Sources */,
 				B3A87DCE242B0230002AECE9 /* MineVenueSchoolTableViewCell.m in Sources */,
 				B3A87DAD242B0230002AECE9 /* PrepareCourseAbroadModel.m in Sources */,
+				1F0768C72462F0F800B37831 /* MineAddOfferScoreTableViewCell.m in Sources */,
 				B376EFF123A10FC7004E6FBC /* ZXQRCodeMode.m in Sources */,
 				B376F05723A10FC7004E6FBC /* ZXRSSExpandedFieldParser.m in Sources */,
 				B376EFE123A10FC7004E6FBC /* ZXAztecWriter.m in Sources */,

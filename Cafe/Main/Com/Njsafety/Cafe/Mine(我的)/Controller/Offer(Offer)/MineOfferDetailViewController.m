@@ -416,7 +416,7 @@
             case 5: {
                 NSString *title = @"就读国际学校:";
                 if([showLanguage isEqualToString:@"EN"]){
-                    title = @"International Date:";
+                    title = @"International School:";
                 }
 
                 NSMutableDictionary *dic = [NSMutableDictionary dictionary];
@@ -433,7 +433,7 @@
             case 6: {
                 NSString *title = @"就读时间:";
                 if([showLanguage isEqualToString:@"EN"]){
-                    title = @"International School:";
+                    title = @"International Date:";  
                 }
 
                 NSMutableDictionary *dic = [NSMutableDictionary dictionary];
