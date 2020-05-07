@@ -3376,6 +3376,10 @@
 				B3A87C5C242B022E002AECE9 /* MineOfferDetailViewController.m */,
 				1F5911B624588955003E15BD /* MineAddOfferViewController.h */,
 				1F5911B724588955003E15BD /* MineAddOfferViewController.m */,
+				1F0769012463ABA400B37831 /* MineSelectOfferViewController.h */,
+				1F0769022463ABA400B37831 /* MineSelectOfferViewController.m */,
+				1F0769042463ABB800B37831 /* MineShowOfferViewController.h */,
+				1F0769052463ABB800B37831 /* MineShowOfferViewController.m */,
 			);
 			path = "Offer(Offer)";
 			sourceTree = "<group>";
@@ -3391,10 +3395,6 @@
 				1F5911B12455D293003E15BD /* MineAddWorkViewController.m */,
 				1F5911B32455E2C0003E15BD /* MineEditWorkViewController.h */,
 				1F5911B42455E2C0003E15BD /* MineEditWorkViewController.m */,
-				1F0769012463ABA400B37831 /* MineSelectOfferViewController.h */,
-				1F0769022463ABA400B37831 /* MineSelectOfferViewController.m */,
-				1F0769042463ABB800B37831 /* MineShowOfferViewController.h */,
-				1F0769052463ABB800B37831 /* MineShowOfferViewController.m */,
 			);
 			path = "Job(工作经历)";
 			sourceTree = "<group>";
