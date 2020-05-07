@@ -44,6 +44,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) UILabel *scoreFiveTitleLabel;
 @property (nonatomic, strong) UILabel *scoreFiveLabel;
 
+@property (nonatomic, assign) NSInteger indexPathSection;
+
 //根据类去填充cell
 -(void)updateCellWithModel:(MineOfferScoreModel *)model;
 

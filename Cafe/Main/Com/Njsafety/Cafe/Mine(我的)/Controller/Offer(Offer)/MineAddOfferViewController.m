@@ -747,6 +747,8 @@
 
     [cell updateCellWithModel:self.scoreArray[indexPath.section]];
 
+    cell.indexPathSection = indexPath.section;
+    
     return cell;
 }
 
@@ -767,7 +769,7 @@
 #pragma mark - 点击cell -
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    
+    NSLog(@"123");
 }
 
 //**********    tableView代理 end   **********//
