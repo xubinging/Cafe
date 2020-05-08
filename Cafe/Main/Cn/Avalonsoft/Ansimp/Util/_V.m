@@ -157,6 +157,8 @@ NSString * const MINE_MY_LIKED_COUNT = @"edu/eduuserlikes/queryAllLikedCount";
 NSString * const MINE_MY_EXAM_SCORE_LIST = @"edu/exam/eduexamscore/queryList";
 //考试成绩详情
 NSString * const MINE_MY_EXAM_SCORE_DETAILS = @"edu/exam/eduexamscore/query?id=";
+//考试成绩删除
+NSString * const MINE_MY_EXAM_SCORE_DELETE = @"edu/exam/eduexamscore/delete?id=";
 //考试成绩添加
 NSString * const MINE_MY_EXAM_SCORE_ADD = @"edu/exam/eduexamscore/add";
 //考试成绩编辑
