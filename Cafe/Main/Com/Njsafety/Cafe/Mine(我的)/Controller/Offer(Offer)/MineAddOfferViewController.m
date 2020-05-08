@@ -10,13 +10,15 @@
 #import "MineAddOfferScoreTableViewCell.h"
 #import <AssetsLibrary/AssetsLibrary.h>
 #import "AvalonsoftImagePicker.h"
+#import "MineSelectOfferViewController.h"
+#import "MineShowOfferViewController.h"
 
 #define TEXTFIELD_TAG 10000
 #define K_ScoreTableView_CellHeight     114
 #define K_NumberOfSections              6
 #define K_HeightForHeaderInSection      20
 
-@interface MineAddOfferViewController () <UITextFieldDelegate, UITextViewDelegate,UITableViewDelegate,UITableViewDataSource>
+@interface MineAddOfferViewController () <UITextFieldDelegate, UITextViewDelegate,UITableViewDelegate,UITableViewDataSource,MineSelectButtonDelegate>
 {
     @private UIButton *backButton;
     @private UIButton *saveButton;
@@ -748,6 +750,8 @@
     [cell updateCellWithModel:self.scoreArray[indexPath.section]];
 
     cell.indexPathSection = indexPath.section;
+
+    cell.delegate = self;
     
     return cell;
 }
@@ -1028,6 +1032,19 @@
     }];
 }
 
+#pragma mark - MineSelectButtonDelegate
+- (void)actionOfSelect
+{
+    MineSelectOfferViewController *selectVC = [MineSelectOfferViewController new];
+    [self.navigationController pushViewController:selectVC animated:YES];
+}
+
+
+- (void)actionOfShow
+{
+    MineShowOfferViewController *showVC = [MineShowOfferViewController new];
+    [self.navigationController pushViewController:showVC animated:YES];
+}
 @end
 
 

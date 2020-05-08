@@ -566,6 +566,8 @@
 		1F0769022463ABA400B37831 /* MineSelectOfferViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MineSelectOfferViewController.m; sourceTree = "<group>"; };
 		1F0769042463ABB800B37831 /* MineShowOfferViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MineShowOfferViewController.h; sourceTree = "<group>"; };
 		1F0769052463ABB800B37831 /* MineShowOfferViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MineShowOfferViewController.m; sourceTree = "<group>"; };
+		1F0769142463F4F100B37831 /* MineDetailCommonTableViewCell2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MineDetailCommonTableViewCell2.h; sourceTree = "<group>"; };
+		1F0769152463F4F100B37831 /* MineDetailCommonTableViewCell2.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MineDetailCommonTableViewCell2.m; sourceTree = "<group>"; };
 		1F18614F244D954C009977B1 /* MineAddRewordAndSkillViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MineAddRewordAndSkillViewController.h; sourceTree = "<group>"; };
 		1F186150244D954C009977B1 /* MineAddRewordAndSkillViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MineAddRewordAndSkillViewController.m; sourceTree = "<group>"; };
 		1F186152244FDAD6009977B1 /* MineEditRewordAndSkillViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MineEditRewordAndSkillViewController.h; sourceTree = "<group>"; };
@@ -4072,6 +4074,8 @@
 			children = (
 				B3A87D3D242B022F002AECE9 /* MineDetailCommonTableViewCell.h */,
 				B3A87D3E242B022F002AECE9 /* MineDetailCommonTableViewCell.m */,
+				1F0769142463F4F100B37831 /* MineDetailCommonTableViewCell2.h */,
+				1F0769152463F4F100B37831 /* MineDetailCommonTableViewCell2.m */,
 			);
 			path = Common;
 			sourceTree = "<group>";

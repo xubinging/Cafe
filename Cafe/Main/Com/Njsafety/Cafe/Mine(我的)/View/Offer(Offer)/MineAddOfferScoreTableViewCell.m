@@ -428,81 +428,17 @@
     // Configure the view for the selected state
 }
 
-
 - (void)selectButtonClick
 {
-    switch (self.indexPathSection) {
-        case 0: {
-            
-        }
-            break;
-            
-        case 1: {
-            
-        }
-            break;
-
-        case 2: {
-            
-        }
-            break;
-            
-        case 3: {
-            
-        }
-            break;
-        
-        case 4: {
-            
-        }
-            break;
-            
-        case 5: {
-            
-        }
-            break;
-                        
-        default:
-            break;
+    if (self.delegate && [self.delegate respondsToSelector:@selector(actionOfSelect)]) {
+        [self.delegate actionOfSelect];
     }
 }
 
-
 - (void)showButtonClick
 {
-    switch (self.indexPathSection) {
-        case 0: {
-            
-        }
-            break;
-            
-        case 1: {
-            
-        }
-            break;
-
-        case 2: {
-            
-        }
-            break;
-            
-        case 3: {
-            
-        }
-            break;
-        
-        case 4: {
-            
-        }
-            break;
-            
-        case 5: {
-            
-        }
-            break;
-                        
-        default:
-            break;
+    if (self.delegate && [self.delegate respondsToSelector:@selector(actionOfShow)]) {
+        [self.delegate actionOfShow];
     }
 }
 

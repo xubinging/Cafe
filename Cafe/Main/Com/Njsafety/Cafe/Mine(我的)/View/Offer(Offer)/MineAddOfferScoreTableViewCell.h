@@ -12,7 +12,15 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@protocol MineSelectButtonDelegate <NSObject>
+- (void)actionOfSelect;
+- (void)actionOfShow;
+@end
+
+
 @interface MineAddOfferScoreTableViewCell : UITableViewCell
+
+@property (nonatomic, weak) id<MineSelectButtonDelegate> delegate;
 
 @property (nonatomic, strong) UIView *backView;
 
