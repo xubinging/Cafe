@@ -172,9 +172,16 @@
 - (void)updateCellWithModel:(MineResultModel *)model
 {
 
-    NSString *resultType = model.resultType;
-    NSString *resultDate = model.resultDate;
-    NSString *resultScore = model.resultScore;
+    NSString *resultType = [self bridgeExamType:model.examType];
+    
+    NSString *resultDate = @"";
+    if ([model.examDate isKindOfClass:[NSString class]]) {
+        resultDate = model.examDate;
+    } else {
+        resultDate = [NSString stringWithFormat:@"%@",model.examDate];
+    }
+
+    NSString *resultScore = model.examScore;
     NSString *showLanguage = model.showLanguage;    //ZH -- 中文；EN -- 英文
     
     [_resultTypeLabel setText:resultType];
@@ -205,4 +212,39 @@
     // Configure the view for the selected state
 }
 
+- (NSString *)bridgeExamType:(NSString *)examType
+{
+    //考试类型:类型1->TOEFL，类型2->IELTS，类型3->GRE，类型4->GMAT，类型5->SAT，类型6->SSAT，类型7->ACT
+    NSString *type = @"";
+    if ([examType isKindOfClass:[NSString class]]) {
+        switch (examType.integerValue) {
+            case 1:
+                type = @"TOEFL";
+                break;
+            case 2:
+                type = @"IELTS";
+                break;
+            case 3:
+                type = @"GRE";
+                break;
+            case 4:
+                type = @"GMAT";
+                break;
+            case 5:
+                type = @"SAT";
+                break;
+            case 6:
+                type = @"SSAT";
+                break;
+            case 7:
+                type = @"ACT";
+                break;
+                
+            default:
+                break;
+        }
+    }
+    
+    return type;
+}
 @end

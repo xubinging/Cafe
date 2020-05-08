@@ -28,7 +28,7 @@
 }
 
 @property (nonatomic,strong) UITableView *resultTableView;
-@property (nonatomic,strong) NSArray *resultArray;
+@property (nonatomic,strong) NSMutableArray *resultArray;
 @property (nonatomic,copy) NSIndexPath *editingIndexPath;   //当前左滑cell的index，在代理方法中设置
 
 @end
@@ -42,45 +42,20 @@
     [self initSharedPreferences];
     [self initNavigationView];
     [self initView];
+    [self queryMineExamScoreList];
+}
+
+
+- (NSMutableArray *)resultArray
+{
+    return _resultArray?:(_resultArray = [NSMutableArray array]);
 }
 
 #pragma mark - 初始化一些参数 -
 -(void)initVars
 {
     self.view.backgroundColor = RGBA_GGCOLOR(249, 249, 249, 1);
-    
     isShowChinese = YES;
-    
-    //造数据
-    _resultArray = nil;
-    NSMutableArray *tempArray = [NSMutableArray array];
-
-    for(int i=0; i<20; i++){
-
-        NSString *showLanguage = @"ZH";
-        NSInteger index = i+1;
-        
-        NSDictionary *dic = @{
-            @"resultIndex":@(index),
-            @"resultType":@"TOEFL",
-            @"resultDate":@"2019/10/20",
-            @"resultLocation":@"南京",
-            @"resultOrg":@"**机构",
-            @"resultL":@"10",
-            @"resultS":@"20",
-            @"resultR":@"30",
-            @"resultW":@"40",
-            @"resultScore":[NSString stringWithFormat:@"%d",345 + i],
-            @"showLanguage":showLanguage
-        };
-        
-        MineResultModel *model = [MineResultModel modelWithDict:dic];
-        [tempArray addObject:model];
-
-    }
-
-    _resultArray = [tempArray copy];
-    
 }
 
 #pragma mark - 初始化数据 -
@@ -158,7 +133,7 @@
         make.top.equalTo(navigationView.mas_bottom).offset(10);
         make.left.equalTo(self.view);
         make.right.equalTo(self.view);
-        make.bottom.equalTo(self.view).offset(-TabbarSafeBottomMargin);
+        make.bottom.equalTo(self.view).offset(-TabbarSafeBottomMargin - 80);
     }];
     [_resultTableView setBackgroundColor:[UIColor clearColor]];
     _resultTableView.bounces = YES;
@@ -197,7 +172,6 @@
     
     //添加事件
     [showResultButton addTarget:self action:@selector(showResultButtonClick) forControlEvents:UIControlEventTouchUpInside];
-    
 }
 
 //**********    tableView代理 begin   **********//
@@ -225,7 +199,6 @@
 
     MineResultTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"MineResultTableViewCell"];
 
-    //更新cell，注意这里是根据section下标取值的
     [cell updateCellWithModel:self.resultArray[indexPath.section]];
 
     return cell;
@@ -252,233 +225,39 @@
     
     MineResultModel *slctModel = self.resultArray[indexPath.section];
     
-    NSString *type = slctModel.resultType;
-    NSString *date = slctModel.resultDate;
-    NSString *location = slctModel.resultLocation;
-    NSString *org = slctModel.resultOrg;
-    NSString *resultL = slctModel.resultL;
-    NSString *resultS = slctModel.resultS;
-    NSString *resultR = slctModel.resultR;
-    NSString *resultW = slctModel.resultW;
-    NSString *resultScore = slctModel.resultScore;
+    NSString *type = slctModel.examType;
+    NSString *date = slctModel.examDate;
+    NSString *location = slctModel.address;
+    NSString *org = slctModel.examOrgan;
+    NSString *scoreA = slctModel.scoreA;
+    NSString *scoreB = slctModel.scoreB;
+    NSString *scoreC = slctModel.scoreC;
+    NSString *scoreD = slctModel.scoreD;
+    NSString *examScore = slctModel.examScore;
     
     NSDictionary *sendDic = @{
         @"type":type,
         @"date":date,
         @"location":location,
         @"org":org,
-        @"resultL":resultL,
-        @"resultS":resultS,
-        @"resultR":resultR,
-        @"resultW":resultW,
-        @"resultScore":resultScore
+        @"scoreA":scoreA,
+        @"scoreB":scoreB,
+        @"scoreC":scoreC,
+        @"scoreD":scoreD,
+        @"examScore":examScore
     };
     
     MineResultDetailViewController *detailVC = [MineResultDetailViewController new];
-
-    //设置block回调
-    [detailVC setSendValueBlock:^(NSDictionary *valueDict){
-        //回调函数
-        NSString *type = valueDict[@"type"];
-        NSString *date = valueDict[@"date"];
-        NSString *location = valueDict[@"location"];
-        NSString *org = valueDict[@"org"];
-        NSString *resultL = valueDict[@"resultL"];
-        NSString *resultS = valueDict[@"resultS"];
-        NSString *resultR = valueDict[@"resultR"];
-        NSString *resultW = valueDict[@"resultW"];
-        NSString *resultScore = valueDict[@"resultScore"];
-
-        slctModel.resultType = type;
-        slctModel.resultDate = date;
-        slctModel.resultLocation = location;
-        slctModel.resultOrg = org;
-        slctModel.resultL = resultL;
-        slctModel.resultS = resultS;
-        slctModel.resultR = resultR;
-        slctModel.resultW = resultW;
-        slctModel.resultScore = resultScore;
-        
-
-        [self.resultTableView reloadData];
-
-    }];
-
     detailVC.dataDic = sendDic;
-
     [self.navigationController pushViewController:detailVC animated:YES];
-    
-}
 
-#pragma mark - 设置Cell可编辑 -
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    return YES;
-}
+    __weak typeof(self) weakSelf = self;
+    [detailVC setSendValueBlock:^(NSDictionary *valueDict){
+        __strong typeof(weakSelf) strongSelf = weakSelf;
 
-#pragma mark - 添加左滑按钮点击事件 -
-- (NSArray *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    // 添加删除按钮
-    UITableViewRowAction *deleteRowAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleDestructive title:@"" handler:^(UITableViewRowAction *action, NSIndexPath *indexPath){
-        
-        //注意这里通过section来获取
-        MineResultModel *model = self->_resultArray[indexPath.section];
-
-        NSInteger resultIndex = model.resultIndex;
-        
-        AvalonsoftMsgAlertView *alertView = [AvalonsoftMsgAlertView showWithTitle:@"确定删除本次记录?" content:@"" buttonTitles:@[@"否",@"是"] buttonClickedBlock:^(NSInteger buttonIndex){
-            
-            if(buttonIndex == 1){
-                NSMutableArray *tempArr = [NSMutableArray array];
-                
-                for(MineResultModel *model in self.resultArray){
-                    if(model.resultIndex != resultIndex){
-                        [tempArr addObject:model];
-                    }
-                }
-                
-                self.resultArray = [tempArr copy];
-                
-                [self.resultTableView reloadData];
-                
-                [AvalonsoftToast showWithMessage:@"记录已删除"];
-                
-                self.editingIndexPath = nil;
-            }
-            
-        }];
-        
-        [alertView setMainButtonIndex:1];
-        
+        [strongSelf queryMineExamScoreList];
     }];
     
-    deleteRowAction.backgroundColor = RGBA_GGCOLOR(249, 249, 249, 1);
-    // 将设置好的按钮放到数组中返回
-    return @[deleteRowAction];
-}
-
-#pragma mark - 开始编辑时 -
-- (void)tableView:(UITableView *)tableView willBeginEditingRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    self.editingIndexPath = indexPath;
-    
-    // 触发viewDidLayoutSubviews
-    [self.view setNeedsLayout];
-}
-
-#pragma mark - 结束编辑时 -
-- (void)tableView:(UITableView *)tableView didEndEditingRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    self.editingIndexPath = nil;
-}
-
-//**********    tableView代理 end   **********//
-
-#pragma mark - 强制刷新view，执行条件：[self.view setNeedsLayout]; -
-- (void)viewDidLayoutSubviews
-{
-    [super viewDidLayoutSubviews];
-    
-    if (self.editingIndexPath){
-        [self configSwipeButtons];
-    }
-}
-
-#pragma mark - 配置按钮 -
-- (void)configSwipeButtons
-{
-    // 获取选项按钮的reference
-//    if(IOS_VERSION.doubleValue < 11){
-//        // iOS 8-10层级:UITableView -> UITableViewCell -> UITableViewCellDeleteConfirmationView
-//        MineResultTableViewCell *tableCell = [self.resultTableView cellForRowAtIndexPath:self.editingIndexPath];
-//        for (UIView *subview in tableCell.subviews){
-//            if ([subview isKindOfClass:NSClassFromString(@"UITableViewCellDeleteConfirmationView")]){
-//                //添加一个自定义的视图
-//                UIView *backView = [UIView new];
-//                [subview.subviews[0] addSubview:backView];
-//                [backView mas_makeConstraints:^(MASConstraintMaker *make) {
-//                    make.top.equalTo(subview.subviews[0]);
-//                    make.left.equalTo(subview.subviews[0]);
-//                    make.size.mas_equalTo(CGSizeMake(65, subview.subviews[0].frame.size.height));
-//                }];
-//                [backView setBackgroundColor:RGBA_GGCOLOR(255, 80, 63, 1)];
-//                backView.layer.cornerRadius = 8;
-//
-//                UIImageView *imgView = [UIImageView new];
-//                [backView addSubview:imgView];
-//                [imgView mas_makeConstraints:^(MASConstraintMaker *make) {
-//                    make.top.equalTo(backView).offset((subview.subviews[0].frame.size.height - 23)/2);
-//                    make.left.equalTo(backView).offset((65 - 22)/2);
-//                    make.size.mas_equalTo(CGSizeMake(22, 23));
-//                }];
-//                [imgView setImage:[UIImage imageNamed:@"mine_delete_cell"]];
-//            }
-//        }
-//
-//    }else
-    
-    //最低适配 iOS11
-    if(IOS_VERSION.doubleValue>=11 && IOS_VERSION.doubleValue<13){
-        // iOS 11~12层级:UITableView -> UISwipeActionPullView
-        for (UIView *subview in self.resultTableView.subviews){
-            if ([subview isKindOfClass:NSClassFromString(@"UISwipeActionPullView")]){
-                if ([NSStringFromClass([subview.subviews[0] class]) isEqualToString:@"UISwipeActionStandardButton"]) {
-                    //添加一个自定义的视图
-                    UIView *backView = [UIView new];
-                    [subview.subviews[0] addSubview:backView];
-                    [backView mas_makeConstraints:^(MASConstraintMaker *make) {
-                        make.top.equalTo(subview.subviews[0]);
-                        make.left.equalTo(subview.subviews[0]);
-                        make.size.mas_equalTo(CGSizeMake(65, subview.subviews[0].frame.size.height));
-                    }];
-                    [backView setBackgroundColor:RGBA_GGCOLOR(255, 80, 63, 1)];
-                    backView.layer.cornerRadius = 8;
-                    
-                    UIImageView *imgView = [UIImageView new];
-                    [backView addSubview:imgView];
-                    [imgView mas_makeConstraints:^(MASConstraintMaker *make) {
-                        make.top.equalTo(backView).offset((subview.subviews[0].frame.size.height - 23)/2);
-                        make.left.equalTo(backView).offset((65 - 22)/2);
-                        make.size.mas_equalTo(CGSizeMake(22, 23));
-                    }];
-                    [imgView setImage:[UIImage imageNamed:@"mine_delete_cell"]];
-                }
-            }
-        }
-        
-    }else if(IOS_VERSION.doubleValue >= 13){
-        // iOS13
-        for (UIView *subview in self.resultTableView.subviews){
-            if([subview isKindOfClass:NSClassFromString(@"_UITableViewCellSwipeContainerView")]) {
-                for (UIView *subViews in subview.subviews) {
-                    if([subViews isKindOfClass:NSClassFromString(@"UISwipeActionPullView")]) {
-                        if ([NSStringFromClass([subViews.subviews[0] class]) isEqualToString:@"UISwipeActionStandardButton"]) {
-                            //添加一个自定义的视图
-                            UIView *backView = [UIView new];
-                            [subViews.subviews[0] addSubview:backView];
-                            [backView mas_makeConstraints:^(MASConstraintMaker *make) {
-                                make.top.equalTo(subViews.subviews[0]);
-                                make.left.equalTo(subViews.subviews[0]);
-                                make.size.mas_equalTo(CGSizeMake(65, subViews.subviews[0].frame.size.height));
-                            }];
-                            [backView setBackgroundColor:RGBA_GGCOLOR(255, 80, 63, 1)];
-                            backView.layer.cornerRadius = 8;
-                            
-                            UIImageView *imgView = [UIImageView new];
-                            [backView addSubview:imgView];
-                            [imgView mas_makeConstraints:^(MASConstraintMaker *make) {
-                                make.top.equalTo(backView).offset((subViews.subviews[0].frame.size.height - 23)/2);
-                                make.left.equalTo(backView).offset((65 - 22)/2);
-                                make.size.mas_equalTo(CGSizeMake(22, 23));
-                            }];
-                            [imgView setImage:[UIImage imageNamed:@"mine_delete_cell"]];
-                        }
-                    }
-                }
-            }
-        }
-    }
 }
                  
 #pragma mark - 返回按钮点击 -
@@ -491,63 +270,15 @@
 -(void)showResultButtonClick
 {
     MineResultShowViewController *showVC = [MineResultShowViewController new];
-
-    //设置block回调
-    [showVC setSendValueBlock:^(NSDictionary *valueDict){
-        //回调函数
-        NSString *type = valueDict[@"type"];
-        NSString *date = valueDict[@"date"];
-        NSString *location = valueDict[@"location"];
-        NSString *org = valueDict[@"org"];
-        NSString *resultL = valueDict[@"resultL"];
-        NSString *resultS = valueDict[@"resultS"];
-        NSString *resultR = valueDict[@"resultR"];
-        NSString *resultW = valueDict[@"resultW"];
-        NSString *resultScore = valueDict[@"resultScore"];
-        NSString *showLanguage = @"";
-        
-        if(self->isShowChinese){
-            showLanguage = @"ZH";
-        }else{
-            showLanguage = @"EN";
-        }
-        
-        NSMutableArray *tempArr = [NSMutableArray array];
-        for(MineResultModel *model in self.resultArray){
-            [tempArr addObject:model];
-        }
-        
-        //把刚才新加的数据加入到数据列表中
-        NSDictionary *dic = @{
-            @"resultIndex":@(tempArr.count + 1),
-            @"resultType":type,
-            @"resultDate":date,
-            @"resultLocation":location,
-            @"resultOrg":org,
-            @"resultL":resultL,
-            @"resultS":resultS,
-            @"resultR":resultR,
-            @"resultW":resultW,
-            @"resultScore":resultScore,
-            @"showLanguage":showLanguage
-        };
-        
-        MineResultModel *model = [MineResultModel modelWithDict:dic];
-        [tempArr addObject:model];
-        
-        //按照 resultIndex 进行降序排序，这里用的是描述类排序，排序字段一定要和类中写的一致
-        NSSortDescriptor *resultIndexSortDesc = [[NSSortDescriptor alloc] initWithKey:@"resultIndex" ascending:NO];
-        [tempArr sortUsingDescriptors:@[resultIndexSortDesc]];
-        
-        self.resultArray = [tempArr copy];
-        
-        [self.resultTableView reloadData];
-        
-    }];
-    
-    showVC.dataDic = @{};
-    
     [self.navigationController pushViewController:showVC animated:YES];
+
+
+    __weak typeof(self) weakSelf = self;
+    [showVC setSendValueBlock:^(NSDictionary *valueDict){
+        __strong typeof(weakSelf) strongSelf = weakSelf;
+        
+        [strongSelf queryMineExamScoreList];
+    }];        
 }
 
 #pragma mark - 右侧按钮点击 -
@@ -580,6 +311,55 @@
         [self.resultTableView reloadData];
         
     }
+}
+
+#pragma mark - 网络请求
+- (void)queryMineExamScoreList
+{
+    __weak typeof(self) weakSelf = self;
+    [AvalonsoftHasNetwork avalonsoft_hasNetwork:^(bool has) {
+        if (has) {
+            NSMutableDictionary *root = [NSMutableDictionary dictionary];
+            [root setValue:[_UserInfo accountId] forKey:@"accountId"];
+            [root setValue:@"0" forKey:@"delSign"];
+            
+            [[AvalonsoftHttpClient avalonsoftHttpClient] requestWithAction:COMMON_SERVER_URL actionName:MINE_MY_EXAM_SCORE_LIST method:HttpRequestPost paramenters:root prepareExecute:^{
+                
+            } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull responseObject) {
+                __strong typeof(weakSelf) strongSelf = weakSelf;
+                
+                NSLog(@"handleNetworkRequestWithResponseObject responseObject=%@",responseObject);
+                _M *responseModel = [_M createResponseJsonObj:responseObject];
+                NSLog(@"handleNetworkRequestWithResponseObject %ld %@",responseModel.rescode,responseModel.msg);
+                
+                @try {
+                    if(responseModel.rescode == 200){
+                        NSDictionary *rspData = responseModel.data;
+                        NSArray *rspDataArray = rspData[@"dataList"];
+                       [strongSelf.resultArray removeAllObjects];
+                       for(int i=0; i<rspDataArray.count; i++){
+                           MineResultModel *model = [MineResultModel modelWithDict:rspDataArray[i]];
+                           [strongSelf.resultArray addObject:model];
+                       }
+                        
+                        [strongSelf.resultTableView reloadData];
+                    }
+                } @catch (NSException *exception) {
+                    @throw exception;
+                    //给出提示信息
+                    [AvalonsoftMsgAlertView showWithTitle:@"信息" content:@"系统发生错误，请与平台管理员联系解决。"  buttonTitles:@[@"关闭"] buttonClickedBlock:nil];
+                }
+                
+            } failure:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error) {
+                //请求失败
+                NSLog(@"%@",error);
+            }];
+            
+        } else {
+            //没网
+            //            [AvalonsoftMsgAlertView showWithTitle:@"信息" content:@"请检查网络" buttonTitles:@[@"关闭"] buttonClickedBlock:nil];
+        }
+    }];
 }
 
 @end
