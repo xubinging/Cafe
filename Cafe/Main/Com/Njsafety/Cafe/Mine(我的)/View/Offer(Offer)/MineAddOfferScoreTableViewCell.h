@@ -2,7 +2,7 @@
 //  MineAddOfferScoreTableViewCell.h
 //  Cafe
 //
-//  Created by migu on 2020/5/6.
+//  Created by migu on 2020/5/8.
 //  Copyright © 2020 leo. All rights reserved.
 //
 
