@@ -17,6 +17,7 @@
     @private UIView *navigationView;
     @private UIButton *backButton;          //左上角返回按钮
     @private UIButton *rightButton;         //右侧按钮
+    @private UIView *moreActionView;
     
     @private UIImageView *contentImageView; //图片
     
@@ -34,30 +35,40 @@
     @private UILabel *resultOrgLabel;
     @private UILabel *resultOrgTitleLabel;
     
-    @private UILabel *resultLLabel;
-    @private UILabel *resultLTitleLabel;
+    @private UILabel *scoreALabel;
+    @private UILabel *scoreATitleLabel;
     
-    @private UILabel *resultSLabel;
-    @private UILabel *resultSTitleLabel;
+    @private UILabel *scoreBLabel;
+    @private UILabel *scoreBTitleLabel;
     
-    @private UILabel *resultRLabel;
-    @private UILabel *resultRTitleLabel;
+    @private UILabel *scoreCLabel;
+    @private UILabel *scoreCTitleLabel;
     
-    @private UILabel *resultWLabel;
-    @private UILabel *resultWTitleLabel;
+    @private UILabel *scoreDLabel;
+    @private UILabel *scoreDTitleLabel;
     
-    @private UILabel *resultScoreLabel;
-    @private UILabel *resultScoreTitleLabel;
+    @private UILabel *scoreELabel;
+    @private UILabel *scoreETitleLabel;
+    
+    @private UILabel *examScoreLabel;
+    @private UILabel *examScoreTitleLabel;
     
     @private NSString *type;
     @private NSString *date;
     @private NSString *location;
     @private NSString *org;
-    @private NSString *resultL;
-    @private NSString *resultS;
-    @private NSString *resultR;
-    @private NSString *resultW;
-    @private NSString *resultScore;
+    @private NSString *scoreA;
+    @private NSString *scoreATitleName;
+    @private NSString *scoreB;
+    @private NSString *scoreBTitleName;
+    @private NSString *scoreC;
+    @private NSString *scoreCTitleName;
+    @private NSString *scoreD;
+    @private NSString *scoreDTitleName;
+    @private NSString *scoreE;
+    @private NSString *scoreETitleName;
+    @private NSString *examScore;
+    @private NSString *scoreFile;
     
     @private BOOL isViewUp;
 }
@@ -105,22 +116,27 @@
     date = @"";
     location = @"";
     org = @"";
-    resultL = @"";
-    resultS = @"";
-    resultR = @"";
-    resultW = @"";
-    resultScore = @"";
+    scoreA = @"";
+    scoreB = @"";
+    scoreC = @"";
+    scoreD = @"";
+    scoreE = @"";
+    examScore = @"";
+    scoreFile = @"";
         
     if(_dataDic != nil){
         type = _dataDic[@"type"];
+        [self bridgeExamType:type];
         date = _dataDic[@"date"];
         location = _dataDic[@"location"];
         org = _dataDic[@"org"];
-        resultL = _dataDic[@"resultL"];
-        resultS = _dataDic[@"resultS"];
-        resultR = _dataDic[@"resultR"];
-        resultW = _dataDic[@"resultW"];
-        resultScore = _dataDic[@"resultScore"];
+        scoreA = _dataDic[@"scoreA"];
+        scoreB = _dataDic[@"scoreB"];
+        scoreC = _dataDic[@"scoreC"];
+        scoreD = _dataDic[@"scoreD"];
+        scoreE = _dataDic[@"scoreE"];
+        examScore = _dataDic[@"examScore"];
+        scoreFile = _dataDic[@"scoreFile"];
     }
 }
 
@@ -159,7 +175,7 @@
         make.top.equalTo(backButton).offset(1);
         make.size.mas_equalTo(CGSizeMake(30, 20));
     }];
-    NSMutableAttributedString *rightButtonString = [[NSMutableAttributedString alloc] initWithString:@"编辑" attributes: @{NSFontAttributeName: [UIFont fontWithName:@"PingFangSC-Regular" size: 14],NSForegroundColorAttributeName: [UIColor colorWithRed:32/255.0 green:188/255.0 blue:255/255.0 alpha:1.0]}];
+    NSMutableAttributedString *rightButtonString = [[NSMutableAttributedString alloc] initWithString:@"更多" attributes: @{NSFontAttributeName: [UIFont fontWithName:@"PingFangSC-Regular" size: 14],NSForegroundColorAttributeName: [UIColor colorWithRed:32/255.0 green:188/255.0 blue:255/255.0 alpha:1.0]}];
     [rightButton setAttributedTitle:rightButtonString forState:UIControlStateNormal];
     //右上角按钮点击
     [rightButton addTarget:self action:@selector(rightButtonClick) forControlEvents:UIControlEventTouchUpInside];
@@ -186,18 +202,23 @@
     contentImageView = [UIImageView new];
     contentImageView.frame = CGRectMake(20, StatusBarSafeTopMargin + 64 + 10, SCREEN_WIDTH - 40, 160);
     [self.view addSubview:contentImageView];
-    [contentImageView setImage:[UIImage imageNamed:@"bannerImage1"]];
     contentImageView.layer.masksToBounds = YES;
     contentImageView.layer.cornerRadius = 10;
     contentImageView.layer.shadowColor = [UIColor colorWithRed:0/255.0 green:0/255.0 blue:0/255.0 alpha:0.3].CGColor;
     contentImageView.layer.shadowOffset = CGSizeMake(0,5);
     contentImageView.layer.shadowOpacity = 1;
     contentImageView.layer.shadowRadius = 15;
+    [contentImageView sd_setImageWithURL:[NSURL URLWithString:[_F createFileLoadUrl:scoreFile]]];
     
     //内容
     contentView = [UIView new];
-    contentView.frame = CGRectMake(10, StatusBarSafeTopMargin + 64 + 10 + 65 , SCREEN_WIDTH - 20, 290);
     [self.view addSubview:contentView];
+    [contentView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(contentImageView.mas_bottom).offset(20);
+        make.left.equalTo(self.view).offset(10);
+        make.right.equalTo(self.view).offset(-10);
+        make.height.mas_equalTo(@290);
+    }];
     contentView.layer.backgroundColor = [UIColor colorWithRed:255/255.0 green:255/255.0 blue:255/255.0 alpha:1.0].CGColor;
     contentView.layer.cornerRadius = 10;
     contentView.layer.shadowColor = [UIColor colorWithRed:0/255.0 green:0/255.0 blue:0/255.0 alpha:0.05].CGColor;
@@ -320,18 +341,18 @@
     }];
     
     //先添加总分
-    resultScoreLabel = [UILabel new];
-    [contentView addSubview:resultScoreLabel];
-    [resultScoreLabel mas_makeConstraints:^(MASConstraintMaker *make){
+    examScoreLabel = [UILabel new];
+    [contentView addSubview:examScoreLabel];
+    [examScoreLabel mas_makeConstraints:^(MASConstraintMaker *make){
         make.top.equalTo(dashView2.mas_bottom).offset(19);
         make.right.equalTo(contentView).offset(-5);
         make.size.mas_equalTo(CGSizeMake(90, 22));
     }];
 
-    resultScoreTitleLabel = [UILabel new];
-    [contentView addSubview:resultScoreTitleLabel];
-    [resultScoreTitleLabel mas_makeConstraints:^(MASConstraintMaker *make){
-        make.top.equalTo(resultScoreLabel.mas_bottom).offset(15);
+    examScoreTitleLabel = [UILabel new];
+    [contentView addSubview:examScoreTitleLabel];
+    [examScoreTitleLabel mas_makeConstraints:^(MASConstraintMaker *make){
+        make.top.equalTo(examScoreLabel.mas_bottom).offset(15);
         make.right.equalTo(contentView).mas_offset(-5);
         make.size.mas_equalTo(CGSizeMake(90, 20));
     }];
@@ -341,77 +362,94 @@
     [contentView addSubview:splitView3];
     [splitView3 mas_makeConstraints:^(MASConstraintMaker *make){
         make.top.equalTo(dashView2.mas_bottom).offset(24);
-        make.right.equalTo(resultScoreLabel.mas_left).offset(-5);
+        make.right.equalTo(examScoreLabel.mas_left).offset(-5);
         make.size.mas_equalTo(CGSizeMake(1, 47));
     }];
     [splitView3 setBackgroundColor:RGBA_GGCOLOR(238, 238, 238, 1)];
     
-    //L
-    resultLLabel = [UILabel new];
-    [contentView addSubview:resultLLabel];
-    [resultLLabel mas_makeConstraints:^(MASConstraintMaker *make){
+    //scoreA
+    scoreALabel = [UILabel new];
+    [contentView addSubview:scoreALabel];
+    [scoreALabel mas_makeConstraints:^(MASConstraintMaker *make){
         make.top.equalTo(dashView2.mas_bottom).offset(19);
         make.left.equalTo(contentView);
-        make.size.mas_equalTo(CGSizeMake((SCREEN_WIDTH - 100 - 20)/4, 22));
+        make.size.mas_equalTo(CGSizeMake((SCREEN_WIDTH - 100 - 20)/5, 22));
     }];
 
-    resultLTitleLabel = [UILabel new];
-    [contentView addSubview:resultLTitleLabel];
-    [resultLTitleLabel mas_makeConstraints:^(MASConstraintMaker *make){
-        make.top.equalTo(resultLLabel.mas_bottom).offset(15);
+    scoreATitleLabel = [UILabel new];
+    [contentView addSubview:scoreATitleLabel];
+    [scoreATitleLabel mas_makeConstraints:^(MASConstraintMaker *make){
+        make.top.equalTo(scoreALabel.mas_bottom).offset(15);
         make.left.equalTo(contentView);
-        make.size.mas_equalTo(CGSizeMake((SCREEN_WIDTH - 100 - 20)/4, 22));
+        make.size.mas_equalTo(CGSizeMake((SCREEN_WIDTH - 100 - 20)/5, 22));
     }];
     
-    //S
-    resultSLabel = [UILabel new];
-    [contentView addSubview:resultSLabel];
-    [resultSLabel mas_makeConstraints:^(MASConstraintMaker *make){
+    //scoreB
+    scoreBLabel = [UILabel new];
+    [contentView addSubview:scoreBLabel];
+    [scoreBLabel mas_makeConstraints:^(MASConstraintMaker *make){
         make.top.equalTo(dashView2.mas_bottom).offset(19);
-        make.left.equalTo(resultLLabel.mas_right);
-        make.size.mas_equalTo(CGSizeMake((SCREEN_WIDTH - 100 - 20)/4, 22));
+        make.left.equalTo(scoreALabel.mas_right);
+        make.size.mas_equalTo(CGSizeMake((SCREEN_WIDTH - 100 - 20)/5, 22));
     }];
 
-    resultSTitleLabel = [UILabel new];
-    [contentView addSubview:resultSTitleLabel];
-    [resultSTitleLabel mas_makeConstraints:^(MASConstraintMaker *make){
-        make.top.equalTo(resultSLabel.mas_bottom).offset(15);
-        make.left.equalTo(resultLTitleLabel.mas_right);
-        make.size.mas_equalTo(CGSizeMake((SCREEN_WIDTH - 100 - 20)/4, 22));
+    scoreBTitleLabel = [UILabel new];
+    [contentView addSubview:scoreBTitleLabel];
+    [scoreBTitleLabel mas_makeConstraints:^(MASConstraintMaker *make){
+        make.top.equalTo(scoreBLabel.mas_bottom).offset(15);
+        make.left.equalTo(scoreATitleLabel.mas_right);
+        make.size.mas_equalTo(CGSizeMake((SCREEN_WIDTH - 100 - 20)/5, 22));
     }];
 
-    //R
-    resultRLabel = [UILabel new];
-    [contentView addSubview:resultRLabel];
-    [resultRLabel mas_makeConstraints:^(MASConstraintMaker *make){
+    //scoreC
+    scoreCLabel = [UILabel new];
+    [contentView addSubview:scoreCLabel];
+    [scoreCLabel mas_makeConstraints:^(MASConstraintMaker *make){
         make.top.equalTo(dashView2.mas_bottom).offset(19);
-        make.left.equalTo(resultSLabel.mas_right);
-        make.size.mas_equalTo(CGSizeMake((SCREEN_WIDTH - 100 - 20)/4, 22));
+        make.left.equalTo(scoreBLabel.mas_right);
+        make.size.mas_equalTo(CGSizeMake((SCREEN_WIDTH - 100 - 20)/5, 22));
     }];
 
-    resultRTitleLabel = [UILabel new];
-    [contentView addSubview:resultRTitleLabel];
-    [resultRTitleLabel mas_makeConstraints:^(MASConstraintMaker *make){
-        make.top.equalTo(resultRLabel.mas_bottom).offset(15);
-        make.left.equalTo(resultSTitleLabel.mas_right);
-        make.size.mas_equalTo(CGSizeMake((SCREEN_WIDTH - 100 - 20)/4, 22));
+    scoreCTitleLabel = [UILabel new];
+    [contentView addSubview:scoreCTitleLabel];
+    [scoreCTitleLabel mas_makeConstraints:^(MASConstraintMaker *make){
+        make.top.equalTo(scoreCLabel.mas_bottom).offset(15);
+        make.left.equalTo(scoreBTitleLabel.mas_right);
+        make.size.mas_equalTo(CGSizeMake((SCREEN_WIDTH - 100 - 20)/5, 22));
     }];
     
-    //W
-    resultWLabel = [UILabel new];
-    [contentView addSubview:resultWLabel];
-    [resultWLabel mas_makeConstraints:^(MASConstraintMaker *make){
+    //scoreD
+    scoreDLabel = [UILabel new];
+    [contentView addSubview:scoreDLabel];
+    [scoreDLabel mas_makeConstraints:^(MASConstraintMaker *make){
         make.top.equalTo(dashView2.mas_bottom).offset(19);
-        make.left.equalTo(resultRLabel.mas_right);
-        make.size.mas_equalTo(CGSizeMake((SCREEN_WIDTH - 100 - 20)/4, 22));
+        make.left.equalTo(scoreCLabel.mas_right);
+        make.size.mas_equalTo(CGSizeMake((SCREEN_WIDTH - 100 - 20)/5, 22));
     }];
 
-    resultWTitleLabel = [UILabel new];
-    [contentView addSubview:resultWTitleLabel];
-    [resultWTitleLabel mas_makeConstraints:^(MASConstraintMaker *make){
-        make.top.equalTo(resultWLabel.mas_bottom).offset(15);
-        make.left.equalTo(resultRTitleLabel.mas_right);
-        make.size.mas_equalTo(CGSizeMake((SCREEN_WIDTH - 100 - 20)/4, 22));
+    scoreDTitleLabel = [UILabel new];
+    [contentView addSubview:scoreDTitleLabel];
+    [scoreDTitleLabel mas_makeConstraints:^(MASConstraintMaker *make){
+        make.top.equalTo(scoreDLabel.mas_bottom).offset(15);
+        make.left.equalTo(scoreCTitleLabel.mas_right);
+        make.size.mas_equalTo(CGSizeMake((SCREEN_WIDTH - 100 - 20)/5, 22));
+    }];
+    
+    //scoreE
+    scoreELabel = [UILabel new];
+    [contentView addSubview:scoreELabel];
+    [scoreELabel mas_makeConstraints:^(MASConstraintMaker *make){
+        make.top.equalTo(dashView2.mas_bottom).offset(19);
+        make.left.equalTo(scoreDLabel.mas_right);
+        make.size.mas_equalTo(CGSizeMake((SCREEN_WIDTH - 100 - 20)/5, 22));
+    }];
+
+    scoreETitleLabel = [UILabel new];
+    [contentView addSubview:scoreETitleLabel];
+    [scoreETitleLabel mas_makeConstraints:^(MASConstraintMaker *make){
+        make.top.equalTo(scoreELabel.mas_bottom).offset(15);
+        make.left.equalTo(scoreDTitleLabel.mas_right);
+        make.size.mas_equalTo(CGSizeMake((SCREEN_WIDTH - 100 - 20)/5, 22));
     }];
 }
 
@@ -435,6 +473,8 @@
 #pragma mark - 设置参数 -
 -(void)setData
 {
+    [self bridgeScoreSubType];
+    
     //考试类型
     [_F setLabelStyle:resultTypeTitleLabel withName:@"考试类型" textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Regular" size:14] textColor:RGBA_GGCOLOR(193, 193, 193, 1)];
     [_F setLabelStyle:resultTypeLabel withName:type textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Medium" size:16] textColor:RGBA_GGCOLOR(32, 188, 255, 1)];
@@ -451,26 +491,117 @@
     [_F setLabelStyle:resultOrgTitleLabel withName:@"参加的培训机构" textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Regular" size:14] textColor:RGBA_GGCOLOR(193, 193, 193, 1)];
     [_F setLabelStyle:resultOrgLabel withName:org textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Medium" size:16] textColor:RGBA_GGCOLOR(32, 188, 255, 1)];
     
-    //L
-    [_F setLabelStyle:resultLTitleLabel withName:@"L" textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Regular" size:14] textColor:RGBA_GGCOLOR(193, 193, 193, 1)];
-    [_F setLabelStyle:resultLLabel withName:resultL textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Medium" size:16] textColor:RGBA_GGCOLOR(32, 188, 255, 1)];
+    //scoreA
+    [_F setLabelStyle:scoreATitleLabel withName:scoreATitleName textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Regular" size:14] textColor:RGBA_GGCOLOR(193, 193, 193, 1)];
+    [_F setLabelStyle:scoreALabel withName:scoreA textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Medium" size:16] textColor:RGBA_GGCOLOR(32, 188, 255, 1)];
     
-    //S
-    [_F setLabelStyle:resultSTitleLabel withName:@"S" textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Regular" size:14] textColor:RGBA_GGCOLOR(193, 193, 193, 1)];
-    [_F setLabelStyle:resultSLabel withName:resultS textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Medium" size:16] textColor:RGBA_GGCOLOR(32, 188, 255, 1)];
+    //scoreB
+    [_F setLabelStyle:scoreBTitleLabel withName:scoreBTitleName textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Regular" size:14] textColor:RGBA_GGCOLOR(193, 193, 193, 1)];
+    [_F setLabelStyle:scoreBLabel withName:scoreB textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Medium" size:16] textColor:RGBA_GGCOLOR(32, 188, 255, 1)];
     
-    //R
-    [_F setLabelStyle:resultRTitleLabel withName:@"R" textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Regular" size:14] textColor:RGBA_GGCOLOR(193, 193, 193, 1)];
-    [_F setLabelStyle:resultRLabel withName:resultR textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Medium" size:16] textColor:RGBA_GGCOLOR(32, 188, 255, 1)];
+    //scoreC
+    [_F setLabelStyle:scoreCTitleLabel withName:scoreCTitleName textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Regular" size:14] textColor:RGBA_GGCOLOR(193, 193, 193, 1)];
+    [_F setLabelStyle:scoreCLabel withName:scoreC textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Medium" size:16] textColor:RGBA_GGCOLOR(32, 188, 255, 1)];
     
-    //W
-    [_F setLabelStyle:resultWTitleLabel withName:@"W" textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Regular" size:14] textColor:RGBA_GGCOLOR(193, 193, 193, 1)];
-    [_F setLabelStyle:resultWLabel withName:resultW textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Medium" size:16] textColor:RGBA_GGCOLOR(32, 188, 255, 1)];
+    //scoreD
+    [_F setLabelStyle:scoreDTitleLabel withName:scoreDTitleName textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Regular" size:14] textColor:RGBA_GGCOLOR(193, 193, 193, 1)];
+    [_F setLabelStyle:scoreDLabel withName:scoreD textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Medium" size:16] textColor:RGBA_GGCOLOR(32, 188, 255, 1)];
+    
+    //scoreE
+    [_F setLabelStyle:scoreETitleLabel withName:scoreETitleName textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Regular" size:14] textColor:RGBA_GGCOLOR(193, 193, 193, 1)];
+    [_F setLabelStyle:scoreELabel withName:scoreE textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Medium" size:16] textColor:RGBA_GGCOLOR(32, 188, 255, 1)];
     
     //总分
-    [_F setLabelStyle:resultScoreTitleLabel withName:@"总分" textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Regular" size:14] textColor:RGBA_GGCOLOR(193, 193, 193, 1)];
-    [_F setLabelStyle:resultScoreLabel withName:resultScore textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Medium" size:16] textColor:RGBA_GGCOLOR(32, 188, 255, 1)];
+    [_F setLabelStyle:examScoreTitleLabel withName:@"总分" textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Regular" size:14] textColor:RGBA_GGCOLOR(193, 193, 193, 1)];
+    [_F setLabelStyle:examScoreLabel withName:examScore textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Medium" size:16] textColor:RGBA_GGCOLOR(32, 188, 255, 1)];
     
+}
+
+- (NSString *)bridgeExamType:(NSString *)examType
+{
+    //考试类型:类型1->TOEFL，类型2->IELTS，类型3->GRE，类型4->GMAT，类型5->SAT，类型6->SSAT，类型7->ACT
+    if ([examType isKindOfClass:[NSString class]]) {
+        switch (examType.integerValue) {
+            case 1:
+                type = @"TOEFL";
+                break;
+            case 2:
+                type = @"IELTS";
+                break;
+            case 3:
+                type = @"GRE";
+                break;
+            case 4:
+                type = @"GMAT";
+                break;
+            case 5:
+                type = @"SAT";
+                break;
+            case 6:
+                type = @"SSAT";
+                break;
+            case 7:
+                type = @"ACT";
+                break;
+                
+            default:
+                break;
+        }
+    }
+    
+    return type;
+}
+
+- (void)bridgeScoreSubType
+{
+    scoreATitleName = @"";
+    scoreBTitleName = @"";
+    scoreCTitleName = @"";
+    scoreDTitleName = @"";
+    scoreETitleName = @"";
+
+    if ([type isEqualToString:@"TOEFL"] || [type isEqualToString:@"IELTS"]) {
+        scoreATitleName = @"L";
+        scoreBTitleName = @"S";
+        scoreCTitleName = @"R";
+        scoreDTitleName = @"W";
+    }
+    
+    if ([type isEqualToString:@"GRE"]) {
+        scoreATitleName = @"V";
+        scoreBTitleName = @"Q";
+        scoreCTitleName = @"AW";
+    }
+
+    if ([type isEqualToString:@"GMAT"]) {
+        scoreATitleName = @"V";
+        scoreBTitleName = @"Q";
+        scoreCTitleName = @"AW";
+        scoreDTitleName = @"IR";
+    }
+    
+    if ([type isEqualToString:@"SAT"]) {
+        scoreATitleName = @"EBRW";
+        scoreBTitleName = @"M";
+        scoreCTitleName = @"ER";
+        scoreDTitleName = @"EA";
+        scoreETitleName = @"EW";
+    }
+    
+    if ([type isEqualToString:@"SSAT"]) {
+        scoreATitleName = @"Q";
+        scoreBTitleName = @"V";
+        scoreCTitleName = @"R";
+    }
+
+    if ([type isEqualToString:@"ACT"]) {
+        scoreATitleName = @"R";
+        scoreBTitleName = @"E";
+        scoreCTitleName = @"M";
+        scoreDTitleName = @"S";
+        scoreETitleName = @"W";
+    }
+
 }
 
 #pragma mark - 手势处理 -
@@ -514,11 +645,12 @@
                                   @"date":date,
                                   @"location":location,
                                   @"org":org,
-                                  @"resultL":resultL,
-                                  @"resultS":resultS,
-                                  @"resultR":resultR,
-                                  @"resultW":resultW,
-                                  @"resultScore":resultScore
+                                  @"scoreA":scoreA,
+                                  @"scoreB":scoreB,
+                                  @"scoreC":scoreC,
+                                  @"scoreD":scoreD,
+                                  @"scoreE":scoreE,
+                                  @"examScore":examScore
     };
     
     //Block传值step 3:传值类将要传的值传入自己的block中
@@ -530,16 +662,72 @@
 #pragma mark - 编辑按钮点击 -
 -(void)rightButtonClick
 {
+    moreActionView = [UIView new];
+    [self.view addSubview:moreActionView];
+    [moreActionView mas_makeConstraints:^(MASConstraintMaker *make){
+        make.top.equalTo(rightButton.mas_bottom).offset(5);
+        make.right.equalTo(rightButton);
+        make.size.mas_equalTo(CGSizeMake(80, 80));
+    }];
+    moreActionView.layer.cornerRadius = 10;
+    moreActionView.layer.masksToBounds = YES;
+    [moreActionView setBackgroundColor:[UIColor whiteColor]];
+    
+    UIButton *editButton = [UIButton new];
+    [moreActionView addSubview:editButton];
+    [editButton mas_makeConstraints:^(MASConstraintMaker *make){
+        make.top.equalTo(moreActionView);
+        make.left.equalTo(moreActionView);
+        make.size.mas_equalTo(CGSizeMake(80, 40));
+    }];
+    editButton.adjustsImageWhenHighlighted = NO;
+    NSMutableAttributedString *editButtonString = [[NSMutableAttributedString alloc] initWithString:@"编辑" attributes: @{NSFontAttributeName: [UIFont fontWithName:@"PingFangSC-Regular" size: 14],NSForegroundColorAttributeName: [UIColor blackColor]}];
+    [editButton setAttributedTitle:editButtonString forState:UIControlStateNormal];
+    [editButton addTarget:self action:@selector(editButtonClick) forControlEvents:UIControlEventTouchUpInside];
+    
+    
+    UIView *splitView = [UIView new];
+    [moreActionView addSubview:splitView];
+    [splitView mas_makeConstraints:^(MASConstraintMaker *make){
+        make.top.equalTo(editButton.mas_bottom).offset(1);
+        make.left.equalTo(moreActionView).offset(5);
+        make.right.equalTo(moreActionView).offset(-5);
+        make.height.mas_equalTo(@1);
+    }];
+    [splitView setBackgroundColor:RGBA_GGCOLOR(238, 238, 238, 1)];
+    [moreActionView layoutIfNeeded];
+
+    
+    UIButton *deleteButton = [UIButton new];
+    [moreActionView addSubview:deleteButton];
+    [deleteButton mas_makeConstraints:^(MASConstraintMaker *make){
+        make.top.equalTo(editButton.mas_bottom);
+        make.left.equalTo(moreActionView);
+        make.size.mas_equalTo(CGSizeMake(80, 40));
+    }];
+    deleteButton.adjustsImageWhenHighlighted = NO;
+    NSMutableAttributedString *deleteButtonString = [[NSMutableAttributedString alloc] initWithString:@"删除" attributes: @{NSFontAttributeName: [UIFont fontWithName:@"PingFangSC-Regular" size: 14],NSForegroundColorAttributeName: [UIColor blackColor]}];
+    [deleteButton setAttributedTitle:deleteButtonString forState:UIControlStateNormal];
+    [deleteButton addTarget:self action:@selector(deleteButtonClick) forControlEvents:UIControlEventTouchUpInside];
+}
+
+
+- (void)editButtonClick
+{
+    moreActionView.hidden = YES;
+    [moreActionView removeFromSuperview];
+    
     NSDictionary *sendDic = @{
         @"type":type,
         @"date":date,
         @"location":location,
         @"org":org,
-        @"resultL":resultL,
-        @"resultS":resultS,
-        @"resultR":resultR,
-        @"resultW":resultW,
-        @"resultScore":resultScore
+        @"scoreA":scoreA,
+        @"scoreB":scoreB,
+        @"scoreC":scoreC,
+        @"scoreD":scoreD,
+        @"scoreE":scoreE,
+        @"examScore":examScore
     };
     
     MineResultShowViewController *showVC = [MineResultShowViewController new];
@@ -552,11 +740,12 @@
         self->date = valueDict[@"date"];
         self->location = valueDict[@"location"];
         self->org = valueDict[@"org"];
-        self->resultL = valueDict[@"resultL"];
-        self->resultS = valueDict[@"resultS"];
-        self->resultR = valueDict[@"resultR"];
-        self->resultW = valueDict[@"resultW"];
-        self->resultScore = valueDict[@"resultScore"];
+        self->scoreA = valueDict[@"scoreA"];
+        self->scoreB = valueDict[@"scoreB"];
+        self->scoreC = valueDict[@"scoreC"];
+        self->scoreD = valueDict[@"scoreD"];
+        self->scoreE = valueDict[@"scoreE"];
+        self->examScore = valueDict[@"examScore"];
         
         [self setData];
 
@@ -565,6 +754,21 @@
     showVC.dataDic = sendDic;
 
     [self.navigationController pushViewController:showVC animated:YES];
+
 }
 
+- (void)deleteButtonClick
+{
+    moreActionView.hidden = YES;
+    [moreActionView removeFromSuperview];
+    
+}
+
+#pragma mark - touch screen hide moreActionView -
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+    [super touchesBegan:touches withEvent:event];
+
+    moreActionView.hidden = YES;
+    [moreActionView removeFromSuperview];
+}
 @end

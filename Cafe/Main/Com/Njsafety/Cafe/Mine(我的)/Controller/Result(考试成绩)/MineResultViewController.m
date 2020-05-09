@@ -233,7 +233,10 @@
     NSString *scoreB = slctModel.scoreB;
     NSString *scoreC = slctModel.scoreC;
     NSString *scoreD = slctModel.scoreD;
+    NSString *scoreE = slctModel.scoreE;
     NSString *examScore = slctModel.examScore;
+    NSString *scoreFile = slctModel.scoreFile;
+
     
     NSDictionary *sendDic = @{
         @"type":type,
@@ -244,7 +247,9 @@
         @"scoreB":scoreB,
         @"scoreC":scoreC,
         @"scoreD":scoreD,
-        @"examScore":examScore
+        @"scoreE":scoreE,
+        @"examScore":examScore,
+        @"scoreFile":scoreFile
     };
     
     MineResultDetailViewController *detailVC = [MineResultDetailViewController new];

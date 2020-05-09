@@ -20,8 +20,11 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) NSString *scoreA;
 @property (nonatomic, copy) NSString *scoreB;
 @property (nonatomic, copy) NSString *scoreC;
-@property (nonatomic, copy) NSString *scoreD;             
+@property (nonatomic, copy) NSString *scoreD;
+@property (nonatomic, copy) NSString *scoreE;
 @property (nonatomic, copy) NSString *examScore;          //总分
+@property (nonatomic, copy) NSString *scoreFile;
+
 @property (nonatomic, copy) NSString *showLanguage; //CH -- 中文；EN -- 英文
 
 //工厂方法，需要传入字典。可以完成model的创建和属性的b批量赋值。
