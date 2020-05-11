@@ -23,27 +23,37 @@
     @private UIScrollView *contentScrollView;   //滑动视图
     @private UIButton *operateButton;           //本页操作按钮
     @private UIButton *clickableOperateButton;  //可点击的操作按钮
+    @private UIView *scoreCSplitView;
     
     @private UITextField *typeTextField;        //考试类型
     @private UITextField *dateTextField;        //考试日期
     @private UITextField *locationTextField;    //考试地点
     @private UITextField *orgTextField;         //机构
-    @private UITextField *resultLTextField;     //L
-    @private UITextField *resultSTextField;     //S
-    @private UITextField *resultRTextField;     //R
-    @private UITextField *resultWTextField;     //W
-    @private UITextField *resultScoreTextField; //总分
+    
+    @private UILabel *scoreALabel;
+    @private UILabel *scoreBLabel;
+    @private UILabel *scoreCLabel;
+    @private UILabel *scoreDLabel;
+    @private UILabel *scoreELabel;
+    
+    @private UITextField *scoreATextField;
+    @private UITextField *scoreBTextField;
+    @private UITextField *scoreCTextField;
+    @private UITextField *scoreDTextField;
+    @private UITextField *scoreETextField;
+    @private UITextField *examScoreTextField;
     @private UIButton *uploadFileButton;        //上传附件按钮
     
     @private NSString *type;
     @private NSString *date;
     @private NSString *location;
     @private NSString *org;
-    @private NSString *resultL;
-    @private NSString *resultS;
-    @private NSString *resultR;
-    @private NSString *resultW;
-    @private NSString *resultScore;
+    @private NSString *scoreA;
+    @private NSString *scoreB;
+    @private NSString *scoreC;
+    @private NSString *scoreD;
+    @private NSString *scoreE;
+    @private NSString *examScore;
     
 }
 
@@ -110,34 +120,40 @@
             org = @"";
         }
         
-        if(_dataDic[@"resultL"]){
-            resultL = _dataDic[@"resultL"];
+        if(_dataDic[@"scoreA"]){
+            scoreA = _dataDic[@"scoreA"];
         }else{
-            resultL = @"";
+            scoreA = @"";
         }
         
-        if(_dataDic[@"resultS"]){
-            resultS = _dataDic[@"resultS"];
+        if(_dataDic[@"scoreB"]){
+            scoreB = _dataDic[@"scoreB"];
         }else{
-            resultS = @"";
+            scoreB = @"";
         }
         
-        if(_dataDic[@"resultR"]){
-            resultR = _dataDic[@"resultR"];
+        if(_dataDic[@"scoreC"]){
+            scoreC = _dataDic[@"scoreC"];
         }else{
-            resultR = @"";
+            scoreC = @"";
         }
         
-        if(_dataDic[@"resultW"]){
-            resultW = _dataDic[@"resultW"];
+        if(_dataDic[@"scoreD"]){
+            scoreD = _dataDic[@"scoreD"];
         }else{
-            resultW = @"";
+            scoreD = @"";
         }
         
-        if(_dataDic[@"resultScore"]){
-            resultScore = _dataDic[@"resultScore"];
+        if(_dataDic[@"scoreE"]){
+            scoreE = _dataDic[@"scoreE"];
         }else{
-            resultScore = @"";
+            scoreE = @"";
+        }
+        
+        if(_dataDic[@"examScore"]){
+            examScore = _dataDic[@"examScore"];
+        }else{
+            examScore = @"";
         }
     }
 }
@@ -193,8 +209,9 @@
         make.top.equalTo(navigationView.mas_bottom).offset(10);
         make.left.equalTo(self.view).offset(10);
         make.right.equalTo(self.view).offset(-10);
-        make.bottom.equalTo(self.view).offset(-80-TabbarSafeBottomMargin);
+        make.bottom.equalTo(self.view).offset(-TabbarSafeBottomMargin);
     }];
+    
     contentView.layer.backgroundColor = [UIColor colorWithRed:255/255.0 green:255/255.0 blue:255/255.0 alpha:1.0].CGColor;
     contentView.layer.cornerRadius = 8;
     contentView.layer.shadowColor = [UIColor colorWithRed:0/255.0 green:0/255.0 blue:0/255.0 alpha:0.05].CGColor;
@@ -265,7 +282,6 @@
     }];
     [contentScrollView setBackgroundColor:[UIColor clearColor]];
     contentScrollView.showsVerticalScrollIndicator = NO;
-    //内容尺寸是固定的
     [contentScrollView setContentSize:CGSizeMake(SCREEN_WIDTH-20, 1050)];
         
     //***** 考试类型 *****//
@@ -421,174 +437,189 @@
         make.height.mas_equalTo(@1);
     }];
     [orgSplitView setBackgroundColor:RGBA_GGCOLOR(238, 238, 238, 1)];
-
-
-    //***** L *****//
-    UILabel *resultLLabel = [UILabel new];
-    [contentScrollView addSubview:resultLLabel];
-    [resultLLabel mas_makeConstraints:^(MASConstraintMaker *make){
-        make.top.equalTo(orgSplitView.mas_bottom).offset(28);
-        make.left.equalTo(orgSplitView).offset(5);
-        make.size.mas_equalTo(CGSizeMake(SCREEN_WIDTH - 20 - 30, 20));
-    }];
-    [self setTitleLabelStyle:resultLLabel withName:@"L"];
-
-    UIImageView *resultLNextStep = [UIImageView new];
-    [contentScrollView addSubview:resultLNextStep];
-    [resultLNextStep mas_makeConstraints:^(MASConstraintMaker *make){
-        make.top.equalTo(resultLLabel.mas_bottom).offset(19);
-        make.right.equalTo(resultLLabel);
-        make.size.mas_equalTo(CGSizeMake(7, 14));
-    }];
-    [resultLNextStep setImage:[UIImage imageNamed:@"mine_nextstep"]];
-
-    resultLTextField = [UITextField new];
-    [contentScrollView addSubview:resultLTextField];
-    [resultLTextField mas_makeConstraints:^(MASConstraintMaker *make){
-        make.top.equalTo(resultLLabel.mas_bottom).offset(1);
-        make.left.equalTo(resultLLabel);
-        make.right.equalTo(resultLNextStep.mas_left).offset(-15);
-        make.height.equalTo(@50);
-    }];
-    [self setTextFieldStyle:resultLTextField withTag:5];
-
-    UIView *resultLSplitView = [UIView new];
-    [contentScrollView addSubview:resultLSplitView];
-    [resultLSplitView mas_makeConstraints:^(MASConstraintMaker *make){
-        make.top.equalTo(resultLTextField.mas_bottom).offset(1);
-        make.left.equalTo(resultLLabel).offset(-5);
-        make.right.equalTo(resultLLabel).offset(5);
-        make.height.mas_equalTo(@1);
-    }];
-    [resultLSplitView setBackgroundColor:RGBA_GGCOLOR(238, 238, 238, 1)];
-
-
-    //***** S *****//
-    UILabel *resultSLabel = [UILabel new];
-    [contentScrollView addSubview:resultSLabel];
-    [resultSLabel mas_makeConstraints:^(MASConstraintMaker *make){
-        make.top.equalTo(resultLSplitView.mas_bottom).offset(28);
-        make.left.equalTo(resultLSplitView).offset(5);
-        make.size.mas_equalTo(CGSizeMake(SCREEN_WIDTH - 20 - 30, 20));
-    }];
-    [self setTitleLabelStyle:resultSLabel withName:@"S"];
-
-    UIImageView *resultSNextStep = [UIImageView new];
-    [contentScrollView addSubview:resultSNextStep];
-    [resultSNextStep mas_makeConstraints:^(MASConstraintMaker *make){
-        make.top.equalTo(resultSLabel.mas_bottom).offset(19);
-        make.right.equalTo(resultSLabel);
-        make.size.mas_equalTo(CGSizeMake(7, 14));
-    }];
-    [resultSNextStep setImage:[UIImage imageNamed:@"mine_nextstep"]];
-
-    resultSTextField = [UITextField new];
-    [contentScrollView addSubview:resultSTextField];
-    [resultSTextField mas_makeConstraints:^(MASConstraintMaker *make){
-        make.top.equalTo(resultSLabel.mas_bottom).offset(1);
-        make.left.equalTo(resultSLabel);
-        make.right.equalTo(resultSNextStep.mas_left).offset(-15);
-        make.height.equalTo(@50);
-    }];
-    [self setTextFieldStyle:resultSTextField withTag:6];
-
-    UIView *resultSSplitView = [UIView new];
-    [contentScrollView addSubview:resultSSplitView];
-    [resultSSplitView mas_makeConstraints:^(MASConstraintMaker *make){
-        make.top.equalTo(resultSTextField.mas_bottom).offset(1);
-        make.left.equalTo(resultSLabel).offset(-5);
-        make.right.equalTo(resultSLabel).offset(5);
-        make.height.mas_equalTo(@1);
-    }];
-    [resultSSplitView setBackgroundColor:RGBA_GGCOLOR(238, 238, 238, 1)];
     
+    //***** scoreA *****//
+    scoreALabel = [UILabel new];
+    [contentScrollView addSubview:scoreALabel];
+    [scoreALabel mas_makeConstraints:^(MASConstraintMaker *make){
+       make.top.equalTo(orgSplitView.mas_bottom).offset(28);
+       make.left.equalTo(orgSplitView).offset(5);
+       make.size.mas_equalTo(CGSizeMake(SCREEN_WIDTH - 20 - 30, 20));
+    }];
+
+    UIImageView *scoreANextStep = [UIImageView new];
+    [contentScrollView addSubview:scoreANextStep];
+    [scoreANextStep mas_makeConstraints:^(MASConstraintMaker *make){
+       make.top.equalTo(scoreALabel.mas_bottom).offset(19);
+       make.right.equalTo(scoreALabel);
+       make.size.mas_equalTo(CGSizeMake(7, 14));
+    }];
+    [scoreANextStep setImage:[UIImage imageNamed:@"mine_nextstep"]];
+
+    scoreATextField = [UITextField new];
+    [contentScrollView addSubview:scoreATextField];
+    [scoreATextField mas_makeConstraints:^(MASConstraintMaker *make){
+       make.top.equalTo(scoreALabel.mas_bottom).offset(1);
+       make.left.equalTo(scoreALabel);
+       make.right.equalTo(scoreANextStep.mas_left).offset(-15);
+       make.height.equalTo(@50);
+    }];
+    [self setTextFieldStyle:scoreATextField withTag:5];
+
+    UIView *scoreASplitView = [UIView new];
+    [contentScrollView addSubview:scoreASplitView];
+    [scoreASplitView mas_makeConstraints:^(MASConstraintMaker *make){
+       make.top.equalTo(scoreATextField.mas_bottom).offset(1);
+       make.left.equalTo(scoreALabel).offset(-5);
+       make.right.equalTo(scoreALabel).offset(5);
+       make.height.mas_equalTo(@1);
+    }];
+    [scoreASplitView setBackgroundColor:RGBA_GGCOLOR(238, 238, 238, 1)];
+
+
+    //***** scoreB *****//
+    scoreBLabel = [UILabel new];
+    [contentScrollView addSubview:scoreBLabel];
+    [scoreBLabel mas_makeConstraints:^(MASConstraintMaker *make){
+       make.top.equalTo(scoreASplitView.mas_bottom).offset(28);
+       make.left.equalTo(scoreASplitView).offset(5);
+       make.size.mas_equalTo(CGSizeMake(SCREEN_WIDTH - 20 - 30, 20));
+    }];
+
+    UIImageView *scoreBNextStep = [UIImageView new];
+    [contentScrollView addSubview:scoreBNextStep];
+    [scoreBNextStep mas_makeConstraints:^(MASConstraintMaker *make){
+       make.top.equalTo(scoreBLabel.mas_bottom).offset(19);
+       make.right.equalTo(scoreBLabel);
+       make.size.mas_equalTo(CGSizeMake(7, 14));
+    }];
+    [scoreBNextStep setImage:[UIImage imageNamed:@"mine_nextstep"]];
+
+    scoreBTextField = [UITextField new];
+    [contentScrollView addSubview:scoreBTextField];
+    [scoreBTextField mas_makeConstraints:^(MASConstraintMaker *make){
+       make.top.equalTo(scoreBLabel.mas_bottom).offset(1);
+       make.left.equalTo(scoreBLabel);
+       make.right.equalTo(scoreBNextStep.mas_left).offset(-15);
+       make.height.equalTo(@50);
+    }];
+    [self setTextFieldStyle:scoreBTextField withTag:6];
+
+    UIView *scoreBSplitView = [UIView new];
+    [contentScrollView addSubview:scoreBSplitView];
+    [scoreBSplitView mas_makeConstraints:^(MASConstraintMaker *make){
+       make.top.equalTo(scoreBTextField.mas_bottom).offset(1);
+       make.left.equalTo(scoreBLabel).offset(-5);
+       make.right.equalTo(scoreBLabel).offset(5);
+       make.height.mas_equalTo(@1);
+    }];
+    [scoreBSplitView setBackgroundColor:RGBA_GGCOLOR(238, 238, 238, 1)];
+
+
+    //***** scoreC *****//
+    scoreCLabel = [UILabel new];
+    [contentScrollView addSubview:scoreCLabel];
+    [scoreCLabel mas_makeConstraints:^(MASConstraintMaker *make){
+       make.top.equalTo(scoreBSplitView.mas_bottom).offset(28);
+       make.left.equalTo(scoreBSplitView).offset(5);
+       make.size.mas_equalTo(CGSizeMake(SCREEN_WIDTH - 20 - 30, 20));
+    }];
+
+    UIImageView *scoreCNextStep = [UIImageView new];
+    [contentScrollView addSubview:scoreCNextStep];
+    [scoreCNextStep mas_makeConstraints:^(MASConstraintMaker *make){
+       make.top.equalTo(scoreCLabel.mas_bottom).offset(19);
+       make.right.equalTo(scoreCLabel);
+       make.size.mas_equalTo(CGSizeMake(7, 14));
+    }];
+    [scoreCNextStep setImage:[UIImage imageNamed:@"mine_nextstep"]];
+
+    scoreCTextField = [UITextField new];
+    [contentScrollView addSubview:scoreCTextField];
+    [scoreCTextField mas_makeConstraints:^(MASConstraintMaker *make){
+       make.top.equalTo(scoreCLabel.mas_bottom).offset(1);
+       make.left.equalTo(scoreCLabel);
+       make.right.equalTo(scoreBNextStep.mas_left).offset(-15);
+       make.height.equalTo(@50);
+    }];
+    [self setTextFieldStyle:scoreCTextField withTag:7];
+
+    scoreCSplitView = [UIView new];
+    [contentScrollView addSubview:scoreCSplitView];
+    [scoreCSplitView mas_makeConstraints:^(MASConstraintMaker *make){
+       make.top.equalTo(scoreCTextField.mas_bottom).offset(1);
+       make.left.equalTo(scoreCLabel).offset(-5);
+       make.right.equalTo(scoreCLabel).offset(5);
+       make.height.mas_equalTo(@1);
+    }];
+    [scoreCSplitView setBackgroundColor:RGBA_GGCOLOR(238, 238, 238, 1)];
     
-    //***** R *****//
-    UILabel *resultRLabel = [UILabel new];
-    [contentScrollView addSubview:resultRLabel];
-    [resultRLabel mas_makeConstraints:^(MASConstraintMaker *make){
-        make.top.equalTo(resultSSplitView.mas_bottom).offset(28);
-        make.left.equalTo(resultSSplitView).offset(5);
-        make.size.mas_equalTo(CGSizeMake(SCREEN_WIDTH - 20 - 30, 20));
-    }];
-    [self setTitleLabelStyle:resultRLabel withName:@"R"];
+    [self setupSubViewsWithType:type];
+}
 
-    UIImageView *resultRNextStep = [UIImageView new];
-    [contentScrollView addSubview:resultRNextStep];
-    [resultRNextStep mas_makeConstraints:^(MASConstraintMaker *make){
-        make.top.equalTo(resultRLabel.mas_bottom).offset(19);
-        make.right.equalTo(resultRLabel);
-        make.size.mas_equalTo(CGSizeMake(7, 14));
-    }];
-    [resultRNextStep setImage:[UIImage imageNamed:@"mine_nextstep"]];
-
-    resultRTextField = [UITextField new];
-    [contentScrollView addSubview:resultRTextField];
-    [resultRTextField mas_makeConstraints:^(MASConstraintMaker *make){
-        make.top.equalTo(resultRLabel.mas_bottom).offset(1);
-        make.left.equalTo(resultRLabel);
-        make.right.equalTo(resultSNextStep.mas_left).offset(-15);
-        make.height.equalTo(@50);
-    }];
-    [self setTextFieldStyle:resultRTextField withTag:7];
-
-    UIView *resultRSplitView = [UIView new];
-    [contentScrollView addSubview:resultRSplitView];
-    [resultRSplitView mas_makeConstraints:^(MASConstraintMaker *make){
-        make.top.equalTo(resultRTextField.mas_bottom).offset(1);
-        make.left.equalTo(resultRLabel).offset(-5);
-        make.right.equalTo(resultRLabel).offset(5);
-        make.height.mas_equalTo(@1);
-    }];
-    [resultRSplitView setBackgroundColor:RGBA_GGCOLOR(238, 238, 238, 1)];
+- (void)setupSubViewsWithType:(NSString *)type
+{
+    if ([type isEqualToString:@"TOEFL"] || [type isEqualToString:@"IELTS"]) {
+        [self setupSubViews2];
+        [self setTitleLabelStyle:scoreALabel withName:@"L"];
+        [self setTitleLabelStyle:scoreBLabel withName:@"S"];
+        [self setTitleLabelStyle:scoreCLabel withName:@"R"];
+        [self setTitleLabelStyle:scoreDLabel withName:@"W"];
+    }
     
+    if ([type isEqualToString:@"GRE"]) {
+        [self setupSubViews1];
+        [self setTitleLabelStyle:scoreALabel withName:@"V"];
+        [self setTitleLabelStyle:scoreBLabel withName:@"Q"];
+        [self setTitleLabelStyle:scoreCLabel withName:@"AW"];
+        [contentScrollView setContentSize:CGSizeMake(SCREEN_WIDTH-20, 950)];
+    }
     
-    //***** W *****//
-    UILabel *resultWLabel = [UILabel new];
-    [contentScrollView addSubview:resultWLabel];
-    [resultWLabel mas_makeConstraints:^(MASConstraintMaker *make){
-        make.top.equalTo(resultRSplitView.mas_bottom).offset(28);
-        make.left.equalTo(resultRSplitView).offset(5);
-        make.size.mas_equalTo(CGSizeMake(SCREEN_WIDTH - 20 - 30, 20));
-    }];
-    [self setTitleLabelStyle:resultWLabel withName:@"W"];
-
-    UIImageView *resultWNextStep = [UIImageView new];
-    [contentScrollView addSubview:resultWNextStep];
-    [resultWNextStep mas_makeConstraints:^(MASConstraintMaker *make){
-        make.top.equalTo(resultWLabel.mas_bottom).offset(19);
-        make.right.equalTo(resultWLabel);
-        make.size.mas_equalTo(CGSizeMake(7, 14));
-    }];
-    [resultWNextStep setImage:[UIImage imageNamed:@"mine_nextstep"]];
-
-    resultWTextField = [UITextField new];
-    [contentScrollView addSubview:resultWTextField];
-    [resultWTextField mas_makeConstraints:^(MASConstraintMaker *make){
-        make.top.equalTo(resultWLabel.mas_bottom).offset(1);
-        make.left.equalTo(resultWLabel);
-        make.right.equalTo(resultWNextStep.mas_left).offset(-15);
-        make.height.equalTo(@50);
-    }];
-    [self setTextFieldStyle:resultWTextField withTag:8];
-
-    UIView *resultWSplitView = [UIView new];
-    [contentScrollView addSubview:resultWSplitView];
-    [resultWSplitView mas_makeConstraints:^(MASConstraintMaker *make){
-        make.top.equalTo(resultWTextField.mas_bottom).offset(1);
-        make.left.equalTo(resultWLabel).offset(-5);
-        make.right.equalTo(resultWLabel).offset(5);
-        make.height.mas_equalTo(@1);
-    }];
-    [resultWSplitView setBackgroundColor:RGBA_GGCOLOR(238, 238, 238, 1)];
+    if ([type isEqualToString:@"GMAT"]) {
+        [self setupSubViews2];
+        [self setTitleLabelStyle:scoreALabel withName:@"V"];
+        [self setTitleLabelStyle:scoreBLabel withName:@"Q"];
+        [self setTitleLabelStyle:scoreCLabel withName:@"AW"];
+        [self setTitleLabelStyle:scoreDLabel withName:@"IR"];
+    }
     
+    if ([type isEqualToString:@"SAT"]) {
+        [self setupSubViews3];
+        [self setTitleLabelStyle:scoreALabel withName:@"EBRW"];
+        [self setTitleLabelStyle:scoreBLabel withName:@"M"];
+        [self setTitleLabelStyle:scoreCLabel withName:@"ER"];
+        [self setTitleLabelStyle:scoreDLabel withName:@"EA"];
+        [self setTitleLabelStyle:scoreELabel withName:@"EW"];
+        [contentScrollView setContentSize:CGSizeMake(SCREEN_WIDTH-20, 1150)];
+    }
     
+    if ([type isEqualToString:@"SSAT"]) {
+        [self setupSubViews1];
+        [self setTitleLabelStyle:scoreALabel withName:@"Q"];
+        [self setTitleLabelStyle:scoreBLabel withName:@"V"];
+        [self setTitleLabelStyle:scoreCLabel withName:@"R"];
+        [contentScrollView setContentSize:CGSizeMake(SCREEN_WIDTH-20, 950)];
+    }
+    
+    if ([type isEqualToString:@"ACT"]) {
+        [self setupSubViews3];
+        [self setTitleLabelStyle:scoreALabel withName:@"R"];
+        [self setTitleLabelStyle:scoreBLabel withName:@"E"];
+        [self setTitleLabelStyle:scoreCLabel withName:@"M"];
+        [self setTitleLabelStyle:scoreDLabel withName:@"S"];
+        [self setTitleLabelStyle:scoreELabel withName:@"W"];
+        [contentScrollView setContentSize:CGSizeMake(SCREEN_WIDTH-20, 1150)];
+    }
+}
+
+- (void)setupSubViews1
+{
     //***** 总分 *****//
     UILabel *resultScoreLabel = [UILabel new];
     [contentScrollView addSubview:resultScoreLabel];
     [resultScoreLabel mas_makeConstraints:^(MASConstraintMaker *make){
-        make.top.equalTo(resultWSplitView.mas_bottom).offset(28);
-        make.left.equalTo(resultWSplitView).offset(5);
+        make.top.equalTo(scoreCSplitView.mas_bottom).offset(28);
+        make.left.equalTo(scoreCSplitView).offset(5);
         make.size.mas_equalTo(CGSizeMake(SCREEN_WIDTH - 20 - 30, 20));
     }];
     [self setTitleLabelStyle:resultScoreLabel withName:@"总分"];
@@ -602,20 +633,20 @@
     }];
     [resultScoreNextStep setImage:[UIImage imageNamed:@"mine_nextstep"]];
 
-    resultScoreTextField = [UITextField new];
-    [contentScrollView addSubview:resultScoreTextField];
-    [resultScoreTextField mas_makeConstraints:^(MASConstraintMaker *make){
+    examScoreTextField = [UITextField new];
+    [contentScrollView addSubview:examScoreTextField];
+    [examScoreTextField mas_makeConstraints:^(MASConstraintMaker *make){
         make.top.equalTo(resultScoreLabel.mas_bottom).offset(1);
         make.left.equalTo(resultScoreLabel);
         make.right.equalTo(resultScoreNextStep.mas_left).offset(-15);
         make.height.equalTo(@50);
     }];
-    [self setTextFieldStyle:resultScoreTextField withTag:9];
+    [self setTextFieldStyle:examScoreTextField withTag:10];
 
     UIView *resultScoreSplitView = [UIView new];
     [contentScrollView addSubview:resultScoreSplitView];
     [resultScoreSplitView mas_makeConstraints:^(MASConstraintMaker *make){
-        make.top.equalTo(resultScoreTextField.mas_bottom).offset(1);
+        make.top.equalTo(examScoreTextField.mas_bottom).offset(1);
         make.left.equalTo(resultScoreLabel).offset(-5);
         make.right.equalTo(resultScoreLabel).offset(5);
         make.height.mas_equalTo(@1);
@@ -628,7 +659,7 @@
     [contentScrollView addSubview:uploadPicLabel];
     [uploadPicLabel mas_makeConstraints:^(MASConstraintMaker *make){
         make.top.equalTo(resultScoreSplitView.mas_bottom).offset(15);
-        make.left.equalTo(resultWSplitView).offset(5);
+        make.left.equalTo(scoreCSplitView).offset(5);
         make.size.mas_equalTo(CGSizeMake(SCREEN_WIDTH - 20 - 30, 20));
     }];
     [self setTitleLabelStyle:uploadPicLabel withName:@"上传成绩"];
@@ -658,7 +689,282 @@
 
     NSMutableAttributedString *detailLabelString = [[NSMutableAttributedString alloc] initWithString:@"支持png,jpg,jpeg等格式,大小不超过5M" attributes: @{NSFontAttributeName: [UIFont fontWithName:@"PingFangSC-Regular" size: 12],NSForegroundColorAttributeName: [UIColor colorWithRed:170/255.0 green:170/255.0 blue:170/255.0 alpha:1.0]}];
     detailLabel.attributedText = detailLabelString;
+}
+
+
+- (void)setupSubViews2
+{
+    //***** scoreD *****//
+    scoreDLabel = [UILabel new];
+    [contentScrollView addSubview:scoreDLabel];
+    [scoreDLabel mas_makeConstraints:^(MASConstraintMaker *make){
+        make.top.equalTo(scoreCSplitView.mas_bottom).offset(28);
+        make.left.equalTo(scoreCSplitView).offset(5);
+        make.size.mas_equalTo(CGSizeMake(SCREEN_WIDTH - 20 - 30, 20));
+    }];
+
+    UIImageView *scoreDNextStep = [UIImageView new];
+    [contentScrollView addSubview:scoreDNextStep];
+    [scoreDNextStep mas_makeConstraints:^(MASConstraintMaker *make){
+        make.top.equalTo(scoreDLabel.mas_bottom).offset(19);
+        make.right.equalTo(scoreDLabel);
+        make.size.mas_equalTo(CGSizeMake(7, 14));
+    }];
+    [scoreDNextStep setImage:[UIImage imageNamed:@"mine_nextstep"]];
+
+    scoreDTextField = [UITextField new];
+    [contentScrollView addSubview:scoreDTextField];
+    [scoreDTextField mas_makeConstraints:^(MASConstraintMaker *make){
+        make.top.equalTo(scoreDLabel.mas_bottom).offset(1);
+        make.left.equalTo(scoreDLabel);
+        make.right.equalTo(scoreDNextStep.mas_left).offset(-15);
+        make.height.equalTo(@50);
+    }];
+    [self setTextFieldStyle:scoreDTextField withTag:8];
+
+    UIView *scoreDSplitView = [UIView new];
+    [contentScrollView addSubview:scoreDSplitView];
+    [scoreDSplitView mas_makeConstraints:^(MASConstraintMaker *make){
+        make.top.equalTo(scoreDTextField.mas_bottom).offset(1);
+        make.left.equalTo(scoreDLabel).offset(-5);
+        make.right.equalTo(scoreDLabel).offset(5);
+        make.height.mas_equalTo(@1);
+    }];
+    [scoreDSplitView setBackgroundColor:RGBA_GGCOLOR(238, 238, 238, 1)];
     
+    
+    //***** 总分 *****//
+    UILabel *resultScoreLabel = [UILabel new];
+    [contentScrollView addSubview:resultScoreLabel];
+    [resultScoreLabel mas_makeConstraints:^(MASConstraintMaker *make){
+        make.top.equalTo(scoreDSplitView.mas_bottom).offset(28);
+        make.left.equalTo(scoreDSplitView).offset(5);
+        make.size.mas_equalTo(CGSizeMake(SCREEN_WIDTH - 20 - 30, 20));
+    }];
+    [self setTitleLabelStyle:resultScoreLabel withName:@"总分"];
+
+    UIImageView *resultScoreNextStep = [UIImageView new];
+    [contentScrollView addSubview:resultScoreNextStep];
+    [resultScoreNextStep mas_makeConstraints:^(MASConstraintMaker *make){
+        make.top.equalTo(resultScoreLabel.mas_bottom).offset(19);
+        make.right.equalTo(resultScoreLabel);
+        make.size.mas_equalTo(CGSizeMake(7, 14));
+    }];
+    [resultScoreNextStep setImage:[UIImage imageNamed:@"mine_nextstep"]];
+
+    examScoreTextField = [UITextField new];
+    [contentScrollView addSubview:examScoreTextField];
+    [examScoreTextField mas_makeConstraints:^(MASConstraintMaker *make){
+        make.top.equalTo(resultScoreLabel.mas_bottom).offset(1);
+        make.left.equalTo(resultScoreLabel);
+        make.right.equalTo(resultScoreNextStep.mas_left).offset(-15);
+        make.height.equalTo(@50);
+    }];
+    [self setTextFieldStyle:examScoreTextField withTag:10];
+
+    UIView *resultScoreSplitView = [UIView new];
+    [contentScrollView addSubview:resultScoreSplitView];
+    [resultScoreSplitView mas_makeConstraints:^(MASConstraintMaker *make){
+        make.top.equalTo(examScoreTextField.mas_bottom).offset(1);
+        make.left.equalTo(resultScoreLabel).offset(-5);
+        make.right.equalTo(resultScoreLabel).offset(5);
+        make.height.mas_equalTo(@1);
+    }];
+    [resultScoreSplitView setBackgroundColor:RGBA_GGCOLOR(238, 238, 238, 1)];
+    
+    
+    //上传照片
+    UILabel *uploadPicLabel = [UILabel new];
+    [contentScrollView addSubview:uploadPicLabel];
+    [uploadPicLabel mas_makeConstraints:^(MASConstraintMaker *make){
+        make.top.equalTo(resultScoreSplitView.mas_bottom).offset(15);
+        make.left.equalTo(scoreDSplitView).offset(5);
+        make.size.mas_equalTo(CGSizeMake(SCREEN_WIDTH - 20 - 30, 20));
+    }];
+    [self setTitleLabelStyle:uploadPicLabel withName:@"上传成绩"];
+    
+    //上传附件按钮
+    uploadFileButton = [UIButton new];
+    [contentScrollView addSubview:uploadFileButton];
+    [uploadFileButton mas_makeConstraints:^(MASConstraintMaker *make){
+        make.top.equalTo(uploadPicLabel.mas_bottom).offset(15);
+        make.left.equalTo(uploadPicLabel);
+        make.size.mas_equalTo(CGSizeMake(78, 78));
+    }];
+    [uploadFileButton setImage:[UIImage imageNamed:@"mine_upload_file"] forState:UIControlStateNormal];
+    [uploadFileButton setAdjustsImageWhenHighlighted:NO];
+    
+    //说明文字
+    UILabel *detailLabel = [UILabel new];
+    [contentScrollView addSubview:detailLabel];
+    [detailLabel mas_makeConstraints:^(MASConstraintMaker *make){
+        make.top.equalTo(uploadFileButton).offset(30);
+        make.left.equalTo(uploadFileButton.mas_right).offset(10);
+        make.size.mas_equalTo(CGSizeMake(220, 18));
+    }];
+    detailLabel.numberOfLines = 0;
+    detailLabel.textAlignment = NSTextAlignmentLeft;
+    detailLabel.alpha = 1.0;
+
+    NSMutableAttributedString *detailLabelString = [[NSMutableAttributedString alloc] initWithString:@"支持png,jpg,jpeg等格式,大小不超过5M" attributes: @{NSFontAttributeName: [UIFont fontWithName:@"PingFangSC-Regular" size: 12],NSForegroundColorAttributeName: [UIColor colorWithRed:170/255.0 green:170/255.0 blue:170/255.0 alpha:1.0]}];
+    detailLabel.attributedText = detailLabelString;
+}
+
+- (void)setupSubViews3
+{
+    //***** scoreD *****//
+    scoreDLabel = [UILabel new];
+    [contentScrollView addSubview:scoreDLabel];
+    [scoreDLabel mas_makeConstraints:^(MASConstraintMaker *make){
+        make.top.equalTo(scoreCSplitView.mas_bottom).offset(28);
+        make.left.equalTo(scoreCSplitView).offset(5);
+        make.size.mas_equalTo(CGSizeMake(SCREEN_WIDTH - 20 - 30, 20));
+    }];
+
+    UIImageView *scoreDNextStep = [UIImageView new];
+    [contentScrollView addSubview:scoreDNextStep];
+    [scoreDNextStep mas_makeConstraints:^(MASConstraintMaker *make){
+        make.top.equalTo(scoreDLabel.mas_bottom).offset(19);
+        make.right.equalTo(scoreDLabel);
+        make.size.mas_equalTo(CGSizeMake(7, 14));
+    }];
+    [scoreDNextStep setImage:[UIImage imageNamed:@"mine_nextstep"]];
+
+    scoreDTextField = [UITextField new];
+    [contentScrollView addSubview:scoreDTextField];
+    [scoreDTextField mas_makeConstraints:^(MASConstraintMaker *make){
+        make.top.equalTo(scoreDLabel.mas_bottom).offset(1);
+        make.left.equalTo(scoreDLabel);
+        make.right.equalTo(scoreDNextStep.mas_left).offset(-15);
+        make.height.equalTo(@50);
+    }];
+    [self setTextFieldStyle:scoreDTextField withTag:8];
+
+    UIView *scoreDSplitView = [UIView new];
+    [contentScrollView addSubview:scoreDSplitView];
+    [scoreDSplitView mas_makeConstraints:^(MASConstraintMaker *make){
+        make.top.equalTo(scoreDTextField.mas_bottom).offset(1);
+        make.left.equalTo(scoreDLabel).offset(-5);
+        make.right.equalTo(scoreDLabel).offset(5);
+        make.height.mas_equalTo(@1);
+    }];
+    [scoreDSplitView setBackgroundColor:RGBA_GGCOLOR(238, 238, 238, 1)];
+    
+    
+    //***** scoreE *****//
+    scoreELabel = [UILabel new];
+    [contentScrollView addSubview:scoreELabel];
+    [scoreELabel mas_makeConstraints:^(MASConstraintMaker *make){
+        make.top.equalTo(scoreDSplitView.mas_bottom).offset(28);
+        make.left.equalTo(scoreDSplitView).offset(5);
+        make.size.mas_equalTo(CGSizeMake(SCREEN_WIDTH - 20 - 30, 20));
+    }];
+
+    UIImageView *scoreENextStep = [UIImageView new];
+    [contentScrollView addSubview:scoreENextStep];
+    [scoreENextStep mas_makeConstraints:^(MASConstraintMaker *make){
+        make.top.equalTo(scoreELabel.mas_bottom).offset(19);
+        make.right.equalTo(scoreELabel);
+        make.size.mas_equalTo(CGSizeMake(7, 14));
+    }];
+    [scoreENextStep setImage:[UIImage imageNamed:@"mine_nextstep"]];
+
+    scoreETextField = [UITextField new];
+    [contentScrollView addSubview:scoreETextField];
+    [scoreETextField mas_makeConstraints:^(MASConstraintMaker *make){
+        make.top.equalTo(scoreELabel.mas_bottom).offset(1);
+        make.left.equalTo(scoreELabel);
+        make.right.equalTo(scoreENextStep.mas_left).offset(-15);
+        make.height.equalTo(@50);
+    }];
+    [self setTextFieldStyle:scoreETextField withTag:9];
+
+    UIView *scoreESplitView = [UIView new];
+    [contentScrollView addSubview:scoreESplitView];
+    [scoreESplitView mas_makeConstraints:^(MASConstraintMaker *make){
+        make.top.equalTo(scoreETextField.mas_bottom).offset(1);
+        make.left.equalTo(scoreELabel).offset(-5);
+        make.right.equalTo(scoreELabel).offset(5);
+        make.height.mas_equalTo(@1);
+    }];
+    [scoreESplitView setBackgroundColor:RGBA_GGCOLOR(238, 238, 238, 1)];
+    
+    
+    //***** 总分 *****//
+    UILabel *resultScoreLabel = [UILabel new];
+    [contentScrollView addSubview:resultScoreLabel];
+    [resultScoreLabel mas_makeConstraints:^(MASConstraintMaker *make){
+        make.top.equalTo(scoreESplitView.mas_bottom).offset(28);
+        make.left.equalTo(scoreESplitView).offset(5);
+        make.size.mas_equalTo(CGSizeMake(SCREEN_WIDTH - 20 - 30, 20));
+    }];
+    [self setTitleLabelStyle:resultScoreLabel withName:@"总分"];
+
+    UIImageView *resultScoreNextStep = [UIImageView new];
+    [contentScrollView addSubview:resultScoreNextStep];
+    [resultScoreNextStep mas_makeConstraints:^(MASConstraintMaker *make){
+        make.top.equalTo(resultScoreLabel.mas_bottom).offset(19);
+        make.right.equalTo(resultScoreLabel);
+        make.size.mas_equalTo(CGSizeMake(7, 14));
+    }];
+    [resultScoreNextStep setImage:[UIImage imageNamed:@"mine_nextstep"]];
+
+    examScoreTextField = [UITextField new];
+    [contentScrollView addSubview:examScoreTextField];
+    [examScoreTextField mas_makeConstraints:^(MASConstraintMaker *make){
+        make.top.equalTo(resultScoreLabel.mas_bottom).offset(1);
+        make.left.equalTo(resultScoreLabel);
+        make.right.equalTo(resultScoreNextStep.mas_left).offset(-15);
+        make.height.equalTo(@50);
+    }];
+    [self setTextFieldStyle:examScoreTextField withTag:10];
+
+    UIView *resultScoreSplitView = [UIView new];
+    [contentScrollView addSubview:resultScoreSplitView];
+    [resultScoreSplitView mas_makeConstraints:^(MASConstraintMaker *make){
+        make.top.equalTo(examScoreTextField.mas_bottom).offset(1);
+        make.left.equalTo(resultScoreLabel).offset(-5);
+        make.right.equalTo(resultScoreLabel).offset(5);
+        make.height.mas_equalTo(@1);
+    }];
+    [resultScoreSplitView setBackgroundColor:RGBA_GGCOLOR(238, 238, 238, 1)];
+    
+    
+    //上传照片
+    UILabel *uploadPicLabel = [UILabel new];
+    [contentScrollView addSubview:uploadPicLabel];
+    [uploadPicLabel mas_makeConstraints:^(MASConstraintMaker *make){
+        make.top.equalTo(resultScoreSplitView.mas_bottom).offset(15);
+        make.left.equalTo(scoreESplitView).offset(5);
+        make.size.mas_equalTo(CGSizeMake(SCREEN_WIDTH - 20 - 30, 20));
+    }];
+    [self setTitleLabelStyle:uploadPicLabel withName:@"上传成绩"];
+    
+    //上传附件按钮
+    uploadFileButton = [UIButton new];
+    [contentScrollView addSubview:uploadFileButton];
+    [uploadFileButton mas_makeConstraints:^(MASConstraintMaker *make){
+        make.top.equalTo(uploadPicLabel.mas_bottom).offset(15);
+        make.left.equalTo(uploadPicLabel);
+        make.size.mas_equalTo(CGSizeMake(78, 78));
+    }];
+    [uploadFileButton setImage:[UIImage imageNamed:@"mine_upload_file"] forState:UIControlStateNormal];
+    [uploadFileButton setAdjustsImageWhenHighlighted:NO];
+    
+    //说明文字
+    UILabel *detailLabel = [UILabel new];
+    [contentScrollView addSubview:detailLabel];
+    [detailLabel mas_makeConstraints:^(MASConstraintMaker *make){
+        make.top.equalTo(uploadFileButton).offset(30);
+        make.left.equalTo(uploadFileButton.mas_right).offset(10);
+        make.size.mas_equalTo(CGSizeMake(220, 18));
+    }];
+    detailLabel.numberOfLines = 0;
+    detailLabel.textAlignment = NSTextAlignmentLeft;
+    detailLabel.alpha = 1.0;
+
+    NSMutableAttributedString *detailLabelString = [[NSMutableAttributedString alloc] initWithString:@"支持png,jpg,jpeg等格式,大小不超过5M" attributes: @{NSFontAttributeName: [UIFont fontWithName:@"PingFangSC-Regular" size: 12],NSForegroundColorAttributeName: [UIColor colorWithRed:170/255.0 green:170/255.0 blue:170/255.0 alpha:1.0]}];
+    detailLabel.attributedText = detailLabelString;
 }
 
 #pragma mark - 设置控件监听事件 -
@@ -680,14 +986,12 @@
     dateTextField.text = date;
     locationTextField.text = location;
     orgTextField.text = org;
-    resultLTextField.text = resultL;
-    resultSTextField.text = resultS;
-    resultRTextField.text = resultR;
-    resultWTextField.text = resultW;
-    resultScoreTextField.text = resultScore;
-    
-    //判断保存按钮是否可点击
-    [self isShowSavaButton];
+    scoreATextField.text = scoreA;
+    scoreBTextField.text = scoreB;
+    scoreCTextField.text = scoreC;
+    scoreDTextField.text = scoreD;
+    scoreETextField.text = scoreE;
+    examScoreTextField.text = examScore;
 }
 
 #pragma mark - 返回按钮点击 -
@@ -712,11 +1016,12 @@
                                   @"date":date,
                                   @"location":location,
                                   @"org":org,
-                                  @"resultL":resultL,
-                                  @"resultS":resultS,
-                                  @"resultR":resultR,
-                                  @"resultW":resultW,
-                                  @"resultScore":resultScore
+                                  @"scoreA":scoreA,
+                                  @"scoreB":scoreB,
+                                  @"scoreC":scoreC,
+                                  @"scoreD":scoreD,
+                                  @"scoreE":scoreE,
+                                  @"examScore":examScore
     };
     
     //Block传值step 3:传值类将要传的值传入自己的block中
@@ -731,117 +1036,67 @@
     
     NSInteger tfTag = textField.tag - TEXTFIELD_TAG;
     
-    if(tfTag == 1){
-        //考试类型
-        [AvalonsoftPickerView showStringPickerWithTitle:@"" DataSource:@[@"ACT", @"SSAT", @"TOEFL", @"SAT", @"GMAT"] DefaultSelValue:@"TOEFL" IsAutoSelect:NO ResultBlock:^(id selectValue, id selectRow){
-            //回调
-            
-            self->type = selectValue;
-            self->typeTextField.text = selectValue;
-            
-            //判断保存按钮是否可点击
-            [self isShowSavaButton];
-
-        }];
-
-    }else if(tfTag == 2){
-        //考试日期
-        NSDate *now = [NSDate date];
-        NSDateFormatter *fmt = [[NSDateFormatter alloc] init];
-        fmt.dateFormat = @"yyyy-MM-dd HH:mm:ss";
-        NSString *nowStr = [fmt stringFromDate:now];
-
-        [AvalonsoftPickerView showDatePickerWithTitle:@"" DateType:UIDatePickerModeDate DefaultSelValue:@"" MinDateStr:@"1900-01-01 00:00:00" MaxDateStr:nowStr IsAutoSelect:NO Manager:nil ResultBlock:^(NSString *selectValue){
-            //回调
-            self->date = [selectValue stringByReplacingOccurrencesOfString:@"-" withString:@"/"];
-            self->dateTextField.text = [selectValue stringByReplacingOccurrencesOfString:@"-" withString:@"/"];
-            
-            //判断保存按钮是否可点击
-            [self isShowSavaButton];
-
-        }];
-
-    }else {
-    
-        NSString *title = @"";
-        NSString *content = @"";
-        if(tfTag == 3){
-            title = @"考试地点";
-            content = location;
-            
-        }else if(tfTag == 4){
-            title = @"参加的培训机构";
-            content = org;
-            
-        }else if(tfTag == 5){
-            title = @"L";
-            content = resultL;
-        
-        }else if(tfTag == 6){
-            title = @"S";
-            content = resultS;
-        
-        }else if(tfTag == 7){
-            title = @"R";
-            content = resultR;
-        
-        }else if(tfTag == 8){
-            title = @"W";
-            content = resultW;
-        
-        }else if(tfTag == 9){
-            title = @"总分";
-            content = resultScore;
+    switch (tfTag) {
+        case 4:
+        case 5:
+        case 6:
+        case 7:
+        case 8:
+        case 9:
+        case 10: {
+            return YES;
         }
+            break;
         
-        //通过字典将值传到后台
-        NSDictionary *sendDataDic = @{@"title":title,
-                                      @"content":content
-        };
-        
-        MineResultShowContentEditViewController *contentEditVC = [[MineResultShowContentEditViewController alloc] init];
-        //设置block回调
-        [contentEditVC setSendValueBlock:^(NSDictionary *valueDict){
-            //回调函数
-            NSString *returnContent = valueDict[@"content"];
+        case 1: {
+            [self resignFirstResponderForTextField];
+
+            __weak typeof(self) weakSelf = self;
+            [AvalonsoftPickerView showStringPickerWithTitle:@"" DataSource:@[@"TOEFL",@"IELTS",@"TOEFL",@"GRE",@"GMAT",@"SAT",@"SSAT",@"ACT"] DefaultSelValue:@"TOEFL" IsAutoSelect:NO ResultBlock:^(id selectValue, id selectRow){
+                __strong typeof(weakSelf) strongSelf = weakSelf;
+
+                strongSelf->type = selectValue;
+                strongSelf->typeTextField.text = selectValue;
+            }];
+        }
+            break;
             
-            if(tfTag == 3){
-                self->location = returnContent;
-                self->locationTextField.text = returnContent;;
+        case 2: {
+            [self resignFirstResponderForTextField];
+
+            NSDate *now = [NSDate date];
+            NSDateFormatter *fmt = [[NSDateFormatter alloc] init];
+            fmt.dateFormat = @"yyyy-MM-dd HH:mm:ss";
+            NSString *nowStr = [fmt stringFromDate:now];
+
+            __weak typeof(self) weakSelf = self;
+            [AvalonsoftPickerView showDatePickerWithTitle:@"" DateType:UIDatePickerModeDate DefaultSelValue:@"" MinDateStr:@"1900-01-01 00:00:00" MaxDateStr:nowStr IsAutoSelect:NO Manager:nil ResultBlock:^(NSString *selectValue){
+                __strong typeof(weakSelf) strongSelf = weakSelf;
                 
-            }else if(tfTag == 4){
-                self->org = returnContent;
-                self->orgTextField.text = returnContent;;
+//                self->date = [selectValue stringByReplacingOccurrencesOfString:@"-" withString:@"/"];
+//                self->dateTextField.text = [selectValue stringByReplacingOccurrencesOfString:@"-" withString:@"/"];
                 
-            }else if(tfTag == 5){
-                self->resultL = returnContent;
-                self->resultLTextField.text = returnContent;;
+                strongSelf->date = selectValue;
+                strongSelf->dateTextField.text = selectValue;
+            }];
+        }
+            break;
             
-            }else if(tfTag == 6){
-                self->resultS = returnContent;
-                self->resultSTextField.text = returnContent;;
+        case 3: {
+            [self resignFirstResponderForTextField];
+
+            __weak typeof(self) weakSelf = self;
+            [AvalonsoftPickerView showAddressPickerWithTitle:@"" DefaultSelected:@[@11, @1, @5] IsAutoSelect:NO Manager:nil ResultBlock:^(NSArray *selectAddressArr, NSArray *selectAddressRow){
+                __strong typeof(weakSelf) strongSelf = weakSelf;
+                
+                strongSelf->location = [NSString stringWithFormat:@"%@ %@ %@", selectAddressArr[0], selectAddressArr[1],selectAddressArr[2]];
+                strongSelf->locationTextField.text = [NSString stringWithFormat:@"%@ %@ %@", selectAddressArr[0], selectAddressArr[1],selectAddressArr[2]];
+            }];
+        }
+            break;
             
-            }else if(tfTag == 7){
-                self->resultR = returnContent;
-                self->resultRTextField.text = returnContent;;
-            
-            }else if(tfTag == 8){
-                self->resultW = returnContent;
-                self->resultWTextField.text = returnContent;;
-            
-            }else if(tfTag == 9){
-                self->resultScore = returnContent;
-                self->resultScoreTextField.text = returnContent;;
-            }
-            
-            //判断保存按钮是否可点击
-            [self isShowSavaButton];
-            
-        }];
-        
-        contentEditVC.dataDic = sendDataDic;
-        [self.navigationController pushViewController:contentEditVC animated:YES];
-    
+        default:
+            break;
     }
     
     return NO;
@@ -873,18 +1128,29 @@
 #pragma mark - 判断是否显示保存按钮 -
 -(void)isShowSavaButton
 {
-    if(![type isEqualToString:@""] && ![date isEqualToString:@""] && ![location isEqualToString:@""]
-       && ![org isEqualToString:@""] && ![resultL isEqualToString:@""] && ![resultS isEqualToString:@""]
-       && ![resultR isEqualToString:@""] && ![resultW isEqualToString:@""] && ![resultScore isEqualToString:@""]){
-        
-        operateButton.hidden = YES;
-        clickableOperateButton.hidden = NO;
-        
-    }else{
-        
-        operateButton.hidden = NO;
-        clickableOperateButton.hidden = YES;
-    }
+//    if(![type isEqualToString:@""] && ![date isEqualToString:@""] && ![location isEqualToString:@""]
+//       && ![org isEqualToString:@""] && ![resultL isEqualToString:@""] && ![resultS isEqualToString:@""]
+//       && ![resultR isEqualToString:@""] && ![resultW isEqualToString:@""] && ![resultScore isEqualToString:@""]){
+//
+//        operateButton.hidden = YES;
+//        clickableOperateButton.hidden = NO;
+//
+//    }else{
+//
+//        operateButton.hidden = NO;
+//        clickableOperateButton.hidden = YES;
+//    }
+}
+
+- (void)resignFirstResponderForTextField
+{
+    [orgTextField resignFirstResponder];
+    [scoreATextField resignFirstResponder];
+    [scoreBTextField resignFirstResponder];
+    [scoreCTextField resignFirstResponder];
+    [scoreDTextField resignFirstResponder];
+    [scoreETextField resignFirstResponder];
+    [examScoreTextField resignFirstResponder];
 }
 
 @end

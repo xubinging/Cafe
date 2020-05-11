@@ -60,6 +60,7 @@ typedef NS_ENUM(NSInteger, AvalonsoftStringPickerViewStyle) {
                            Manager:(AvalonsoftPickerViewManager *)manager
                        ResultBlock:(AvalonsoftAddressResultBlock)resultBlock;
 
+
 //自定义使用的
 + (void)showAddressPickerWithTitle:(NSString *)title
                    DefaultSelected:(NSArray *)defaultSelectedArr
