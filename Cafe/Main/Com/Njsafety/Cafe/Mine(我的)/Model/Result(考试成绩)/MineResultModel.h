@@ -25,6 +25,18 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) NSString *examScore;          //总分
 @property (nonatomic, copy) NSString *scoreFile;
 
+
+@property (nonatomic, copy) NSString *accountId;
+@property (nonatomic, copy) NSString *ID;
+@property (nonatomic, copy) NSString *areaType;
+@property (nonatomic, copy) NSString *countryCode;
+@property (nonatomic, copy) NSString *countryName;
+@property (nonatomic, copy) NSString *provincesCode;
+@property (nonatomic, copy) NSString *provincesName;
+@property (nonatomic, copy) NSString *cityCode;
+@property (nonatomic, copy) NSString *cityName;
+@property (nonatomic, copy) NSString *insid;
+
 @property (nonatomic, copy) NSString *showLanguage; //CH -- 中文；EN -- 英文
 
 //工厂方法，需要传入字典。可以完成model的创建和属性的b批量赋值。
@@ -33,3 +45,41 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 NS_ASSUME_NONNULL_END
+
+
+
+//addTime = 1589186890000;
+//address = "\U5185\U8499\U53e4\U81ea\U6cbb\U533a\U8d64\U5cf0\U5e02";
+//areaType = 1;
+//cityCode = 150400;
+//cityName = "\U8d64\U5cf0\U5e02";
+//countryCode = "";
+//countryName = "";
+//delSign = 0;
+//examDate = "2020-05-13";
+//examOrgan = sgrgwg;
+//examScore = 120;
+//examType = 1;
+//id = A81858A4994442F79304440C6AD26AA6;
+//insid = 4350;
+//modTime = "<null>";
+//nickname = zhuzhaolong;
+//operator = "<null>";
+//postId = "<null>";
+//presentFlag = "<null>";
+//provincesCode = 150000;
+//provincesName = "\U5185\U8499\U53e4\U81ea\U6cbb\U533a";
+//remarks = "<null>";
+//scoreA = 30;
+//scoreB = 30;
+//scoreC = 30;
+//scoreD = 30;
+//scoreE = "";
+//scoreF = "<null>";
+//scoreFile = "group1/M00/00/2C/Mes7UV65ESqAevcnAAkYBIl5muQ428.jpg";
+//scoreG = "<null>";
+//scoreH = "<null>";
+//scoreI = "<null>";
+//scoreJ = "<null>";
+//status = "<null>";
+//username = zhuzhaolong;

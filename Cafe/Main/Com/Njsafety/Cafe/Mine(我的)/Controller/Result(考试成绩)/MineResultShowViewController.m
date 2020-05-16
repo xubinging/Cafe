@@ -20,8 +20,7 @@
     
     @private UIView *contentView;
     @private UIScrollView *contentScrollView;   //滑动视图
-    @private UIButton *operateButton;           //本页操作按钮
-    @private UIButton *clickableOperateButton;  //可点击的操作按钮
+    @private UIButton *saveButton;              //保存按钮
     @private UIView *scoreCSplitView;
     
     @private UITextField *typeTextField;        //考试类型
@@ -69,7 +68,6 @@
     [self initNavigationView];
     [self initView];
     [self initScrollView];
-    [self setListener];
     [self setData];
 }
 
@@ -218,53 +216,38 @@
     contentView.layer.shadowOpacity = 1;
     contentView.layer.shadowRadius = 10;
     
-    //先加2个按钮
-    //不可点击的
-    operateButton = [UIButton new];
-    [contentView addSubview:operateButton];
-    [operateButton mas_makeConstraints:^(MASConstraintMaker *make){
+    //保存按钮
+    saveButton = [UIButton new];
+    [contentView addSubview:saveButton];
+    [saveButton mas_makeConstraints:^(MASConstraintMaker *make){
         make.bottom.equalTo(contentView).offset(-35);
         make.left.equalTo(contentView).offset(15);
         make.right.equalTo(contentView).offset(-15);
         make.height.mas_equalTo(@46);
     }];
-    operateButton.layer.backgroundColor = [UIColor colorWithRed:158/255.0 green:226/255.0 blue:255/255.0 alpha:1.0].CGColor;
-    operateButton.layer.cornerRadius = 23;
-    
-    NSMutableAttributedString *operateButtonString = [[NSMutableAttributedString alloc] initWithString:@"保存" attributes: @{NSFontAttributeName: [UIFont fontWithName:@"PingFangSC-Regular" size: 16],NSForegroundColorAttributeName: [UIColor colorWithRed:255/255.0 green:255/255.0 blue:255/255.0 alpha:1.0]}];
-    [operateButton setAttributedTitle:operateButtonString forState:UIControlStateNormal];
-    
-    //可点击的
-    clickableOperateButton = [UIButton new];
-    [contentView addSubview:clickableOperateButton];
-    [clickableOperateButton mas_makeConstraints:^(MASConstraintMaker *make){
-        make.bottom.equalTo(contentView).offset(-35);
-        make.left.equalTo(contentView).offset(15);
-        make.right.equalTo(contentView).offset(-15);
-        make.height.mas_equalTo(@46);
-    }];
-    clickableOperateButton.layer.cornerRadius = 23;
-    clickableOperateButton.layer.shadowColor = [UIColor colorWithRed:32/255.0 green:188/255.0 blue:255/255.0 alpha:0.3].CGColor;
-    clickableOperateButton.layer.shadowOffset = CGSizeMake(0,5);
-    clickableOperateButton.layer.shadowOpacity = 1;
-    clickableOperateButton.layer.shadowRadius = 15;
+    saveButton.layer.cornerRadius = 23;
+    saveButton.layer.shadowColor = [UIColor colorWithRed:32/255.0 green:188/255.0 blue:255/255.0 alpha:0.3].CGColor;
+    saveButton.layer.shadowOffset = CGSizeMake(0,5);
+    saveButton.layer.shadowOpacity = 1;
+    saveButton.layer.shadowRadius = 15;
+    [saveButton addTarget:self action:@selector(saveButtonClick) forControlEvents:UIControlEventTouchUpInside];
     
     //设置文字
-    NSMutableAttributedString *clickableOperateButtonString = [[NSMutableAttributedString alloc] initWithString:@"保存" attributes: @{NSFontAttributeName: [UIFont fontWithName:@"PingFangSC-Regular" size: 16],NSForegroundColorAttributeName: [UIColor colorWithRed:255/255.0 green:255/255.0 blue:255/255.0 alpha:1.0]}];
-    [clickableOperateButton setAttributedTitle:clickableOperateButtonString forState:UIControlStateNormal];
+    NSMutableAttributedString *saveButtonString = [[NSMutableAttributedString alloc] initWithString:@"保存" attributes: @{NSFontAttributeName: [UIFont fontWithName:@"PingFangSC-Regular" size: 16],NSForegroundColorAttributeName: [UIColor colorWithRed:255/255.0 green:255/255.0 blue:255/255.0 alpha:1.0]}];
+    [saveButton setAttributedTitle:saveButtonString forState:UIControlStateNormal];
     
     [self.view layoutIfNeeded];
     
     // gradient
     CAGradientLayer *gl = [CAGradientLayer layer];
-    gl.frame = clickableOperateButton.bounds;
+    gl.frame = saveButton.bounds;
     gl.startPoint = CGPointMake(0.92, 0.13);
     gl.endPoint = CGPointMake(0, 0.96);
     gl.colors = @[(__bridge id)[UIColor colorWithRed:32/255.0 green:188/255.0 blue:255/255.0 alpha:1.0].CGColor, (__bridge id)[UIColor colorWithRed:0/255.0 green:154/255.0 blue:255/255.0 alpha:1.0].CGColor];
     gl.locations = @[@(0), @(1.0f)];
     gl.cornerRadius = 23;
     //添加到最底层，否则会覆盖文字
-    [clickableOperateButton.layer insertSublayer:gl atIndex:0];
+    [saveButton.layer insertSublayer:gl atIndex:0];
 }
 
 #pragma mark - 初始化滑动视图 -
@@ -275,7 +258,7 @@
     [contentView addSubview:contentScrollView];
     [contentScrollView mas_makeConstraints:^(MASConstraintMaker *make){
         make.top.equalTo(contentView);
-        make.bottom.equalTo(operateButton.mas_top).offset(-30);
+        make.bottom.equalTo(saveButton.mas_top).offset(-30);
         make.left.equalTo(contentView);
         make.right.equalTo(contentView);
     }];
@@ -970,18 +953,6 @@
     detailLabel.attributedText = detailLabelString;
 }
 
-#pragma mark - 设置控件监听事件 -
--(void)setListener
-{
-    //2个操作按钮
-    operateButton.hidden = NO;
-    operateButton.userInteractionEnabled = NO;
-    
-    clickableOperateButton.hidden = YES;
-    //添加事件
-    [clickableOperateButton addTarget:self action:@selector(saveButtonClick) forControlEvents:UIControlEventTouchUpInside];
-}
-
 #pragma mark - 设置参数 -
 -(void)setData
 {
@@ -1143,23 +1114,6 @@
     }];
 }
 
-#pragma mark - 判断是否显示保存按钮 -
--(void)isShowSavaButton
-{
-//    if(![type isEqualToString:@""] && ![date isEqualToString:@""] && ![location isEqualToString:@""]
-//       && ![org isEqualToString:@""] && ![resultL isEqualToString:@""] && ![resultS isEqualToString:@""]
-//       && ![resultR isEqualToString:@""] && ![resultW isEqualToString:@""] && ![resultScore isEqualToString:@""]){
-//
-//        operateButton.hidden = YES;
-//        clickableOperateButton.hidden = NO;
-//
-//    }else{
-//
-//        operateButton.hidden = NO;
-//        clickableOperateButton.hidden = YES;
-//    }
-}
-
 - (void)resignFirstResponderForTextField
 {
     [orgTextField resignFirstResponder];
@@ -1190,5 +1144,128 @@
 
     [self resignFirstResponderForTextField];
 }
+
+
+#pragma mark - 网络请求
+//- (void)editMineExamScoreList
+//{
+//    __weak typeof(self) weakSelf = self;
+//    [AvalonsoftHasNetwork avalonsoft_hasNetwork:^(bool has) {
+//        __strong typeof(weakSelf) strongSelf = weakSelf;
+//
+//        if (has) {
+//            NSMutableDictionary *root = [NSMutableDictionary dictionary];
+//            [root setValue:strongSelf->type forKey:@"examType"];
+//            [root setValue:strongSelf->examScore forKey:@"examScore"];
+//            [root setValue:strongSelf->date forKey:@"examDate"];
+//            [root setValue:strongSelf->scoreA forKey:@"scoreA"];
+//            [root setValue:strongSelf->scoreB forKey:@"scoreB"];
+//            [root setValue:strongSelf->scoreC forKey:@"scoreC"];
+//            [root setValue:strongSelf->scoreD forKey:@"scoreD"];
+//            [root setValue:strongSelf->scoreE forKey:@"scoreE"];
+//
+//
+//
+//
+//            [root setValue:[_UserInfo accountId] forKey:@"accountId"];
+//            [root setValue:@"0" forKey:@"delSign"];
+//
+//
+//
+//
+//
+//"id(编号 编辑考试成绩的id)
+//areaType(考试地点类型,1:表示国内,2:国外)
+//countryCode(考试国家Code)
+//countryName(考试国家Name)
+//provincesCode(考试省份Code,国内使用)
+//provincesName(考试省份Name,国内使用)
+//cityCode(考试城市Code,国内使用)
+//cityName(考试城市Name,国内使用)
+//address(考试地点)
+//examOrgan(参加的培训机构)
+//insid(机构id)
+//scoreFile(成绩单)
+//nickname(昵称)
+//
+//
+//
+//accountId = 1165;
+//addTime = 1589186890000;
+//address = "\U5185\U8499\U53e4\U81ea\U6cbb\U533a\U8d64\U5cf0\U5e02";
+//areaType = 1;
+//cityCode = 150400;
+//cityName = "\U8d64\U5cf0\U5e02";
+//countryCode = "";
+//countryName = "";
+//delSign = 0;
+//examDate = "2020-05-13";
+//examOrgan = sgrgwg;
+//examScore = 120;
+//examType = 1;
+//id = A81858A4994442F79304440C6AD26AA6;
+//insid = 4350;
+//modTime = "<null>";
+//nickname = zhuzhaolong;
+//operator = "<null>";
+//postId = "<null>";
+//presentFlag = "<null>";
+//provincesCode = 150000;
+//provincesName = "\U5185\U8499\U53e4\U81ea\U6cbb\U533a";
+//remarks = "<null>";
+//scoreA = 30;
+//scoreB = 30;
+//scoreC = 30;
+//scoreD = 30;
+//scoreE = "";
+//scoreF = "<null>";
+//scoreFile = "group1/M00/00/2C/Mes7UV65ESqAevcnAAkYBIl5muQ428.jpg";
+//scoreG = "<null>";
+//scoreH = "<null>";
+//scoreI = "<null>";
+//scoreJ = "<null>";
+//status = "<null>";
+//username = zhuzhaolong;
+//
+//
+//
+//
+//            [[AvalonsoftHttpClient avalonsoftHttpClient] requestWithAction:COMMON_SERVER_URL actionName:MINE_MY_EXAM_SCORE_LIST method:HttpRequestPost paramenters:root prepareExecute:^{
+//
+//            } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull responseObject) {
+//
+//                NSLog(@"handleNetworkRequestWithResponseObject responseObject=%@",responseObject);
+//                _M *responseModel = [_M createResponseJsonObj:responseObject];
+//                NSLog(@"handleNetworkRequestWithResponseObject %ld %@",responseModel.rescode,responseModel.msg);
+//
+//                @try {
+//                    if(responseModel.rescode == 200){
+//                        NSDictionary *rspData = responseModel.data;
+//                        NSArray *rspDataArray = rspData[@"dataList"];
+//                       [strongSelf.resultArray removeAllObjects];
+//                       for(int i=0; i<rspDataArray.count; i++){
+//                           MineResultModel *model = [MineResultModel modelWithDict:rspDataArray[i]];
+//                           [strongSelf.resultArray addObject:model];
+//                       }
+//
+//                        [strongSelf.resultTableView reloadData];
+//                    }
+//                } @catch (NSException *exception) {
+//                    @throw exception;
+//                    //给出提示信息
+//                    [AvalonsoftMsgAlertView showWithTitle:@"信息" content:@"系统发生错误，请与平台管理员联系解决。"  buttonTitles:@[@"关闭"] buttonClickedBlock:nil];
+//                }
+//
+//            } failure:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error) {
+//                //请求失败
+//                NSLog(@"%@",error);
+//            }];
+//
+//        } else {
+//            //没网
+//            //            [AvalonsoftMsgAlertView showWithTitle:@"信息" content:@"请检查网络" buttonTitles:@[@"关闭"] buttonClickedBlock:nil];
+//        }
+//    }];
+//}
 
 @end
