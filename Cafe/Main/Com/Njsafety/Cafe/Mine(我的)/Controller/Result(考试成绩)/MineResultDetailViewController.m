@@ -70,7 +70,7 @@
     @private NSString *examScore;
     @private NSString *scoreFile;
     
-    @private BOOL isViewUp;
+//    @private BOOL isViewUp;
 }
 
 @end
@@ -85,7 +85,7 @@
     [self getParentVars];
     [self initNavigationView];
     [self initView];
-    [self setListener];
+//    [self setListener];
     [self setData];
 }
 
@@ -95,7 +95,7 @@
     self.view.backgroundColor = RGBA_GGCOLOR(249, 249, 249, 1);
     
     //内容视图此时所在位置，是否在上方
-    isViewUp = YES;
+//    isViewUp = YES;
 }
 
 #pragma mark - 初始化数据 -
@@ -454,21 +454,21 @@
 }
 
 #pragma mark - 添加监听 -
--(void)setListener
-{
-    [self.view layoutIfNeeded];
-    
-    //添加上滑、下滑手势监测
-    UISwipeGestureRecognizer *recognizer;
-    //上滑
-    recognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(handleSwipeFrom:)];
-    [recognizer setDirection:(UISwipeGestureRecognizerDirectionUp)];
-    [contentView addGestureRecognizer:recognizer];
-    //下滑
-    recognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(handleSwipeFrom:)];
-    [recognizer setDirection:(UISwipeGestureRecognizerDirectionDown)];
-    [contentView addGestureRecognizer:recognizer];
-}
+//-(void)setListener
+//{
+//    [self.view layoutIfNeeded];
+//
+//    //添加上滑、下滑手势监测
+//    UISwipeGestureRecognizer *recognizer;
+//    //上滑
+//    recognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(handleSwipeFrom:)];
+//    [recognizer setDirection:(UISwipeGestureRecognizerDirectionUp)];
+//    [contentView addGestureRecognizer:recognizer];
+//    //下滑
+//    recognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(handleSwipeFrom:)];
+//    [recognizer setDirection:(UISwipeGestureRecognizerDirectionDown)];
+//    [contentView addGestureRecognizer:recognizer];
+//}
 
 #pragma mark - 设置参数 -
 -(void)setData
@@ -605,37 +605,37 @@
 }
 
 #pragma mark - 手势处理 -
--(void)handleSwipeFrom:(UISwipeGestureRecognizer *)recognizer {
-    if (recognizer.direction==UISwipeGestureRecognizerDirectionDown) {
-        //向下滑动，如何这时候内容视图在上方，就滑下来
-        if(isViewUp){
-            [UIView beginAnimations:nil context:nil];
-            [UIView setAnimationDuration:0.3];
-            CGPoint point = contentView.center;
-            point.y += 115;
-            [contentView setCenter:point];
-            [UIView commitAnimations];
-            
-            //此时在下方
-            isViewUp = NO;
-        }
-    }
-
-    if (recognizer.direction==UISwipeGestureRecognizerDirectionUp) {
-        //向上滑动，如果这时候内容视图在下方，就滑上来
-        if(!isViewUp){
-            [UIView beginAnimations:nil context:nil];
-            [UIView setAnimationDuration:0.3];
-            CGPoint point = contentView.center;
-            point.y -= 115;
-            [contentView setCenter:point];
-            [UIView commitAnimations];
-            
-            //此时在上方
-            isViewUp = YES;
-        }
-    }
-}
+//-(void)handleSwipeFrom:(UISwipeGestureRecognizer *)recognizer {
+//    if (recognizer.direction==UISwipeGestureRecognizerDirectionDown) {
+//        //向下滑动，如何这时候内容视图在上方，就滑下来
+//        if(isViewUp){
+//            [UIView beginAnimations:nil context:nil];
+//            [UIView setAnimationDuration:0.3];
+//            CGPoint point = contentView.center;
+//            point.y += 115;
+//            [contentView setCenter:point];
+//            [UIView commitAnimations];
+//
+//            //此时在下方
+//            isViewUp = NO;
+//        }
+//    }
+//
+//    if (recognizer.direction==UISwipeGestureRecognizerDirectionUp) {
+//        //向上滑动，如果这时候内容视图在下方，就滑上来
+//        if(!isViewUp){
+//            [UIView beginAnimations:nil context:nil];
+//            [UIView setAnimationDuration:0.3];
+//            CGPoint point = contentView.center;
+//            point.y -= 115;
+//            [contentView setCenter:point];
+//            [UIView commitAnimations];
+//
+//            //此时在上方
+//            isViewUp = YES;
+//        }
+//    }
+//}
 
 #pragma mark - 返回按钮点击 -
 -(void)backButtonClick
