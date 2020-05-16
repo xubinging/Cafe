@@ -8,8 +8,7 @@
 //  晒晒成绩
 
 #import "MineResultShowViewController.h"
-
-#import "MineResultShowContentEditViewController.h"
+#import "AvalonsoftImagePicker.h"
 
 #define TEXTFIELD_TAG 10000
 
@@ -674,6 +673,8 @@
     }];
     [uploadFileButton setImage:[UIImage imageNamed:@"mine_upload_file"] forState:UIControlStateNormal];
     [uploadFileButton setAdjustsImageWhenHighlighted:NO];
+    [uploadFileButton addTarget:self action:@selector(uploadExamResult) forControlEvents:UIControlEventTouchUpInside];
+
     
     //说明文字
     UILabel *detailLabel = [UILabel new];
@@ -793,6 +794,7 @@
     }];
     [uploadFileButton setImage:[UIImage imageNamed:@"mine_upload_file"] forState:UIControlStateNormal];
     [uploadFileButton setAdjustsImageWhenHighlighted:NO];
+    [uploadFileButton addTarget:self action:@selector(uploadExamResult) forControlEvents:UIControlEventTouchUpInside];
     
     //说明文字
     UILabel *detailLabel = [UILabel new];
@@ -950,6 +952,7 @@
     }];
     [uploadFileButton setImage:[UIImage imageNamed:@"mine_upload_file"] forState:UIControlStateNormal];
     [uploadFileButton setAdjustsImageWhenHighlighted:NO];
+    [uploadFileButton addTarget:self action:@selector(uploadExamResult) forControlEvents:UIControlEventTouchUpInside];
     
     //说明文字
     UILabel *detailLabel = [UILabel new];
@@ -1052,11 +1055,12 @@
             [self resignFirstResponderForTextField];
 
             __weak typeof(self) weakSelf = self;
-            [AvalonsoftPickerView showStringPickerWithTitle:@"" DataSource:@[@"TOEFL",@"IELTS",@"TOEFL",@"GRE",@"GMAT",@"SAT",@"SSAT",@"ACT"] DefaultSelValue:@"TOEFL" IsAutoSelect:NO ResultBlock:^(id selectValue, id selectRow){
+            [AvalonsoftPickerView showStringPickerWithTitle:@"" DataSource:@[@"TOEFL",@"IELTS",@"GRE",@"GMAT",@"SAT",@"SSAT",@"ACT"] DefaultSelValue:@"TOEFL" IsAutoSelect:NO ResultBlock:^(id selectValue, id selectRow){
                 __strong typeof(weakSelf) strongSelf = weakSelf;
 
                 strongSelf->type = selectValue;
                 strongSelf->typeTextField.text = selectValue;
+                [strongSelf clearData];
             }];
         }
             break;
@@ -1125,6 +1129,20 @@
     [textField setFont:[UIFont fontWithName:@"PingFangSC-Medium" size:16]];
 }
 
+
+#pragma mark 上传成绩
+- (void)uploadExamResult
+{
+    __weak typeof(self) weakSelf = self;
+    [AvalonsoftImagePicker showImagePickerFromViewController:self allowsEditing:YES finishAction:^(UIImage *image) {
+        __strong typeof(weakSelf) strongSelf = weakSelf;
+
+        if (image) {
+            [strongSelf->uploadFileButton setImage:image forState:UIControlStateNormal];
+        }
+    }];
+}
+
 #pragma mark - 判断是否显示保存按钮 -
 -(void)isShowSavaButton
 {
@@ -1151,6 +1169,26 @@
     [scoreDTextField resignFirstResponder];
     [scoreETextField resignFirstResponder];
     [examScoreTextField resignFirstResponder];
+}
+
+- (void)clearData
+{
+    dateTextField.text = nil;
+    locationTextField.text = nil;
+    orgTextField.text = nil;
+    scoreATextField.text = nil;
+    scoreBTextField.text = nil;
+    scoreCTextField.text = nil;
+    scoreDTextField.text = nil;
+    scoreETextField.text = nil;
+    examScoreTextField.text = nil;
+}
+
+#pragma mark - touch screen hide soft keyboard -
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+    [super touchesBegan:touches withEvent:event];
+
+    [self resignFirstResponderForTextField];
 }
 
 @end
