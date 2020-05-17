@@ -54,8 +54,6 @@
     [self initSharedPreferences];
     [self initNavigationView];
     [self initView];
-    [self initScrollView];
-    [self setData];
 }
 
 #pragma mark - 初始化一些参数 -
@@ -169,6 +167,8 @@
     gl.cornerRadius = 23;
     //添加到最底层，否则会覆盖文字
     [saveButton.layer insertSublayer:gl atIndex:0];
+    
+    [self initScrollView];
 }
 
 #pragma mark - 初始化滑动视图 -
@@ -458,6 +458,7 @@
     [scoreCSplitView setBackgroundColor:RGBA_GGCOLOR(238, 238, 238, 1)];
     
     [self setupSubViewsWithType:self.model.examType];
+    [self setData];
 }
 
 - (void)setupSubViewsWithType:(NSString *)type
@@ -928,7 +929,8 @@
 
                 self.model.examType = selectValue;
                 strongSelf->typeTextField.text = selectValue;
-                [strongSelf clearData];
+                [strongSelf->contentView removeFromSuperview];
+                [strongSelf initView];
             }];
         }
             break;
@@ -1022,18 +1024,18 @@
     [examScoreTextField resignFirstResponder];
 }
 
-- (void)clearData
-{
-    dateTextField.text = nil;
-    locationTextField.text = nil;
-    orgTextField.text = nil;
-    scoreATextField.text = nil;
-    scoreBTextField.text = nil;
-    scoreCTextField.text = nil;
-    scoreDTextField.text = nil;
-    scoreETextField.text = nil;
-    examScoreTextField.text = nil;
-}
+//- (void)clearData
+//{
+//    dateTextField.text = nil;
+//    locationTextField.text = nil;
+//    orgTextField.text = nil;
+//    scoreATextField.text = nil;
+//    scoreBTextField.text = nil;
+//    scoreCTextField.text = nil;
+//    scoreDTextField.text = nil;
+//    scoreETextField.text = nil;
+//    examScoreTextField.text = nil;
+//}
 
 #pragma mark - touch screen hide soft keyboard -
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
