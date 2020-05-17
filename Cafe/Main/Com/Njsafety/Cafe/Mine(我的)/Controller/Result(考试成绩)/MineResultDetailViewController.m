@@ -72,6 +72,7 @@
     [self initNavigationView];
     [self initView];
     [self setData];
+    [self queryMineExamScore];
 }
 
 #pragma mark - 初始化一些参数 -
@@ -622,7 +623,7 @@
 {
     moreActionView.hidden = YES;
     [moreActionView removeFromSuperview];
-    
+    [self deleteMineExamScore];
 }
 
 #pragma mark - touch screen hide moreActionView -
@@ -631,5 +632,95 @@
 
     moreActionView.hidden = YES;
     [moreActionView removeFromSuperview];
+}
+
+
+#pragma mark - 网络请求
+-(void)queryMineExamScore
+{
+    __weak typeof(self) weakSelf = self;
+    [AvalonsoftHasNetwork avalonsoft_hasNetwork:^(bool has) {
+        __strong typeof(weakSelf) strongSelf = weakSelf;
+
+        if (has) {
+            NSMutableDictionary *root = [NSMutableDictionary dictionary];
+            NSString *url = [[NSString alloc] init];
+            NSString *ID = strongSelf.model.ID;
+            url = [COMMON_SERVER_URL stringByAppendingFormat:@"/%@%@",MINE_MY_EXAM_SCORE_DETAILS, ID];
+            
+            [[AvalonsoftHttpClient avalonsoftHttpClient] requestWithActionUrlAndParam:url method:HttpRequestPost paramenters:root prepareExecute:^{
+            } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull responseObject) {
+                //处理网络请求结果
+                NSLog(@"handleNetworkRequestWithResponseObject responseObject=%@",responseObject);
+                _M *responseModel = [_M createResponseJsonObj:responseObject];
+                NSLog(@"handleNetworkRequestWithResponseObject %ld %@",responseModel.rescode,responseModel.msg);
+                
+                @try {
+                    if(responseModel.rescode == 200){
+                        NSDictionary *rspData = responseModel.data;
+                        self.model = [MineResultModel modelWithDict:rspData];
+                        [strongSelf setData];
+                    }
+                } @catch (NSException *exception) {
+                    @throw exception;
+                    //给出提示信息
+                    [AvalonsoftMsgAlertView showWithTitle:@"信息" content:@"系统发生错误，请与平台管理员联系解决。"  buttonTitles:@[@"关闭"] buttonClickedBlock:nil];
+                }
+            } failure:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error) {
+                //请求失败
+                NSLog(@"%@",error);
+            }];
+            
+        } else {
+            //没网
+            //            [AvalonsoftMsgAlertView showWithTitle:@"信息" content:@"请检查网络" buttonTitles:@[@"关闭"] buttonClickedBlock:nil];
+        }
+    }];
+}
+-(void)deleteMineExamScore
+{
+    __weak typeof(self) weakSelf = self;
+    [AvalonsoftHasNetwork avalonsoft_hasNetwork:^(bool has) {
+        __strong typeof(weakSelf) strongSelf = weakSelf;
+
+        if (has) {
+            NSMutableDictionary *root = [NSMutableDictionary dictionary];
+            NSString *url = [[NSString alloc] init];
+            NSString *ID = strongSelf.model.ID;
+            url = [COMMON_SERVER_URL stringByAppendingFormat:@"/%@%@",MINE_MY_EXAM_SCORE_DELETE, ID];
+            
+            [[AvalonsoftHttpClient avalonsoftHttpClient] requestWithActionUrlAndParam:url method:HttpRequestPost paramenters:root prepareExecute:^{
+            } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull responseObject) {
+                //处理网络请求结果
+                NSLog(@"handleNetworkRequestWithResponseObject responseObject=%@",responseObject);
+                _M *responseModel = [_M createResponseJsonObj:responseObject];
+                NSLog(@"handleNetworkRequestWithResponseObject %ld %@",responseModel.rescode,responseModel.msg);
+                
+                @try {
+                    if(responseModel.rescode == 200){
+                        NSDictionary *rspData = responseModel.data;
+                        MineResultModel *model = [MineResultModel modelWithDict:rspData];
+
+                        if (self.sendValueBlock) {
+                            self.sendValueBlock(model);
+                        }
+                        
+                        [strongSelf.navigationController popViewControllerAnimated:YES];
+                    }
+                } @catch (NSException *exception) {
+                    @throw exception;
+                    //给出提示信息
+                    [AvalonsoftMsgAlertView showWithTitle:@"信息" content:@"系统发生错误，请与平台管理员联系解决。"  buttonTitles:@[@"关闭"] buttonClickedBlock:nil];
+                }
+            } failure:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error) {
+                //请求失败
+                NSLog(@"%@",error);
+            }];
+            
+        } else {
+            //没网
+            //            [AvalonsoftMsgAlertView showWithTitle:@"信息" content:@"请检查网络" buttonTitles:@[@"关闭"] buttonClickedBlock:nil];
+        }
+    }];
 }
 @end

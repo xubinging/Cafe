@@ -898,7 +898,7 @@
 #pragma mark - 保存按钮点击 -
 -(void)saveButtonClick
 {
-    [self editMineExamScoreList];
+    [self editMineExamScore];
 }
 
 #pragma mark - UITextFieldDelegate -
@@ -1044,7 +1044,7 @@
 
 
 #pragma mark - 网络请求
-- (void)editMineExamScoreList
+- (void)editMineExamScore
 {
     __weak typeof(self) weakSelf = self;
     [AvalonsoftHasNetwork avalonsoft_hasNetwork:^(bool has) {
@@ -1111,6 +1111,5 @@
         }
     }];
 }
-
 
 @end
