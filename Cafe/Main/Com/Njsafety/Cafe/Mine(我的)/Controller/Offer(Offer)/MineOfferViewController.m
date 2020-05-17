@@ -7,7 +7,6 @@
 //
 
 #import "MineOfferViewController.h"
-
 #import "MineOfferModel.h"
 #import "MineOfferTableViewCell.h"
 #import "MineAddOfferViewController.h"
@@ -247,11 +246,13 @@
 -(void)addButtonClick
 {
     MineAddOfferViewController *showVC = [MineAddOfferViewController new];
+    MineResultModel *model = [MineResultModel new];
+    showVC.model = model;
     [self.navigationController pushViewController:showVC animated:YES];
 
     //设置block回调
     __weak typeof(self) weakSelf = self;
-    [showVC setSendValueBlock:^(NSDictionary *valueDict){
+    [showVC setSendValueBlock:^(MineResultModel *model){
        __strong typeof(weakSelf) strongSelf = weakSelf;
 
        [strongSelf queryMineOfferList];

@@ -37,7 +37,6 @@
     @private UIView *splitView7;
     @private UIButton *uploadOfferButton;
     @private UITextView *contentTextView;
-    @private MineOfferScoreModel *offerScoreModel;
 
     
     @private NSString *country;
@@ -617,108 +616,54 @@
 #pragma mark - 设置参数 -
 -(void)setData
 {
-    NSString *scoreType = @"";            //分数类别
-    NSString *totalScoreTitle = @"总分";   //总分
-    NSString *totalScore = @"";
-    NSString *scoreOneTitle = @"";        //分数一
-    NSString *scoreOne = @"";
-    NSString *scoreTwoTitle = @"";        //分数二
-    NSString *scoreTwo = @"";
-    NSString *scoreThreeTitle = @"";      //分数三
-    NSString *scoreThree = @"";
-    NSString *scoreFourTitle = @"";       //分数四
-    NSString *scoreFour = @"";
-    NSString *scoreFiveTitle = @"";       //分数五
-    NSString *scoreFive = @"";
-    
-    
-    totalScore = offerScoreModel.totalScore;
-    scoreOne = offerScoreModel.scoreOne;
-    scoreTwo = offerScoreModel.scoreTwo;
-    scoreThree = offerScoreModel.scoreThree;
-    scoreFour = offerScoreModel.scoreFour;
-    scoreFive = offerScoreModel.scoreFive;
-
     for (int i = 0; i < 6; i++) {
+        MineResultModel *model = [MineResultModel new];
         if (i == 0) {
             //TOEF
-            scoreType = @"TOEFL";
-            scoreOneTitle = @"L";
-            scoreTwoTitle = @"S";
-            scoreThreeTitle = @"R";
-            scoreFourTitle = @"W";
+            model.examType = @"TOEFL";
+            model.scoreATitle = @"L";
+            model.scoreBTitle = @"S";
+            model.scoreCTitle = @"R";
+            model.scoreDTitle = @"W";
+            model.totalScoreTitle = @"总分";
         } else if (i == 1) {
             //IELTS
-            scoreType = @"IELTS";
-            scoreOneTitle = @"L";
-            scoreTwoTitle = @"S";
-            scoreThreeTitle = @"R";
-            scoreFourTitle = @"W";
+            model.examType = @"IELTS";
+            model.scoreATitle = @"L";
+            model.scoreBTitle = @"S";
+            model.scoreCTitle = @"R";
+            model.scoreDTitle = @"W";
         } else if (i == 2) {
             //GRE
-            scoreType = @"GRE";
-            scoreOneTitle = @"L";
-            scoreTwoTitle = @"Q";
-            scoreThreeTitle = @"AW";
+            model.examType = @"GRE";
+            model.scoreATitle = @"L";
+            model.scoreBTitle = @"Q";
+            model.scoreCTitle = @"AW";
         } else if (i == 3) {
             //GMAT
-            scoreType = @"GMAT";
-            scoreOneTitle = @"V";
-            scoreTwoTitle = @"Q";
-            scoreThreeTitle = @"AW";
-            scoreFourTitle = @"IR";
+            model.examType = @"GMAT";
+            model.scoreATitle = @"V";
+            model.scoreBTitle = @"Q";
+            model.scoreCTitle = @"AW";
+            model.scoreDTitle = @"IR";
         } else if (i == 4) {
             //SAT
-            scoreType = @"SAT";
-            scoreOneTitle = @"EBRW";
-            scoreTwoTitle = @"M";
-            scoreThreeTitle = @"ER";
-            scoreFourTitle = @"EA";
-            scoreFiveTitle = @"EW";
+            model.examType = @"SAT";
+            model.scoreATitle = @"EBRW";
+            model.scoreBTitle = @"M";
+            model.scoreCTitle = @"ER";
+            model.scoreDTitle = @"EA";
+            model.scoreETitle = @"EW";
         } else if (i == 5) {
             //ACT
-            scoreType = @"ACT";
-            scoreOneTitle = @"R";
-            scoreTwoTitle = @"E";
-            scoreThreeTitle = @"M";
-            scoreFourTitle = @"S";
-            scoreFiveTitle = @"W";
+            model.examType = @"ACT";
+            model.scoreATitle = @"R";
+            model.scoreBTitle = @"E";
+            model.scoreCTitle = @"M";
+            model.scoreDTitle = @"S";
+            model.scoreETitle = @"W";
         }
         
-        NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-        [dict setValue:scoreType forKey:@"scoreType"];
-        [dict setValue:totalScoreTitle forKey:@"totalScoreTitle"];
-        [dict setValue:scoreOneTitle forKey:@"scoreOneTitle"];
-        [dict setValue:scoreTwoTitle forKey:@"scoreTwoTitle"];
-        [dict setValue:scoreThreeTitle forKey:@"scoreThreeTitle"];
-        [dict setValue:scoreFourTitle forKey:@"scoreFourTitle"];
-        [dict setValue:scoreFiveTitle forKey:@"scoreFiveTitle"];
-        
-        if (totalScore.length > 0) {
-            [dict setValue:totalScore forKey:@"totalScore"];
-        }
-        
-        if (scoreOne.length > 0) {
-            [dict setValue:scoreOne forKey:@"scoreOne"];
-        }
-        
-        if (scoreTwo.length > 0) {
-            [dict setValue:scoreTwo forKey:@"scoreTwo"];
-        }
-
-        if (scoreThree.length > 0) {
-            [dict setValue:scoreThree forKey:@"scoreThree"];
-        }
-
-        if (scoreFour.length > 0) {
-            [dict setValue:scoreFour forKey:@"scoreFour"];
-        }
-
-        if (scoreFive.length > 0) {
-            [dict setValue:scoreFive forKey:@"scoreFive"];
-        }
-        
-        MineOfferScoreModel *model = [MineOfferScoreModel modelWithDict:dict];
         [self.scoreArray addObject:model];
     }
 }

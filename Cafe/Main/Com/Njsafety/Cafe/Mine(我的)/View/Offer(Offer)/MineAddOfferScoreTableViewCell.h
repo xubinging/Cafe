@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-#import "MineOfferScoreModel.h"
+#import "MineResultModel.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -55,7 +55,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) NSInteger indexPathSection;
 
 //根据类去填充cell
--(void)updateCellWithModel:(MineOfferScoreModel *)model;
+-(void)updateCellWithModel:(MineResultModel *)model;
 
 @end
 
