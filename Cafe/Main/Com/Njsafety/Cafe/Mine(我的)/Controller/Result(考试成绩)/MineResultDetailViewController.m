@@ -677,6 +677,7 @@
         }
     }];
 }
+
 -(void)deleteMineExamScore
 {
     __weak typeof(self) weakSelf = self;

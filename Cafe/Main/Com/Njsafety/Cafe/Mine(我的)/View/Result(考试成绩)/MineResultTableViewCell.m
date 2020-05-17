@@ -215,7 +215,7 @@
 - (NSString *)bridgeExamType:(NSString *)examType
 {
     //考试类型:类型1->TOEFL，类型2->IELTS，类型3->GRE，类型4->GMAT，类型5->SAT，类型6->SSAT，类型7->ACT
-    NSString *type = @"";
+    NSString *type = examType;
     if ([examType isKindOfClass:[NSString class]]) {
         switch (examType.integerValue) {
             case 1:
