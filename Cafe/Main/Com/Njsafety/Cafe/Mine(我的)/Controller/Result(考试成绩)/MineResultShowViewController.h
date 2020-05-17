@@ -8,16 +8,17 @@
 //  晒晒成绩
 
 #import <UIKit/UIKit.h>
+#import "MineResultModel.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface MineResultShowViewController : UIViewController
 
 //Block传值step 1：定义block为传值block的属性
-@property (nonatomic,copy)void(^sendValueBlock)(NSDictionary *valueDict);
+@property (nonatomic,copy)void(^sendValueBlock)(MineResultModel *model);
 
 //接受父页面参数的字典
-@property (nonatomic, strong) NSDictionary *dataDic;
+@property (nonatomic, strong) MineResultModel *model;
 
 @end
 

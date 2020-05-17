@@ -53,24 +53,11 @@
     @private UILabel *examScoreLabel;
     @private UILabel *examScoreTitleLabel;
     
-    @private NSString *type;
-    @private NSString *date;
-    @private NSString *location;
-    @private NSString *org;
-    @private NSString *scoreA;
     @private NSString *scoreATitleName;
-    @private NSString *scoreB;
     @private NSString *scoreBTitleName;
-    @private NSString *scoreC;
     @private NSString *scoreCTitleName;
-    @private NSString *scoreD;
     @private NSString *scoreDTitleName;
-    @private NSString *scoreE;
     @private NSString *scoreETitleName;
-    @private NSString *examScore;
-    @private NSString *scoreFile;
-    
-//    @private BOOL isViewUp;
 }
 
 @end
@@ -82,10 +69,8 @@
     
     [self initVars];
     [self initSharedPreferences];
-    [self getParentVars];
     [self initNavigationView];
     [self initView];
-//    [self setListener];
     [self setData];
 }
 
@@ -93,9 +78,6 @@
 -(void)initVars
 {
     self.view.backgroundColor = RGBA_GGCOLOR(249, 249, 249, 1);
-    
-    //内容视图此时所在位置，是否在上方
-//    isViewUp = YES;
 }
 
 #pragma mark - 初始化数据 -
@@ -106,37 +88,6 @@
     } @catch (NSException *exception) {
         @throw exception;
         
-    }
-}
-
-#pragma mark - 获取父页面参数 -
--(void)getParentVars
-{
-    type = @"";
-    date = @"";
-    location = @"";
-    org = @"";
-    scoreA = @"";
-    scoreB = @"";
-    scoreC = @"";
-    scoreD = @"";
-    scoreE = @"";
-    examScore = @"";
-    scoreFile = @"";
-        
-    if(_dataDic != nil){
-        type = _dataDic[@"type"];
-        [self bridgeExamType:type];
-        date = _dataDic[@"date"];
-        location = _dataDic[@"location"];
-        org = _dataDic[@"org"];
-        scoreA = _dataDic[@"scoreA"];
-        scoreB = _dataDic[@"scoreB"];
-        scoreC = _dataDic[@"scoreC"];
-        scoreD = _dataDic[@"scoreD"];
-        scoreE = _dataDic[@"scoreE"];
-        examScore = _dataDic[@"examScore"];
-        scoreFile = _dataDic[@"scoreFile"];
     }
 }
 
@@ -208,7 +159,6 @@
     contentImageView.layer.shadowOffset = CGSizeMake(0,5);
     contentImageView.layer.shadowOpacity = 1;
     contentImageView.layer.shadowRadius = 15;
-    [contentImageView sd_setImageWithURL:[NSURL URLWithString:[_F createFileLoadUrl:scoreFile]]];
     
     //内容
     contentView = [UIView new];
@@ -453,68 +403,53 @@
     }];
 }
 
-#pragma mark - 添加监听 -
-//-(void)setListener
-//{
-//    [self.view layoutIfNeeded];
-//
-//    //添加上滑、下滑手势监测
-//    UISwipeGestureRecognizer *recognizer;
-//    //上滑
-//    recognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(handleSwipeFrom:)];
-//    [recognizer setDirection:(UISwipeGestureRecognizerDirectionUp)];
-//    [contentView addGestureRecognizer:recognizer];
-//    //下滑
-//    recognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(handleSwipeFrom:)];
-//    [recognizer setDirection:(UISwipeGestureRecognizerDirectionDown)];
-//    [contentView addGestureRecognizer:recognizer];
-//}
-
 #pragma mark - 设置参数 -
 -(void)setData
 {
     [self bridgeScoreSubType];
+    [self bridgeExamType:self.model.examType];
     
     //考试类型
     [_F setLabelStyle:resultTypeTitleLabel withName:@"考试类型" textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Regular" size:14] textColor:RGBA_GGCOLOR(193, 193, 193, 1)];
-    [_F setLabelStyle:resultTypeLabel withName:type textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Medium" size:16] textColor:RGBA_GGCOLOR(32, 188, 255, 1)];
+    [_F setLabelStyle:resultTypeLabel withName:self.model.examType textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Medium" size:16] textColor:RGBA_GGCOLOR(32, 188, 255, 1)];
     
     //考试日期
     [_F setLabelStyle:resultDateTitleLabel withName:@"考试日期" textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Regular" size:14] textColor:RGBA_GGCOLOR(193, 193, 193, 1)];
-    [_F setLabelStyle:resultDateLabel withName:date textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Medium" size:16] textColor:RGBA_GGCOLOR(32, 188, 255, 1)];
+    [_F setLabelStyle:resultDateLabel withName:self.model.examDate textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Medium" size:16] textColor:RGBA_GGCOLOR(32, 188, 255, 1)];
     
     //考试地点
     [_F setLabelStyle:resultLocationTitleLabel withName:@"考试地点" textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Regular" size:14] textColor:RGBA_GGCOLOR(193, 193, 193, 1)];
-    [_F setLabelStyle:resultLocationLabel withName:location textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Medium" size:16] textColor:RGBA_GGCOLOR(32, 188, 255, 1)];
+    [_F setLabelStyle:resultLocationLabel withName:self.model.address textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Medium" size:16] textColor:RGBA_GGCOLOR(32, 188, 255, 1)];
     
     //参加的培训机构
     [_F setLabelStyle:resultOrgTitleLabel withName:@"参加的培训机构" textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Regular" size:14] textColor:RGBA_GGCOLOR(193, 193, 193, 1)];
-    [_F setLabelStyle:resultOrgLabel withName:org textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Medium" size:16] textColor:RGBA_GGCOLOR(32, 188, 255, 1)];
+    [_F setLabelStyle:resultOrgLabel withName:self.model.examOrgan textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Medium" size:16] textColor:RGBA_GGCOLOR(32, 188, 255, 1)];
     
     //scoreA
     [_F setLabelStyle:scoreATitleLabel withName:scoreATitleName textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Regular" size:14] textColor:RGBA_GGCOLOR(193, 193, 193, 1)];
-    [_F setLabelStyle:scoreALabel withName:scoreA textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Medium" size:16] textColor:RGBA_GGCOLOR(32, 188, 255, 1)];
+    [_F setLabelStyle:scoreALabel withName:self.model.scoreA textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Medium" size:16] textColor:RGBA_GGCOLOR(32, 188, 255, 1)];
     
     //scoreB
     [_F setLabelStyle:scoreBTitleLabel withName:scoreBTitleName textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Regular" size:14] textColor:RGBA_GGCOLOR(193, 193, 193, 1)];
-    [_F setLabelStyle:scoreBLabel withName:scoreB textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Medium" size:16] textColor:RGBA_GGCOLOR(32, 188, 255, 1)];
+    [_F setLabelStyle:scoreBLabel withName:self.model.scoreB textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Medium" size:16] textColor:RGBA_GGCOLOR(32, 188, 255, 1)];
     
     //scoreC
     [_F setLabelStyle:scoreCTitleLabel withName:scoreCTitleName textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Regular" size:14] textColor:RGBA_GGCOLOR(193, 193, 193, 1)];
-    [_F setLabelStyle:scoreCLabel withName:scoreC textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Medium" size:16] textColor:RGBA_GGCOLOR(32, 188, 255, 1)];
+    [_F setLabelStyle:scoreCLabel withName:self.model.scoreC textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Medium" size:16] textColor:RGBA_GGCOLOR(32, 188, 255, 1)];
     
     //scoreD
     [_F setLabelStyle:scoreDTitleLabel withName:scoreDTitleName textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Regular" size:14] textColor:RGBA_GGCOLOR(193, 193, 193, 1)];
-    [_F setLabelStyle:scoreDLabel withName:scoreD textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Medium" size:16] textColor:RGBA_GGCOLOR(32, 188, 255, 1)];
+    [_F setLabelStyle:scoreDLabel withName:self.model.scoreD textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Medium" size:16] textColor:RGBA_GGCOLOR(32, 188, 255, 1)];
     
     //scoreE
     [_F setLabelStyle:scoreETitleLabel withName:scoreETitleName textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Regular" size:14] textColor:RGBA_GGCOLOR(193, 193, 193, 1)];
-    [_F setLabelStyle:scoreELabel withName:scoreE textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Medium" size:16] textColor:RGBA_GGCOLOR(32, 188, 255, 1)];
+    [_F setLabelStyle:scoreELabel withName:self.model.scoreE textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Medium" size:16] textColor:RGBA_GGCOLOR(32, 188, 255, 1)];
     
     //总分
     [_F setLabelStyle:examScoreTitleLabel withName:@"总分" textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Regular" size:14] textColor:RGBA_GGCOLOR(193, 193, 193, 1)];
-    [_F setLabelStyle:examScoreLabel withName:examScore textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Medium" size:16] textColor:RGBA_GGCOLOR(32, 188, 255, 1)];
+    [_F setLabelStyle:examScoreLabel withName:self.model.examScore textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Medium" size:16] textColor:RGBA_GGCOLOR(32, 188, 255, 1)];
     
+    [contentImageView sd_setImageWithURL:[NSURL URLWithString:[_F createFileLoadUrl:self.model.scoreFile]]];
 }
 
 - (NSString *)bridgeExamType:(NSString *)examType
@@ -523,25 +458,25 @@
     if ([examType isKindOfClass:[NSString class]]) {
         switch (examType.integerValue) {
             case 1:
-                type = @"TOEFL";
+                self.model.examType = @"TOEFL";
                 break;
             case 2:
-                type = @"IELTS";
+                self.model.examType = @"IELTS";
                 break;
             case 3:
-                type = @"GRE";
+                self.model.examType = @"GRE";
                 break;
             case 4:
-                type = @"GMAT";
+                self.model.examType = @"GMAT";
                 break;
             case 5:
-                type = @"SAT";
+                self.model.examType = @"SAT";
                 break;
             case 6:
-                type = @"SSAT";
+                self.model.examType = @"SSAT";
                 break;
             case 7:
-                type = @"ACT";
+                self.model.examType = @"ACT";
                 break;
                 
             default:
@@ -549,7 +484,7 @@
         }
     }
     
-    return type;
+    return self.model.examType;
 }
 
 - (void)bridgeScoreSubType
@@ -560,27 +495,27 @@
     scoreDTitleName = @"";
     scoreETitleName = @"";
 
-    if ([type isEqualToString:@"TOEFL"] || [type isEqualToString:@"IELTS"]) {
+    if ([self.model.examType isEqualToString:@"TOEFL"] || [self.model.examType isEqualToString:@"IELTS"]) {
         scoreATitleName = @"L";
         scoreBTitleName = @"S";
         scoreCTitleName = @"R";
         scoreDTitleName = @"W";
     }
     
-    if ([type isEqualToString:@"GRE"]) {
+    if ([self.model.examType isEqualToString:@"GRE"]) {
         scoreATitleName = @"V";
         scoreBTitleName = @"Q";
         scoreCTitleName = @"AW";
     }
 
-    if ([type isEqualToString:@"GMAT"]) {
+    if ([self.model.examType isEqualToString:@"GMAT"]) {
         scoreATitleName = @"V";
         scoreBTitleName = @"Q";
         scoreCTitleName = @"AW";
         scoreDTitleName = @"IR";
     }
     
-    if ([type isEqualToString:@"SAT"]) {
+    if ([self.model.examType isEqualToString:@"SAT"]) {
         scoreATitleName = @"EBRW";
         scoreBTitleName = @"M";
         scoreCTitleName = @"ER";
@@ -588,13 +523,13 @@
         scoreETitleName = @"EW";
     }
     
-    if ([type isEqualToString:@"SSAT"]) {
+    if ([self.model.examType isEqualToString:@"SSAT"]) {
         scoreATitleName = @"Q";
         scoreBTitleName = @"V";
         scoreCTitleName = @"R";
     }
 
-    if ([type isEqualToString:@"ACT"]) {
+    if ([self.model.examType isEqualToString:@"ACT"]) {
         scoreATitleName = @"R";
         scoreBTitleName = @"E";
         scoreCTitleName = @"M";
@@ -604,58 +539,12 @@
 
 }
 
-#pragma mark - 手势处理 -
-//-(void)handleSwipeFrom:(UISwipeGestureRecognizer *)recognizer {
-//    if (recognizer.direction==UISwipeGestureRecognizerDirectionDown) {
-//        //向下滑动，如何这时候内容视图在上方，就滑下来
-//        if(isViewUp){
-//            [UIView beginAnimations:nil context:nil];
-//            [UIView setAnimationDuration:0.3];
-//            CGPoint point = contentView.center;
-//            point.y += 115;
-//            [contentView setCenter:point];
-//            [UIView commitAnimations];
-//
-//            //此时在下方
-//            isViewUp = NO;
-//        }
-//    }
-//
-//    if (recognizer.direction==UISwipeGestureRecognizerDirectionUp) {
-//        //向上滑动，如果这时候内容视图在下方，就滑上来
-//        if(!isViewUp){
-//            [UIView beginAnimations:nil context:nil];
-//            [UIView setAnimationDuration:0.3];
-//            CGPoint point = contentView.center;
-//            point.y -= 115;
-//            [contentView setCenter:point];
-//            [UIView commitAnimations];
-//
-//            //此时在上方
-//            isViewUp = YES;
-//        }
-//    }
-//}
-
 #pragma mark - 返回按钮点击 -
 -(void)backButtonClick
 {
-    //设置回调
-    NSDictionary *sendDataDic = @{@"type":type,
-                                  @"date":date,
-                                  @"location":location,
-                                  @"org":org,
-                                  @"scoreA":scoreA,
-                                  @"scoreB":scoreB,
-                                  @"scoreC":scoreC,
-                                  @"scoreD":scoreD,
-                                  @"scoreE":scoreE,
-                                  @"examScore":examScore
-    };
-    
-    //Block传值step 3:传值类将要传的值传入自己的block中
-    self.sendValueBlock(sendDataDic);
-    
+    if (self.sendValueBlock) {
+        self.sendValueBlock(self.model);
+    }
     [self.navigationController popViewControllerAnimated:YES];
 }
 
@@ -717,44 +606,16 @@
     moreActionView.hidden = YES;
     [moreActionView removeFromSuperview];
     
-    NSDictionary *sendDic = @{
-        @"type":type,
-        @"date":date,
-        @"location":location,
-        @"org":org,
-        @"scoreA":scoreA,
-        @"scoreB":scoreB,
-        @"scoreC":scoreC,
-        @"scoreD":scoreD,
-        @"scoreE":scoreE,
-        @"examScore":examScore
-    };
     
     MineResultShowViewController *showVC = [MineResultShowViewController new];
-
-    //设置block回调
-    [showVC setSendValueBlock:^(NSDictionary *valueDict){
-        
-        //回调函数
-        self->type = valueDict[@"type"];
-        self->date = valueDict[@"date"];
-        self->location = valueDict[@"location"];
-        self->org = valueDict[@"org"];
-        self->scoreA = valueDict[@"scoreA"];
-        self->scoreB = valueDict[@"scoreB"];
-        self->scoreC = valueDict[@"scoreC"];
-        self->scoreD = valueDict[@"scoreD"];
-        self->scoreE = valueDict[@"scoreE"];
-        self->examScore = valueDict[@"examScore"];
-        
-        [self setData];
-
-    }];
-
-    showVC.dataDic = sendDic;
-
+    showVC.model = self.model;
     [self.navigationController pushViewController:showVC animated:YES];
 
+    //设置block回调
+    [showVC setSendValueBlock:^(MineResultModel *model){
+
+        [self setData];
+    }];
 }
 
 - (void)deleteButtonClick

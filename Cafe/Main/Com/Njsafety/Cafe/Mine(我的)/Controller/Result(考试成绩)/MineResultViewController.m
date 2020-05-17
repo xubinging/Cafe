@@ -29,7 +29,6 @@
 
 @property (nonatomic,strong) UITableView *resultTableView;
 @property (nonatomic,strong) NSMutableArray *resultArray;
-@property (nonatomic,copy) NSIndexPath *editingIndexPath;   //当前左滑cell的index，在代理方法中设置
 
 @end
 
@@ -224,40 +223,12 @@
 {
     
     MineResultModel *slctModel = self.resultArray[indexPath.section];
-    
-    NSString *type = slctModel.examType;
-    NSString *date = slctModel.examDate;
-    NSString *location = slctModel.address;
-    NSString *org = slctModel.examOrgan;
-    NSString *scoreA = slctModel.scoreA;
-    NSString *scoreB = slctModel.scoreB;
-    NSString *scoreC = slctModel.scoreC;
-    NSString *scoreD = slctModel.scoreD;
-    NSString *scoreE = slctModel.scoreE;
-    NSString *examScore = slctModel.examScore;
-    NSString *scoreFile = slctModel.scoreFile;
-
-    
-    NSDictionary *sendDic = @{
-        @"type":type,
-        @"date":date,
-        @"location":location,
-        @"org":org,
-        @"scoreA":scoreA,
-        @"scoreB":scoreB,
-        @"scoreC":scoreC,
-        @"scoreD":scoreD,
-        @"scoreE":scoreE,
-        @"examScore":examScore,
-        @"scoreFile":scoreFile
-    };
-    
     MineResultDetailViewController *detailVC = [MineResultDetailViewController new];
-    detailVC.dataDic = sendDic;
+    detailVC.model = slctModel;
     [self.navigationController pushViewController:detailVC animated:YES];
 
     __weak typeof(self) weakSelf = self;
-    [detailVC setSendValueBlock:^(NSDictionary *valueDict){
+    [detailVC setSendValueBlock:^(MineResultModel *model){
         __strong typeof(weakSelf) strongSelf = weakSelf;
 
         [strongSelf queryMineExamScoreList];
@@ -279,7 +250,7 @@
 
 
     __weak typeof(self) weakSelf = self;
-    [showVC setSendValueBlock:^(NSDictionary *valueDict){
+    [showVC setSendValueBlock:^(MineResultModel *model){
         __strong typeof(weakSelf) strongSelf = weakSelf;
         
         [strongSelf queryMineExamScoreList];

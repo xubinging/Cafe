@@ -40,19 +40,7 @@
     @private UITextField *scoreDTextField;
     @private UITextField *scoreETextField;
     @private UITextField *examScoreTextField;
-    @private UIButton *uploadFileButton;        //上传附件按钮
-    
-    @private NSString *type;
-    @private NSString *date;
-    @private NSString *location;
-    @private NSString *org;
-    @private NSString *scoreA;
-    @private NSString *scoreB;
-    @private NSString *scoreC;
-    @private NSString *scoreD;
-    @private NSString *scoreE;
-    @private NSString *examScore;
-    
+    @private UIButton *uploadFileButton;        //上传附件按钮    
 }
 
 @end
@@ -64,7 +52,6 @@
     
     [self initVars];
     [self initSharedPreferences];
-    [self getParentVars];
     [self initNavigationView];
     [self initView];
     [self initScrollView];
@@ -86,72 +73,6 @@
     } @catch (NSException *exception) {
         @throw exception;
         
-    }
-}
-
-#pragma mark - 获取父页面参数 -
--(void)getParentVars
-{
-    if(_dataDic != nil){
-        if(_dataDic[@"type"]){
-            type = _dataDic[@"type"];
-        }else{
-            type = @"";
-        }
-        
-        if(_dataDic[@"date"]){
-            date = _dataDic[@"date"];
-        }else{
-            date = @"";
-        }
-        
-        if(_dataDic[@"location"]){
-            location = _dataDic[@"location"];
-        }else{
-            location = @"";
-        }
-        
-        if(_dataDic[@"org"]){
-            org = _dataDic[@"org"];
-        }else{
-            org = @"";
-        }
-        
-        if(_dataDic[@"scoreA"]){
-            scoreA = _dataDic[@"scoreA"];
-        }else{
-            scoreA = @"";
-        }
-        
-        if(_dataDic[@"scoreB"]){
-            scoreB = _dataDic[@"scoreB"];
-        }else{
-            scoreB = @"";
-        }
-        
-        if(_dataDic[@"scoreC"]){
-            scoreC = _dataDic[@"scoreC"];
-        }else{
-            scoreC = @"";
-        }
-        
-        if(_dataDic[@"scoreD"]){
-            scoreD = _dataDic[@"scoreD"];
-        }else{
-            scoreD = @"";
-        }
-        
-        if(_dataDic[@"scoreE"]){
-            scoreE = _dataDic[@"scoreE"];
-        }else{
-            scoreE = @"";
-        }
-        
-        if(_dataDic[@"examScore"]){
-            examScore = _dataDic[@"examScore"];
-        }else{
-            examScore = @"";
-        }
     }
 }
 
@@ -536,7 +457,7 @@
     }];
     [scoreCSplitView setBackgroundColor:RGBA_GGCOLOR(238, 238, 238, 1)];
     
-    [self setupSubViewsWithType:type];
+    [self setupSubViewsWithType:self.model.examType];
 }
 
 - (void)setupSubViewsWithType:(NSString *)type
@@ -956,16 +877,16 @@
 #pragma mark - 设置参数 -
 -(void)setData
 {
-    typeTextField.text = type;
-    dateTextField.text = date;
-    locationTextField.text = location;
-    orgTextField.text = org;
-    scoreATextField.text = scoreA;
-    scoreBTextField.text = scoreB;
-    scoreCTextField.text = scoreC;
-    scoreDTextField.text = scoreD;
-    scoreETextField.text = scoreE;
-    examScoreTextField.text = examScore;
+    typeTextField.text = self.model.examType;
+    dateTextField.text = self.model.examDate;
+    locationTextField.text = self.model.address;
+    orgTextField.text = self.model.examOrgan;
+    scoreATextField.text = self.model.scoreA;
+    scoreBTextField.text = self.model.scoreB;
+    scoreCTextField.text = self.model.scoreC;
+    scoreDTextField.text = self.model.scoreD;
+    scoreETextField.text = self.model.scoreE;
+    examScoreTextField.text = self.model.examScore;
 }
 
 #pragma mark - 返回按钮点击 -
@@ -977,31 +898,7 @@
 #pragma mark - 保存按钮点击 -
 -(void)saveButtonClick
 {
-    //模拟保存成功
-    [AvalonsoftToast showWithMessage:@"保存成功" image:@"login_success" duration:1];
-    
-    //延迟推出
-    [self performSelector:@selector(saveSuccess) withObject:nil afterDelay:1.5];
-}
-
--(void)saveSuccess{
-    //设置回调
-    NSDictionary *sendDataDic = @{@"type":type,
-                                  @"date":date,
-                                  @"location":location,
-                                  @"org":org,
-                                  @"scoreA":scoreA,
-                                  @"scoreB":scoreB,
-                                  @"scoreC":scoreC,
-                                  @"scoreD":scoreD,
-                                  @"scoreE":scoreE,
-                                  @"examScore":examScore
-    };
-    
-    //Block传值step 3:传值类将要传的值传入自己的block中
-    self.sendValueBlock(sendDataDic);
-    
-    [self.navigationController popViewControllerAnimated:YES];
+    [self editMineExamScoreList];
 }
 
 #pragma mark - UITextFieldDelegate -
@@ -1029,7 +926,7 @@
             [AvalonsoftPickerView showStringPickerWithTitle:@"" DataSource:@[@"TOEFL",@"IELTS",@"GRE",@"GMAT",@"SAT",@"SSAT",@"ACT"] DefaultSelValue:@"TOEFL" IsAutoSelect:NO ResultBlock:^(id selectValue, id selectRow){
                 __strong typeof(weakSelf) strongSelf = weakSelf;
 
-                strongSelf->type = selectValue;
+                self.model.examType = selectValue;
                 strongSelf->typeTextField.text = selectValue;
                 [strongSelf clearData];
             }];
@@ -1051,7 +948,7 @@
 //                self->date = [selectValue stringByReplacingOccurrencesOfString:@"-" withString:@"/"];
 //                self->dateTextField.text = [selectValue stringByReplacingOccurrencesOfString:@"-" withString:@"/"];
                 
-                strongSelf->date = selectValue;
+                self.model.examDate = selectValue;
                 strongSelf->dateTextField.text = selectValue;
             }];
         }
@@ -1064,7 +961,7 @@
             [AvalonsoftPickerView showAddressPickerWithTitle:@"" DefaultSelected:@[@11, @1, @5] IsAutoSelect:NO Manager:nil ResultBlock:^(NSArray *selectAddressArr, NSArray *selectAddressRow){
                 __strong typeof(weakSelf) strongSelf = weakSelf;
                 
-                strongSelf->location = [NSString stringWithFormat:@"%@ %@ %@", selectAddressArr[0], selectAddressArr[1],selectAddressArr[2]];
+                self.model.address = [NSString stringWithFormat:@"%@ %@ %@", selectAddressArr[0], selectAddressArr[1],selectAddressArr[2]];
                 strongSelf->locationTextField.text = [NSString stringWithFormat:@"%@ %@ %@", selectAddressArr[0], selectAddressArr[1],selectAddressArr[2]];
             }];
         }
@@ -1147,125 +1044,73 @@
 
 
 #pragma mark - 网络请求
-//- (void)editMineExamScoreList
-//{
-//    __weak typeof(self) weakSelf = self;
-//    [AvalonsoftHasNetwork avalonsoft_hasNetwork:^(bool has) {
-//        __strong typeof(weakSelf) strongSelf = weakSelf;
-//
-//        if (has) {
-//            NSMutableDictionary *root = [NSMutableDictionary dictionary];
-//            [root setValue:strongSelf->type forKey:@"examType"];
-//            [root setValue:strongSelf->examScore forKey:@"examScore"];
-//            [root setValue:strongSelf->date forKey:@"examDate"];
-//            [root setValue:strongSelf->scoreA forKey:@"scoreA"];
-//            [root setValue:strongSelf->scoreB forKey:@"scoreB"];
-//            [root setValue:strongSelf->scoreC forKey:@"scoreC"];
-//            [root setValue:strongSelf->scoreD forKey:@"scoreD"];
-//            [root setValue:strongSelf->scoreE forKey:@"scoreE"];
-//
-//
-//
-//
-//            [root setValue:[_UserInfo accountId] forKey:@"accountId"];
-//            [root setValue:@"0" forKey:@"delSign"];
-//
-//
-//
-//
-//
-//"id(编号 编辑考试成绩的id)
-//areaType(考试地点类型,1:表示国内,2:国外)
-//countryCode(考试国家Code)
-//countryName(考试国家Name)
-//provincesCode(考试省份Code,国内使用)
-//provincesName(考试省份Name,国内使用)
-//cityCode(考试城市Code,国内使用)
-//cityName(考试城市Name,国内使用)
-//address(考试地点)
-//examOrgan(参加的培训机构)
-//insid(机构id)
-//scoreFile(成绩单)
-//nickname(昵称)
-//
-//
-//
-//accountId = 1165;
-//addTime = 1589186890000;
-//address = "\U5185\U8499\U53e4\U81ea\U6cbb\U533a\U8d64\U5cf0\U5e02";
-//areaType = 1;
-//cityCode = 150400;
-//cityName = "\U8d64\U5cf0\U5e02";
-//countryCode = "";
-//countryName = "";
-//delSign = 0;
-//examDate = "2020-05-13";
-//examOrgan = sgrgwg;
-//examScore = 120;
-//examType = 1;
-//id = A81858A4994442F79304440C6AD26AA6;
-//insid = 4350;
-//modTime = "<null>";
-//nickname = zhuzhaolong;
-//operator = "<null>";
-//postId = "<null>";
-//presentFlag = "<null>";
-//provincesCode = 150000;
-//provincesName = "\U5185\U8499\U53e4\U81ea\U6cbb\U533a";
-//remarks = "<null>";
-//scoreA = 30;
-//scoreB = 30;
-//scoreC = 30;
-//scoreD = 30;
-//scoreE = "";
-//scoreF = "<null>";
-//scoreFile = "group1/M00/00/2C/Mes7UV65ESqAevcnAAkYBIl5muQ428.jpg";
-//scoreG = "<null>";
-//scoreH = "<null>";
-//scoreI = "<null>";
-//scoreJ = "<null>";
-//status = "<null>";
-//username = zhuzhaolong;
-//
-//
-//
-//
-//            [[AvalonsoftHttpClient avalonsoftHttpClient] requestWithAction:COMMON_SERVER_URL actionName:MINE_MY_EXAM_SCORE_LIST method:HttpRequestPost paramenters:root prepareExecute:^{
-//
-//            } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull responseObject) {
-//
-//                NSLog(@"handleNetworkRequestWithResponseObject responseObject=%@",responseObject);
-//                _M *responseModel = [_M createResponseJsonObj:responseObject];
-//                NSLog(@"handleNetworkRequestWithResponseObject %ld %@",responseModel.rescode,responseModel.msg);
-//
-//                @try {
-//                    if(responseModel.rescode == 200){
-//                        NSDictionary *rspData = responseModel.data;
-//                        NSArray *rspDataArray = rspData[@"dataList"];
-//                       [strongSelf.resultArray removeAllObjects];
-//                       for(int i=0; i<rspDataArray.count; i++){
-//                           MineResultModel *model = [MineResultModel modelWithDict:rspDataArray[i]];
-//                           [strongSelf.resultArray addObject:model];
-//                       }
-//
-//                        [strongSelf.resultTableView reloadData];
-//                    }
-//                } @catch (NSException *exception) {
-//                    @throw exception;
-//                    //给出提示信息
-//                    [AvalonsoftMsgAlertView showWithTitle:@"信息" content:@"系统发生错误，请与平台管理员联系解决。"  buttonTitles:@[@"关闭"] buttonClickedBlock:nil];
-//                }
-//
-//            } failure:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error) {
-//                //请求失败
-//                NSLog(@"%@",error);
-//            }];
-//
-//        } else {
-//            //没网
-//            //            [AvalonsoftMsgAlertView showWithTitle:@"信息" content:@"请检查网络" buttonTitles:@[@"关闭"] buttonClickedBlock:nil];
-//        }
-//    }];
-//}
+- (void)editMineExamScoreList
+{
+    __weak typeof(self) weakSelf = self;
+    [AvalonsoftHasNetwork avalonsoft_hasNetwork:^(bool has) {
+        __strong typeof(weakSelf) strongSelf = weakSelf;
+
+        if (has) {
+            NSMutableDictionary *root = [NSMutableDictionary dictionary];
+            [root setValue:strongSelf.model.examType forKey:@"examType"];
+            [root setValue:strongSelf.model.examScore forKey:@"examScore"];
+            [root setValue:strongSelf.model.examDate forKey:@"examDate"];
+            [root setValue:strongSelf.model.scoreA forKey:@"scoreA"];
+            [root setValue:strongSelf.model.scoreB forKey:@"scoreB"];
+            [root setValue:strongSelf.model.scoreC forKey:@"scoreC"];
+            [root setValue:strongSelf.model.scoreD forKey:@"scoreD"];
+            [root setValue:strongSelf.model.scoreE forKey:@"scoreE"];
+            [root setValue:strongSelf.model.ID forKey:@"id"];
+            [root setValue:strongSelf.model.areaType forKey:@"areaType"];
+            [root setValue:strongSelf.model.countryCode forKey:@"countryCode"];
+            [root setValue:strongSelf.model.countryName forKey:@"countryName"];
+            [root setValue:strongSelf.model.provincesCode forKey:@"provincesCode"];
+            [root setValue:strongSelf.model.provincesName forKey:@"provincesName"];
+            [root setValue:strongSelf.model.cityCode forKey:@"cityCode"];
+            [root setValue:strongSelf.model.cityName forKey:@"cityName"];
+            [root setValue:strongSelf.model.address forKey:@"address"];
+            [root setValue:strongSelf.model.examOrgan forKey:@"examOrgan"];
+            [root setValue:strongSelf.model.insid forKey:@"insid"];
+            [root setValue:strongSelf.model.scoreFile forKey:@"scoreFile"];
+            [root setValue:strongSelf.model.username forKey:@"nickname"];
+            [root setValue:[_UserInfo accountId] forKey:@"accountId"];
+            [root setValue:@"0" forKey:@"delSign"];
+            [[AvalonsoftHttpClient avalonsoftHttpClient] requestWithAction:COMMON_SERVER_URL actionName:MINE_MY_EXAM_SCORE_UPDATE method:HttpRequestPost paramenters:root prepareExecute:^{
+
+            } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull responseObject) {
+
+                NSLog(@"handleNetworkRequestWithResponseObject responseObject=%@",responseObject);
+                _M *responseModel = [_M createResponseJsonObj:responseObject];
+                NSLog(@"handleNetworkRequestWithResponseObject %ld %@",responseModel.rescode,responseModel.msg);
+
+                @try {
+                    if(responseModel.rescode == 200){
+                        NSDictionary *rspData = responseModel.data;
+                        MineResultModel *model = [MineResultModel modelWithDict:rspData];
+
+                        if (self.sendValueBlock) {
+                            self.sendValueBlock(model);
+                        }
+                        
+                        [strongSelf.navigationController popViewControllerAnimated:YES];
+                    }
+                } @catch (NSException *exception) {
+                    @throw exception;
+                    //给出提示信息
+                    [AvalonsoftMsgAlertView showWithTitle:@"信息" content:@"系统发生错误，请与平台管理员联系解决。"  buttonTitles:@[@"关闭"] buttonClickedBlock:nil];
+                }
+
+            } failure:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error) {
+                //请求失败
+                NSLog(@"%@",error);
+            }];
+
+        } else {
+            //没网
+            //            [AvalonsoftMsgAlertView showWithTitle:@"信息" content:@"请检查网络" buttonTitles:@[@"关闭"] buttonClickedBlock:nil];
+        }
+    }];
+}
+
 
 @end

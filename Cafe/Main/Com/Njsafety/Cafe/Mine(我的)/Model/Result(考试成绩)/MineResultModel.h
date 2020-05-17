@@ -36,6 +36,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) NSString *cityCode;
 @property (nonatomic, copy) NSString *cityName;
 @property (nonatomic, copy) NSString *insid;
+@property (nonatomic, copy) NSString *username;
+
 
 @property (nonatomic, copy) NSString *showLanguage; //CH -- 中文；EN -- 英文
 
