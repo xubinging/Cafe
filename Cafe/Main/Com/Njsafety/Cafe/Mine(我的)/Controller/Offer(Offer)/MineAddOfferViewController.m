@@ -11,7 +11,7 @@
 #import <AssetsLibrary/AssetsLibrary.h>
 #import "AvalonsoftImagePicker.h"
 #import "MineSelectOfferViewController.h"
-#import "MineShowOfferViewController.h"
+#import "MineResultShowViewController.h"
 
 #define TEXTFIELD_TAG 10000
 #define K_ScoreTableView_CellHeight     114
@@ -987,8 +987,19 @@
 
 - (void)actionOfShow
 {
-    MineShowOfferViewController *showVC = [MineShowOfferViewController new];
+    MineResultShowViewController *showVC = [MineResultShowViewController new];
+    MineResultModel *model = [MineResultModel new];
+    model.examType = @"TOEFL";
+    showVC.model = model;
     [self.navigationController pushViewController:showVC animated:YES];
+
+
+    __weak typeof(self) weakSelf = self;
+    [showVC setSendValueBlock:^(MineResultModel *model){
+        __strong typeof(weakSelf) strongSelf = weakSelf;
+        
+//        [strongSelf queryMineExamScoreList];
+    }];
 }
 @end
 

@@ -7,7 +7,7 @@
 //
 
 #import "MineSelectOfferViewController.h"
-#import "MineResultShowContentEditViewController.h"
+//#import "MineResultShowContentEditViewController.h"
 
 #define TEXTFIELD_TAG 10000
 
@@ -797,48 +797,48 @@
                                       @"content":content
         };
         
-        MineResultShowContentEditViewController *contentEditVC = [[MineResultShowContentEditViewController alloc] init];
+//        MineResultShowContentEditViewController *contentEditVC = [[MineResultShowContentEditViewController alloc] init];
         //设置block回调
-        [contentEditVC setSendValueBlock:^(NSDictionary *valueDict){
-            //回调函数
-            NSString *returnContent = valueDict[@"content"];
-            
-            if(tfTag == 3){
-                self->location = returnContent;
-                self->locationTextField.text = returnContent;;
-                
-            }else if(tfTag == 4){
-                self->org = returnContent;
-                self->orgTextField.text = returnContent;;
-                
-            }else if(tfTag == 5){
-                self->resultL = returnContent;
-                self->resultLTextField.text = returnContent;;
-            
-            }else if(tfTag == 6){
-                self->resultS = returnContent;
-                self->resultSTextField.text = returnContent;;
-            
-            }else if(tfTag == 7){
-                self->resultR = returnContent;
-                self->resultRTextField.text = returnContent;;
-            
-            }else if(tfTag == 8){
-                self->resultW = returnContent;
-                self->resultWTextField.text = returnContent;;
-            
-            }else if(tfTag == 9){
-                self->resultScore = returnContent;
-                self->resultScoreTextField.text = returnContent;;
-            }
-            
-            //判断保存按钮是否可点击
-            [self isShowSavaButton];
-            
-        }];
+//        [contentEditVC setSendValueBlock:^(NSDictionary *valueDict){
+//            //回调函数
+//            NSString *returnContent = valueDict[@"content"];
+//
+//            if(tfTag == 3){
+//                self->location = returnContent;
+//                self->locationTextField.text = returnContent;;
+//
+//            }else if(tfTag == 4){
+//                self->org = returnContent;
+//                self->orgTextField.text = returnContent;;
+//
+//            }else if(tfTag == 5){
+//                self->resultL = returnContent;
+//                self->resultLTextField.text = returnContent;;
+//
+//            }else if(tfTag == 6){
+//                self->resultS = returnContent;
+//                self->resultSTextField.text = returnContent;;
+//
+//            }else if(tfTag == 7){
+//                self->resultR = returnContent;
+//                self->resultRTextField.text = returnContent;;
+//
+//            }else if(tfTag == 8){
+//                self->resultW = returnContent;
+//                self->resultWTextField.text = returnContent;;
+//
+//            }else if(tfTag == 9){
+//                self->resultScore = returnContent;
+//                self->resultScoreTextField.text = returnContent;;
+//            }
+//
+//            //判断保存按钮是否可点击
+//            [self isShowSavaButton];
+//
+//        }];
         
-        contentEditVC.dataDic = sendDataDic;
-        [self.navigationController pushViewController:contentEditVC animated:YES];
+//        contentEditVC.dataDic = sendDataDic;
+//        [self.navigationController pushViewController:contentEditVC animated:YES];
     
     }
     

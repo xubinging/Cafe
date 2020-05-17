@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		1F0768C72462F0F800B37831 /* MineAddOfferScoreTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F0768C62462F0F800B37831 /* MineAddOfferScoreTableViewCell.m */; };
 		1F0769032463ABA400B37831 /* MineSelectOfferViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F0769022463ABA400B37831 /* MineSelectOfferViewController.m */; };
-		1F0769062463ABB800B37831 /* MineShowOfferViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F0769052463ABB800B37831 /* MineShowOfferViewController.m */; };
 		1F186151244D954C009977B1 /* MineAddRewordAndSkillViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F186150244D954C009977B1 /* MineAddRewordAndSkillViewController.m */; };
 		1F186154244FDAD6009977B1 /* MineEditRewordAndSkillViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F186153244FDAD6009977B1 /* MineEditRewordAndSkillViewController.m */; };
 		1F5911A92452AB74003E15BD /* MineAddActivityViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F5911A82452AB74003E15BD /* MineAddActivityViewController.m */; };
@@ -453,7 +452,6 @@
 		B3A87D8E242B0230002AECE9 /* MyCollectionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3A87C9D242B022F002AECE9 /* MyCollectionViewController.m */; };
 		B3A87D8F242B0230002AECE9 /* MineResultShowViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3A87C9F242B022F002AECE9 /* MineResultShowViewController.m */; };
 		B3A87D90242B0230002AECE9 /* MineResultDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3A87CA2242B022F002AECE9 /* MineResultDetailViewController.m */; };
-		B3A87D91242B0230002AECE9 /* MineResultShowContentEditViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3A87CA4242B022F002AECE9 /* MineResultShowContentEditViewController.m */; };
 		B3A87D92242B0230002AECE9 /* MineResultViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3A87CA5242B022F002AECE9 /* MineResultViewController.m */; };
 		B3A87D93242B0230002AECE9 /* MineMainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3A87CA9242B022F002AECE9 /* MineMainViewController.m */; };
 		B3A87D94242B0230002AECE9 /* MineVenueCommentPostVC.m in Sources */ = {isa = PBXBuildFile; fileRef = B3A87CAC242B022F002AECE9 /* MineVenueCommentPostVC.m */; };
@@ -474,7 +472,6 @@
 		B3A87DA3242B0230002AECE9 /* MeCardProgressModel.m in Sources */ = {isa = PBXBuildFile; fileRef = B3A87CDA242B022F002AECE9 /* MeCardProgressModel.m */; };
 		B3A87DA4242B0230002AECE9 /* MineEducationModel.m in Sources */ = {isa = PBXBuildFile; fileRef = B3A87CDD242B022F002AECE9 /* MineEducationModel.m */; };
 		B3A87DA5242B0230002AECE9 /* MineActivityModel.m in Sources */ = {isa = PBXBuildFile; fileRef = B3A87CDF242B022F002AECE9 /* MineActivityModel.m */; };
-		B3A87DA6242B0230002AECE9 /* MineOfferScoreModel.m in Sources */ = {isa = PBXBuildFile; fileRef = B3A87CE3242B022F002AECE9 /* MineOfferScoreModel.m */; };
 		B3A87DA7242B0230002AECE9 /* MineOfferModel.m in Sources */ = {isa = PBXBuildFile; fileRef = B3A87CE4242B022F002AECE9 /* MineOfferModel.m */; };
 		B3A87DA8242B0230002AECE9 /* MineJobModel.m in Sources */ = {isa = PBXBuildFile; fileRef = B3A87CE8242B022F002AECE9 /* MineJobModel.m */; };
 		B3A87DA9242B0230002AECE9 /* MineLearningModel.m in Sources */ = {isa = PBXBuildFile; fileRef = B3A87CEB242B022F002AECE9 /* MineLearningModel.m */; };
@@ -564,8 +561,6 @@
 		1F0768FB24631FC700B37831 /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
 		1F0769012463ABA400B37831 /* MineSelectOfferViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MineSelectOfferViewController.h; sourceTree = "<group>"; };
 		1F0769022463ABA400B37831 /* MineSelectOfferViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MineSelectOfferViewController.m; sourceTree = "<group>"; };
-		1F0769042463ABB800B37831 /* MineShowOfferViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MineShowOfferViewController.h; sourceTree = "<group>"; };
-		1F0769052463ABB800B37831 /* MineShowOfferViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MineShowOfferViewController.m; sourceTree = "<group>"; };
 		1F0769142463F4F100B37831 /* MineDetailCommonTableViewCell2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MineDetailCommonTableViewCell2.h; sourceTree = "<group>"; };
 		1F0769152463F4F100B37831 /* MineDetailCommonTableViewCell2.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MineDetailCommonTableViewCell2.m; sourceTree = "<group>"; };
 		1F18614F244D954C009977B1 /* MineAddRewordAndSkillViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MineAddRewordAndSkillViewController.h; sourceTree = "<group>"; };
@@ -1478,11 +1473,9 @@
 		B3A87C9C242B022F002AECE9 /* MyCollectionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MyCollectionViewController.h; sourceTree = "<group>"; };
 		B3A87C9D242B022F002AECE9 /* MyCollectionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MyCollectionViewController.m; sourceTree = "<group>"; };
 		B3A87C9F242B022F002AECE9 /* MineResultShowViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MineResultShowViewController.m; sourceTree = "<group>"; };
-		B3A87CA0242B022F002AECE9 /* MineResultShowContentEditViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MineResultShowContentEditViewController.h; sourceTree = "<group>"; };
 		B3A87CA1242B022F002AECE9 /* MineResultViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MineResultViewController.h; sourceTree = "<group>"; };
 		B3A87CA2242B022F002AECE9 /* MineResultDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MineResultDetailViewController.m; sourceTree = "<group>"; };
 		B3A87CA3242B022F002AECE9 /* MineResultShowViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MineResultShowViewController.h; sourceTree = "<group>"; };
-		B3A87CA4242B022F002AECE9 /* MineResultShowContentEditViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MineResultShowContentEditViewController.m; sourceTree = "<group>"; };
 		B3A87CA5242B022F002AECE9 /* MineResultViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MineResultViewController.m; sourceTree = "<group>"; };
 		B3A87CA6242B022F002AECE9 /* MineResultDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MineResultDetailViewController.h; sourceTree = "<group>"; };
 		B3A87CA8242B022F002AECE9 /* MineMainViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MineMainViewController.h; sourceTree = "<group>"; };
@@ -1524,9 +1517,7 @@
 		B3A87CDF242B022F002AECE9 /* MineActivityModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MineActivityModel.m; sourceTree = "<group>"; };
 		B3A87CE0242B022F002AECE9 /* MineActivityModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MineActivityModel.h; sourceTree = "<group>"; };
 		B3A87CE2242B022F002AECE9 /* MineOfferModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MineOfferModel.h; sourceTree = "<group>"; };
-		B3A87CE3242B022F002AECE9 /* MineOfferScoreModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MineOfferScoreModel.m; sourceTree = "<group>"; };
 		B3A87CE4242B022F002AECE9 /* MineOfferModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MineOfferModel.m; sourceTree = "<group>"; };
-		B3A87CE5242B022F002AECE9 /* MineOfferScoreModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MineOfferScoreModel.h; sourceTree = "<group>"; };
 		B3A87CE7242B022F002AECE9 /* MineJobModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MineJobModel.h; sourceTree = "<group>"; };
 		B3A87CE8242B022F002AECE9 /* MineJobModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MineJobModel.m; sourceTree = "<group>"; };
 		B3A87CEA242B022F002AECE9 /* MineLearningModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MineLearningModel.h; sourceTree = "<group>"; };
@@ -3380,8 +3371,6 @@
 				1F5911B724588955003E15BD /* MineAddOfferViewController.m */,
 				1F0769012463ABA400B37831 /* MineSelectOfferViewController.h */,
 				1F0769022463ABA400B37831 /* MineSelectOfferViewController.m */,
-				1F0769042463ABB800B37831 /* MineShowOfferViewController.h */,
-				1F0769052463ABB800B37831 /* MineShowOfferViewController.m */,
 			);
 			path = "Offer(Offer)";
 			sourceTree = "<group>";
@@ -3548,8 +3537,6 @@
 				B3A87CA5242B022F002AECE9 /* MineResultViewController.m */,
 				B3A87CA3242B022F002AECE9 /* MineResultShowViewController.h */,
 				B3A87C9F242B022F002AECE9 /* MineResultShowViewController.m */,
-				B3A87CA0242B022F002AECE9 /* MineResultShowContentEditViewController.h */,
-				B3A87CA4242B022F002AECE9 /* MineResultShowContentEditViewController.m */,
 				B3A87CA6242B022F002AECE9 /* MineResultDetailViewController.h */,
 				B3A87CA2242B022F002AECE9 /* MineResultDetailViewController.m */,
 			);
@@ -3768,8 +3755,6 @@
 			children = (
 				B3A87CE2242B022F002AECE9 /* MineOfferModel.h */,
 				B3A87CE4242B022F002AECE9 /* MineOfferModel.m */,
-				B3A87CE5242B022F002AECE9 /* MineOfferScoreModel.h */,
-				B3A87CE3242B022F002AECE9 /* MineOfferScoreModel.m */,
 			);
 			path = "Offer(Offer)";
 			sourceTree = "<group>";
@@ -4569,7 +4554,6 @@
 				B396321E241795ED0041630E /* MJRefreshHeader.m in Sources */,
 				B376F05123A10FC7004E6FBC /* ZXAnyAIDecoder.m in Sources */,
 				B3756B9323B6F39500B9861A /* AvalonsoftSheetView.m in Sources */,
-				1F0769062463ABB800B37831 /* MineShowOfferViewController.m in Sources */,
 				B3BDFF4F23C0D4EA007335EA /* AvalonsoftAddressModel.m in Sources */,
 				B3DC783B242653B700B705D1 /* ZQAlterField.m in Sources */,
 				B376EFBC23A10FC7004E6FBC /* LBXScanViewStyle.m in Sources */,
@@ -4927,7 +4911,6 @@
 				B3DC7835242653B700B705D1 /* ZQPlayer.m in Sources */,
 				B376EFD623A10FC7004E6FBC /* ZXAztecDetectorResult.m in Sources */,
 				B3A4F97223A76ABD00BBBB34 /* SDWebImageDownloaderRequestModifier.m in Sources */,
-				B3A87DA6242B0230002AECE9 /* MineOfferScoreModel.m in Sources */,
 				B3A87DA5242B0230002AECE9 /* MineActivityModel.m in Sources */,
 				B376F08423A10FC7004E6FBC /* ZXEmailDoCoMoResultParser.m in Sources */,
 				B3A87DB1242B0230002AECE9 /* MineVenueCommentPostModel.m in Sources */,
@@ -4986,7 +4969,6 @@
 				B376EFEB23A10FC7004E6FBC /* ZXQRCodeDecoderMetaData.m in Sources */,
 				B3A87DAB242B0230002AECE9 /* PlatformMenuModel.m in Sources */,
 				B3A87DC7242B0230002AECE9 /* PersonalDataTableViewCell.m in Sources */,
-				B3A87D91242B0230002AECE9 /* MineResultShowContentEditViewController.m in Sources */,
 				B376EFBF23A10FC7004E6FBC /* LBXScanWrapper.m in Sources */,
 				B3A87D9B242B0230002AECE9 /* MineRewordAndSkillViewController.m in Sources */,
 				B396321A241795ED0041630E /* MJRefreshNormalHeader.m in Sources */,

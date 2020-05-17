@@ -7,7 +7,6 @@
 //
 
 #import "MineAddRewordAndSkillViewController.h"
-#import "MineResultShowContentEditViewController.h"
 
 #define TEXTFIELD_TAG 10000
 
