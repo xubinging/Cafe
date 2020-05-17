@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "MineResultModel.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -23,13 +24,13 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) NSString *internationalSchoolName;      //就读国际学校
 
 
-@property (nonatomic, copy) NSDictionary *toeflScore;                //TOEFL
-@property (nonatomic, copy) NSDictionary *ieltsScore;                //IELTS
-@property (nonatomic, copy) NSDictionary *greScore;                  //GRE
-@property (nonatomic, copy) NSDictionary *gmatScore;                 //GMAT
-@property (nonatomic, copy) NSDictionary *satScore;                  //SAT
-@property (nonatomic, copy) NSDictionary *ssatScore;                 //SSAT
-@property (nonatomic, copy) NSDictionary *actScore;                  //ACT
+@property (nonatomic, strong) MineResultModel *toeflScore;                //TOEFL
+@property (nonatomic, strong) MineResultModel *ieltsScore;                //IELTS
+@property (nonatomic, strong) MineResultModel *greScore;                  //GRE
+@property (nonatomic, strong) MineResultModel *gmatScore;                 //GMAT
+@property (nonatomic, strong) MineResultModel *satScore;                  //SAT
+@property (nonatomic, strong) MineResultModel *ssatScore;                 //SSAT
+@property (nonatomic, strong) MineResultModel *actScore;                  //ACT
 
 @property (nonatomic, copy) NSString *gpaScore;                      //GPA成绩
 @property (nonatomic, copy) NSString *gpaDate;                      //GPA就读时间

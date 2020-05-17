@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-#import "MineOfferScoreModel.h"
+#import "MineResultModel.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -39,7 +39,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) UILabel *scoreFourLabel;
 
 //根据类去填充cell
--(void)updateCellWithModel:(MineOfferScoreModel *)model;
+-(void)updateCellWithModel:(MineResultModel *)model;
 
 @end
 

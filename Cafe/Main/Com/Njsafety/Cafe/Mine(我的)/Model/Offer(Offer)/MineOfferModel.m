@@ -22,7 +22,6 @@
     //对model进行批量赋值，将dict传入
     [model setValuesForKeysWithDictionary:dict];
     
-    ///TODO:xubing 建议平台不要使用 id 字段，可用大写 ID，同时下发的数据类型，建议用字符串
     NSString *ID = dict[@"id"];
     if ([ID isKindOfClass:[NSString class]]) {
         model.ID = ID;
@@ -30,6 +29,34 @@
         model.ID = [NSString stringWithFormat:@"%@",ID];
     }
     
+    if (![dict[@"toeflScore"] isEqual:[NSNull null]]) {
+        model.toeflScore = [MineResultModel modelWithDict: dict[@"toeflScore"]];
+    }
+    
+    if (![dict[@"ieltsScore"] isEqual:[NSNull null]]) {
+        model.ieltsScore = [MineResultModel modelWithDict: dict[@"ieltsScore"]];
+    }
+    
+    if (![dict[@"greScore"] isEqual:[NSNull null]]) {
+        model.greScore = [MineResultModel modelWithDict: dict[@"greScore"]];
+    }
+
+    if (![dict[@"gmatScore"] isEqual:[NSNull null]]) {
+        model.gmatScore = [MineResultModel modelWithDict: dict[@"gmatScore"]];
+    }
+
+    if (![dict[@"satScore"] isEqual:[NSNull null]]) {
+        model.satScore = [MineResultModel modelWithDict: dict[@"satScore"]];
+    }
+
+    if (![dict[@"ssatScore"] isEqual:[NSNull null]]) {
+        model.ssatScore = [MineResultModel modelWithDict: dict[@"ssatScore"]];
+    }
+
+    if (![dict[@"actScore"] isEqual:[NSNull null]]) {
+        model.actScore = [MineResultModel modelWithDict: dict[@"actScore"]];
+    }
+
     return model;
 }
 

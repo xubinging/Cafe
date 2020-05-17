@@ -9,11 +9,9 @@
 #import "MineOfferDetailViewController.h"
 
 #import "MineOfferModel.h"
-
+#import "MineResultModel.h"
 #import "MineDetailCommonModel.h"           //信息列表
 #import "MineDetailCommonTableViewCell.h"
-
-#import "MineOfferScoreModel.h"             //分数列表
 #import "MineOfferScoreTableViewCell.h"
 
 #define K_DetailTableView_Tag   10000
@@ -33,8 +31,6 @@
     @private UILabel *GPALabel;             //平均分标签
     @private UIImageView *contentImageView;
     @private UITextView *contentTextView;
-    
-    @private MineOfferModel *slctModel;
 }
 
 @property (nonatomic,strong) UITableView *detailTableView;
@@ -52,7 +48,6 @@
    
     [self initVars];
     [self initSharedPreferences];
-    [self getParentVars];
     [self initNavigationView];
     [self initView];
     [self setData];
@@ -83,14 +78,6 @@
     } @catch (NSException *exception) {
         @throw exception;
         
-    }
-}
-
-#pragma mark - 获取父页面参数 -
--(void)getParentVars
-{
-    if(_dataDic != nil){
-        slctModel = _dataDic[@"slctModel"];
     }
 }
 
@@ -316,15 +303,15 @@
 -(void)setData
 {
     //detail
-    NSString *country = slctModel.country;
-    NSString *school = slctModel.schoolNameEn;
-    NSString *stage = slctModel.level;
-    NSString *major = slctModel.majorName;
-    NSString *agentCompany = slctModel.agencyCompanyName;
-    NSString *internationalSchool = slctModel.internationalSchoolName;
-    NSString *internationalTime = slctModel.gpaDate;
+    NSString *country = self.model.country;
+    NSString *school = self.model.schoolNameEn;
+    NSString *stage = self.model.level;
+    NSString *major = self.model.majorName;
+    NSString *agentCompany = self.model.agencyCompanyName;
+    NSString *internationalSchool = self.model.internationalSchoolName;
+    NSString *internationalTime = self.model.gpaDate;
     
-    NSString *showLanguage = slctModel.showLanguage;
+    NSString *showLanguage = self.model.showLanguage;
     
     for(int i=0; i<7; i++){
         switch (i) {
@@ -453,386 +440,95 @@
     }
     
     //score
-    NSDictionary *TOEFLDic = slctModel.toeflScore;
-    NSDictionary *IELTSDic = slctModel.ieltsScore;
-    NSDictionary *GREDic = slctModel.greScore;
-    NSDictionary *GMATDic = slctModel.gmatScore;
-    NSDictionary *SATDic = slctModel.satScore;
-    NSDictionary *ACTDic = slctModel.actScore;
+    //TOEFL
+    if (self.model.toeflScore) {
+        self.model.toeflScore.examType = @"TOEFL";
+        self.model.toeflScore.totalScoreTitle = @"总分";
+        self.model.toeflScore.scoreATitle = @"L";
+        self.model.toeflScore.scoreBTitle = @"S";
+        self.model.toeflScore.scoreCTitle = @"R";
+        self.model.toeflScore.scoreDTitle = @"W";
+        [_scoreArray addObject:self.model.toeflScore];
         
-    //TOEF
-    if(TOEFLDic != nil){
-        NSString *scoreType = @"";            //分数类别
-        NSString *totalScoreTitle = @"";      //总分
-        NSString *totalScore = @"";
-        NSString *scoreOneTitle = @"";        //分数一
-        NSString *scoreOne = @"";
-        NSString *scoreTwoTitle = @"";        //分数二
-        NSString *scoreTwo = @"";
-        NSString *scoreThreeTitle = @"";      //分数三
-        NSString *scoreThree = @"";
-        NSString *scoreFourTitle = @"";       //分数四
-        NSString *scoreFour = @"";
-        
-        scoreType = @"TOEFL";
-        if(TOEFLDic[@"examScore"] != nil){
-            totalScoreTitle = @"总分";
-            totalScore = TOEFLDic[@"examScore"];
-        }
-        
-        if(TOEFLDic[@"scoreA"] != nil){
-            scoreOneTitle = @"L";
-            scoreOne = TOEFLDic[@"scoreA"];
-        }
-        
-        if(TOEFLDic[@"scoreB"] != nil){
-            scoreTwoTitle = @"S";
-            scoreTwo = TOEFLDic[@"scoreB"];
-        }
-        
-        if(TOEFLDic[@"scoreC"] != nil){
-            scoreThreeTitle = @"R";
-            scoreThree = TOEFLDic[@"scoreC"];
-        }
-        
-        if(TOEFLDic[@"scoreD"] != nil){
-            scoreFourTitle = @"W";
-            scoreFour = TOEFLDic[@"scoreD"];
-        }
-        
-        if(TOEFLDic[@"scoreFile"] != nil){
-           NSString *scoreFile = TOEFLDic[@"scoreFile"];
-           [contentImageView sd_setImageWithURL:[NSURL URLWithString:[_F createFileLoadUrl:scoreFile]]];
-        }
-        
-        NSDictionary *dic = @{
-            @"scoreType":scoreType,
-            @"totalScoreTitle":totalScoreTitle,
-            @"totalScore":totalScore,
-            @"scoreOneTitle":scoreOneTitle,
-            @"scoreOne":scoreOne,
-            @"scoreTwoTitle":scoreTwoTitle,
-            @"scoreTwo":scoreTwo,
-            @"scoreThreeTitle":scoreThreeTitle,
-            @"scoreThree":scoreThree,
-            @"scoreFourTitle":scoreFourTitle,
-            @"scoreFour":scoreFour
-        };
-        MineOfferScoreModel *model = [MineOfferScoreModel modelWithDict:dic];
-        [_scoreArray addObject:model];
+        [contentImageView sd_setImageWithURL:[NSURL URLWithString:[_F createFileLoadUrl:self.model.toeflScore.scoreFile]]];
     }
+    
     
     //IELTS
-    if(IELTSDic != nil){
-        NSString *scoreType = @"";            //分数类别
-        NSString *totalScoreTitle = @"";      //总分
-        NSString *totalScore = @"";
-        NSString *scoreOneTitle = @"";        //分数一
-        NSString *scoreOne = @"";
-        NSString *scoreTwoTitle = @"";        //分数二
-        NSString *scoreTwo = @"";
-        NSString *scoreThreeTitle = @"";      //分数三
-        NSString *scoreThree = @"";
-        NSString *scoreFourTitle = @"";       //分数四
-        NSString *scoreFour = @"";
+    if (self.model.ieltsScore) {
+        self.model.ieltsScore.examType = @"IELTS";
+        self.model.ieltsScore.totalScoreTitle = @"总分";
+        self.model.ieltsScore.scoreATitle = @"L";
+        self.model.ieltsScore.scoreBTitle = @"S";
+        self.model.ieltsScore.scoreCTitle = @"R";
+        self.model.ieltsScore.scoreDTitle = @"W";
+        [_scoreArray addObject:self.model.ieltsScore];
         
-        scoreType = @"IELTS";
-        if(IELTSDic[@"examScore"] != nil){
-            totalScoreTitle = @"总分";
-            totalScore = IELTSDic[@"examScore"];
-        }
-        
-        if(IELTSDic[@"scoreA"] != nil){
-            scoreOneTitle = @"L";
-            scoreOne = IELTSDic[@"scoreA"];
-        }
-        
-        if(IELTSDic[@"scoreB"] != nil){
-            scoreTwoTitle = @"S";
-            scoreTwo = IELTSDic[@"scoreB"];
-        }
-        
-        if(IELTSDic[@"scoreC"] != nil){
-            scoreThreeTitle = @"R";
-            scoreThree = IELTSDic[@"scoreC"];
-        }
-        
-        if(IELTSDic[@"scoreD"] != nil){
-            scoreFourTitle = @"W";
-            scoreFour = IELTSDic[@"scoreD"];
-        }
-        
-        if(TOEFLDic[@"scoreFile"] != nil){
-           NSString *scoreFile = TOEFLDic[@"scoreFile"];
-           [contentImageView sd_setImageWithURL:[NSURL URLWithString:[_F createFileLoadUrl:scoreFile]]];
-        }
-        
-        NSDictionary *dic = @{
-            @"scoreType":scoreType,
-            @"totalScoreTitle":totalScoreTitle,
-            @"totalScore":totalScore,
-            @"scoreOneTitle":scoreOneTitle,
-            @"scoreOne":scoreOne,
-            @"scoreTwoTitle":scoreTwoTitle,
-            @"scoreTwo":scoreTwo,
-            @"scoreThreeTitle":scoreThreeTitle,
-            @"scoreThree":scoreThree,
-            @"scoreFourTitle":scoreFourTitle,
-            @"scoreFour":scoreFour
-        };
-        MineOfferScoreModel *model = [MineOfferScoreModel modelWithDict:dic];
-        [_scoreArray addObject:model];
+        [contentImageView sd_setImageWithURL:[NSURL URLWithString:[_F createFileLoadUrl:self.model.ieltsScore.scoreFile]]];
     }
+
     
     //GRE
-    if(GREDic != nil){
-        NSString *scoreType = @"";            //分数类别
-        NSString *totalScoreTitle = @"";      //总分
-        NSString *totalScore = @"";
-        NSString *scoreOneTitle = @"";        //分数一
-        NSString *scoreOne = @"";
-        NSString *scoreTwoTitle = @"";        //分数二
-        NSString *scoreTwo = @"";
-        NSString *scoreThreeTitle = @"";      //分数三
-        NSString *scoreThree = @"";
-        NSString *scoreFourTitle = @"";       //分数四
-        NSString *scoreFour = @"";
-        
-        scoreType = @"GRE";
-        if(GREDic[@"examScore"] != nil){
-            totalScoreTitle = @"总分";
-            totalScore = GREDic[@"examScore"];
-        }
-        
-        if(GREDic[@"scoreA"] != nil){
-            scoreOneTitle = @"L";
-            scoreOne = GREDic[@"scoreA"];
-        }
-        
-        if(GREDic[@"scoreB"] != nil){
-            scoreTwoTitle = @"Q";
-            scoreTwo = GREDic[@"scoreB"];
-        }
-        
-        if(GREDic[@"scoreC"] != nil){
-            scoreThreeTitle = @"AW";
-            scoreThree = GREDic[@"scoreC"];
-        }
-        
-        if(TOEFLDic[@"scoreFile"] != nil){
-           NSString *scoreFile = TOEFLDic[@"scoreFile"];
-           [contentImageView sd_setImageWithURL:[NSURL URLWithString:[_F createFileLoadUrl:scoreFile]]];
-        }
-        
-        NSDictionary *dic = @{
-            @"scoreType":scoreType,
-            @"totalScoreTitle":totalScoreTitle,
-            @"totalScore":totalScore,
-            @"scoreOneTitle":scoreOneTitle,
-            @"scoreOne":scoreOne,
-            @"scoreTwoTitle":scoreTwoTitle,
-            @"scoreTwo":scoreTwo,
-            @"scoreThreeTitle":scoreThreeTitle,
-            @"scoreThree":scoreThree,
-            @"scoreFourTitle":scoreFourTitle,
-            @"scoreFour":scoreFour
-        };
-        MineOfferScoreModel *model = [MineOfferScoreModel modelWithDict:dic];
-        [_scoreArray addObject:model];
+    if (self.model.greScore) {
+        self.model.greScore.examType = @"GRE";
+        self.model.greScore.totalScoreTitle = @"总分";
+        self.model.greScore.scoreATitle = @"L";
+        self.model.greScore.scoreBTitle = @"Q";
+        self.model.greScore.scoreCTitle = @"AW";
+        [_scoreArray addObject:self.model.greScore];
+
+        [contentImageView sd_setImageWithURL:[NSURL URLWithString:[_F createFileLoadUrl:self.model.greScore.scoreFile]]];
     }
+
     
     //GMAT
-    if(GMATDic != nil){
-        NSString *scoreType = @"";            //分数类别
-        NSString *totalScoreTitle = @"";      //总分
-        NSString *totalScore = @"";
-        NSString *scoreOneTitle = @"";        //分数一
-        NSString *scoreOne = @"";
-        NSString *scoreTwoTitle = @"";        //分数二
-        NSString *scoreTwo = @"";
-        NSString *scoreThreeTitle = @"";      //分数三
-        NSString *scoreThree = @"";
-        NSString *scoreFourTitle = @"";       //分数四
-        NSString *scoreFour = @"";
-        
-        scoreType = @"GMAT";
-        if(GMATDic[@"examScore"] != nil){
-            totalScoreTitle = @"总分";
-            totalScore = GMATDic[@"examScore"];
-        }
-        
-        if(GMATDic[@"scoreA"] != nil){
-            scoreOneTitle = @"V";
-            scoreOne = GMATDic[@"scoreA"];
-        }
-        
-        if(GMATDic[@"scoreB"] != nil){
-            scoreTwoTitle = @"Q";
-            scoreTwo = GMATDic[@"scoreB"];
-        }
-        
-        if(GMATDic[@"scoreC"] != nil){
-            scoreThreeTitle = @"AW";
-            scoreThree = GMATDic[@"scoreC"];
-        }
-        
-        if(GMATDic[@"scoreD"] != nil){
-            scoreFourTitle = @"IR";
-            scoreFour = GMATDic[@"scoreD"];
-        }
-        
-        if(TOEFLDic[@"scoreFile"] != nil){
-           NSString *scoreFile = TOEFLDic[@"scoreFile"];
-           [contentImageView sd_setImageWithURL:[NSURL URLWithString:[_F createFileLoadUrl:scoreFile]]];
-        }
-        
-        NSDictionary *dic = @{
-            @"scoreType":scoreType,
-            @"totalScoreTitle":totalScoreTitle,
-            @"totalScore":totalScore,
-            @"scoreOneTitle":scoreOneTitle,
-            @"scoreOne":scoreOne,
-            @"scoreTwoTitle":scoreTwoTitle,
-            @"scoreTwo":scoreTwo,
-            @"scoreThreeTitle":scoreThreeTitle,
-            @"scoreThree":scoreThree,
-            @"scoreFourTitle":scoreFourTitle,
-            @"scoreFour":scoreFour
-        };
-        MineOfferScoreModel *model = [MineOfferScoreModel modelWithDict:dic];
-        [_scoreArray addObject:model];
+    if (self.model.gmatScore) {
+        self.model.gmatScore.examType = @"GMAT";
+        self.model.gmatScore.totalScoreTitle = @"总分";
+        self.model.gmatScore.scoreATitle = @"V";
+        self.model.gmatScore.scoreBTitle = @"Q";
+        self.model.gmatScore.scoreCTitle = @"AW";
+        self.model.gmatScore.scoreDTitle = @"IR";
+        [_scoreArray addObject:self.model.gmatScore];
+         
+        [contentImageView sd_setImageWithURL:[NSURL URLWithString:[_F createFileLoadUrl:self.model.gmatScore.scoreFile]]];
     }
+
     
     //SAT
-    if(SATDic != nil){
-        NSString *scoreType = @"";            //分数类别
-        NSString *totalScoreTitle = @"";      //总分
-        NSString *totalScore = @"";
-        NSString *scoreOneTitle = @"";        //分数一
-        NSString *scoreOne = @"";
-        NSString *scoreTwoTitle = @"";        //分数二
-        NSString *scoreTwo = @"";
-        NSString *scoreThreeTitle = @"";      //分数三
-        NSString *scoreThree = @"";
-        NSString *scoreFourTitle = @"";       //分数四
-        NSString *scoreFour = @"";
-        
-        scoreType = @"SAT";
-        if(SATDic[@"examScore"] != nil){
-            totalScoreTitle = @"总分";
-            totalScore = SATDic[@"examScore"];
-        }
-        
-        if(SATDic[@"scoreA"] != nil){
-            scoreOneTitle = @"EBRW";
-            scoreOne = SATDic[@"scoreA"];
-        }
-        
-        if(SATDic[@"scoreB"] != nil){
-            scoreTwoTitle = @"M";
-            scoreTwo = SATDic[@"scoreB"];
-        }
-        
-        if(SATDic[@"scoreC"] != nil){
-            scoreThreeTitle = @"ER";
-            scoreThree = SATDic[@"scoreC"];
-        }
-        
-        if(SATDic[@"scoreD"] != nil){
-            scoreFourTitle = @"EA";
-            scoreFour = SATDic[@"scoreD"];
-        }
-        
-        if(TOEFLDic[@"scoreFile"] != nil){
-           NSString *scoreFile = TOEFLDic[@"scoreFile"];
-           [contentImageView sd_setImageWithURL:[NSURL URLWithString:[_F createFileLoadUrl:scoreFile]]];
-        }
-        
-        NSDictionary *dic = @{
-            @"scoreType":scoreType,
-            @"totalScoreTitle":totalScoreTitle,
-            @"totalScore":totalScore,
-            @"scoreOneTitle":scoreOneTitle,
-            @"scoreOne":scoreOne,
-            @"scoreTwoTitle":scoreTwoTitle,
-            @"scoreTwo":scoreTwo,
-            @"scoreThreeTitle":scoreThreeTitle,
-            @"scoreThree":scoreThree,
-            @"scoreFourTitle":scoreFourTitle,
-            @"scoreFour":scoreFour
-        };
-        MineOfferScoreModel *model = [MineOfferScoreModel modelWithDict:dic];
-        [_scoreArray addObject:model];
+    if (self.model.satScore) {
+        self.model.satScore.examType = @"SAT";
+        self.model.satScore.totalScoreTitle = @"总分";
+        self.model.satScore.scoreATitle = @"EBRW";
+        self.model.satScore.scoreBTitle = @"M";
+        self.model.satScore.scoreCTitle = @"ER";
+        self.model.satScore.scoreDTitle = @"EA";
+        [_scoreArray addObject:self.model.satScore];
+         
+        [contentImageView sd_setImageWithURL:[NSURL URLWithString:[_F createFileLoadUrl:self.model.satScore.scoreFile]]];
     }
+
     
     //ACT
-    if(ACTDic != nil){
-        NSString *scoreType = @"";            //分数类别
-        NSString *totalScoreTitle = @"";      //总分
-        NSString *totalScore = @"";
-        NSString *scoreOneTitle = @"";        //分数一
-        NSString *scoreOne = @"";
-        NSString *scoreTwoTitle = @"";        //分数二
-        NSString *scoreTwo = @"";
-        NSString *scoreThreeTitle = @"";      //分数三
-        NSString *scoreThree = @"";
-        NSString *scoreFourTitle = @"";       //分数四
-        NSString *scoreFour = @"";
-        
-        scoreType = @"ACT";
-        if(ACTDic[@"examScore"] != nil){
-            totalScoreTitle = @"总分";
-            totalScore = ACTDic[@"examScore"];
-        }
-        
-        if(ACTDic[@"scoreA"] != nil){
-            scoreOneTitle = @"R";
-            scoreOne = ACTDic[@"scoreA"];
-        }
-        
-        if(ACTDic[@"scoreB"] != nil){
-            scoreTwoTitle = @"E";
-            scoreTwo = ACTDic[@"scoreB"];
-        }
-        
-        if(ACTDic[@"scoreC"] != nil){
-            scoreThreeTitle = @"M";
-            scoreThree = ACTDic[@"scoreC"];
-        }
-        
-        if(ACTDic[@"scoreD"] != nil){
-            scoreFourTitle = @"S";
-            scoreFour = ACTDic[@"scoreD"];
-        }
-        
-        if(TOEFLDic[@"scoreFile"] != nil){
-           NSString *scoreFile = TOEFLDic[@"scoreFile"];
-           [contentImageView sd_setImageWithURL:[NSURL URLWithString:[_F createFileLoadUrl:scoreFile]]];
-        }
-        
-        NSDictionary *dic = @{
-            @"scoreType":scoreType,
-            @"totalScoreTitle":totalScoreTitle,
-            @"totalScore":totalScore,
-            @"scoreOneTitle":scoreOneTitle,
-            @"scoreOne":scoreOne,
-            @"scoreTwoTitle":scoreTwoTitle,
-            @"scoreTwo":scoreTwo,
-            @"scoreThreeTitle":scoreThreeTitle,
-            @"scoreThree":scoreThree,
-            @"scoreFourTitle":scoreFourTitle,
-            @"scoreFour":scoreFour
-        };
-        MineOfferScoreModel *model = [MineOfferScoreModel modelWithDict:dic];
-        [_scoreArray addObject:model];
+    if (self.model.actScore) {
+        self.model.actScore.examType = @"ACT";
+        self.model.actScore.totalScoreTitle = @"总分";
+        self.model.actScore.scoreATitle = @"R";
+        self.model.actScore.scoreBTitle = @"E";
+        self.model.actScore.scoreCTitle = @"M";
+        self.model.actScore.scoreDTitle = @"S";
+        [_scoreArray addObject:self.model.actScore];
+
+        [contentImageView sd_setImageWithURL:[NSURL URLWithString:[_F createFileLoadUrl:self.model.actScore.scoreFile]]];
     }
+
         
     //GPA数据
-    NSString *gpa = slctModel.gpaScore;
+    NSString *gpa = self.model.gpaScore;
     [GPALabel setText:gpa];
 
     //content
-    NSString *content = slctModel.content;
+    NSString *content = self.model.content;
     if(![content isEqualToString:@""] && content != nil){
         NSMutableAttributedString *string = [[NSMutableAttributedString alloc] initWithString:content attributes: @{NSFontAttributeName: [UIFont fontWithName:@"PingFangSC-Regular" size: 16],NSForegroundColorAttributeName: [UIColor colorWithRed:102/255.0 green:102/255.0 blue:102/255.0 alpha:1.0]}];
         [contentTextView setAttributedText:string];
@@ -962,14 +658,9 @@
 #pragma mark - 返回按钮点击 -
 -(void)backButtonClick
 {
-    //设置回调
-    NSDictionary *sendDataDic = @{
-        @"modelReturn":slctModel
-    };
-    
-    //Block传值step 3:传值类将要传的值传入自己的block中
-    self.sendValueBlock(sendDataDic);
-    
+    if (self.sendValueBlock) {
+        self.sendValueBlock(self.model);
+    }
     [self.navigationController popViewControllerAnimated:YES];
 }
 
@@ -1024,8 +715,7 @@
         if (has) {
             NSMutableDictionary *root = [NSMutableDictionary dictionary];
             NSString *url = [[NSString alloc] init];
-            NSString *ID = strongSelf->slctModel.ID;
-            ///TODO:xubing 代码中，参数拼接形式发请求时，采用如下格式stringByAppendingFormat:@"/%@\%@"，接口报错201，故使用stringByAppendingFormat:@"/%@=%@"
+            NSString *ID = self.model.ID;
             url = [COMMON_SERVER_URL stringByAppendingFormat:@"/%@=%@",MINE_MY_OFFER_DETAILS, ID];
             
             [[AvalonsoftHttpClient avalonsoftHttpClient] requestWithActionUrlAndParam:url method:HttpRequestPost paramenters:root prepareExecute:^{
@@ -1038,7 +728,7 @@
                 @try {
                     if(responseModel.rescode == 200){
                         NSDictionary *rspData = responseModel.data;
-                        strongSelf->slctModel = [MineOfferModel modelWithDict:rspData];
+                        strongSelf.model = [MineOfferModel modelWithDict:rspData];
                         [strongSelf setData];
                         [strongSelf.detailTableView reloadData];
                         [strongSelf.scoreTableView reloadData];

@@ -221,19 +221,14 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     
-    MineOfferModel *slctModel = self.offerArray[indexPath.section];
-
-    NSDictionary *sendDic = @{
-        @"slctModel":slctModel
-    };
-
+    MineOfferModel *model = self.offerArray[indexPath.section];
     MineOfferDetailViewController *detailVC = [MineOfferDetailViewController new];
-    detailVC.dataDic = sendDic;
+    detailVC.model = model;
     [self.navigationController pushViewController:detailVC animated:YES];
 
     //设置block回调
     __weak typeof(self) weakSelf = self;
-    [detailVC setSendValueBlock:^(NSDictionary *valueDict){
+    [detailVC setSendValueBlock:^(MineOfferModel *model){
         __strong typeof(weakSelf) strongSelf = weakSelf;
              
         [strongSelf queryMineOfferList];

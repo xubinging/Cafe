@@ -301,24 +301,24 @@
     return self;
 }
 
-- (void)updateCellWithModel:(MineOfferScoreModel *)model
+- (void)updateCellWithModel:(MineResultModel *)model
 {
-    NSString *scoreType = model.scoreType;
+    NSString *scoreType = model.examType;
     
     NSString *totalScoreTitle = model.totalScoreTitle;
-    NSString *totalScore = model.totalScore;
+    NSString *totalScore = model.examScore;
     
-    NSString *scoreOneTitle = model.scoreOneTitle;
-    NSString *scoreOne = model.scoreOne;
+    NSString *scoreOneTitle = model.scoreATitle;
+    NSString *scoreOne = model.scoreA;
     
-    NSString *scoreTwoTitle = model.scoreTwoTitle;
-    NSString *scoreTwo = model.scoreTwo;
+    NSString *scoreTwoTitle = model.scoreBTitle;
+    NSString *scoreTwo = model.scoreB;
     
-    NSString *scoreThreeTitle = model.scoreThreeTitle;
-    NSString *scoreThree = model.scoreThree;
+    NSString *scoreThreeTitle = model.scoreCTitle;
+    NSString *scoreThree = model.scoreC;
     
-    NSString *scoreFourTitle = model.scoreFourTitle;
-    NSString *scoreFour = model.scoreFour;
+    NSString *scoreFourTitle = model.scoreDTitle;
+    NSString *scoreFour = model.scoreD;
     
     [_scoreTypeLabel setText:scoreType];
     
