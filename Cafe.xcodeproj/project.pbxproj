@@ -11,6 +11,7 @@
 		1F0769032463ABA400B37831 /* MineSelectOfferViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F0769022463ABA400B37831 /* MineSelectOfferViewController.m */; };
 		1F186151244D954C009977B1 /* MineAddRewordAndSkillViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F186150244D954C009977B1 /* MineAddRewordAndSkillViewController.m */; };
 		1F186154244FDAD6009977B1 /* MineEditRewordAndSkillViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F186153244FDAD6009977B1 /* MineEditRewordAndSkillViewController.m */; };
+		1F1D681A2472269700299BE4 /* MineSelectOfferScoreTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F1D68192472269700299BE4 /* MineSelectOfferScoreTableViewCell.m */; };
 		1F5911A92452AB74003E15BD /* MineAddActivityViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F5911A82452AB74003E15BD /* MineAddActivityViewController.m */; };
 		1F5911AC2452AB8E003E15BD /* MineEditActivityViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F5911AB2452AB8E003E15BD /* MineEditActivityViewController.m */; };
 		1F5911B22455D293003E15BD /* MineAddWorkViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F5911B12455D293003E15BD /* MineAddWorkViewController.m */; };
@@ -567,6 +568,8 @@
 		1F186150244D954C009977B1 /* MineAddRewordAndSkillViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MineAddRewordAndSkillViewController.m; sourceTree = "<group>"; };
 		1F186152244FDAD6009977B1 /* MineEditRewordAndSkillViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MineEditRewordAndSkillViewController.h; sourceTree = "<group>"; };
 		1F186153244FDAD6009977B1 /* MineEditRewordAndSkillViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MineEditRewordAndSkillViewController.m; sourceTree = "<group>"; };
+		1F1D68182472269700299BE4 /* MineSelectOfferScoreTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MineSelectOfferScoreTableViewCell.h; sourceTree = "<group>"; };
+		1F1D68192472269700299BE4 /* MineSelectOfferScoreTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MineSelectOfferScoreTableViewCell.m; sourceTree = "<group>"; };
 		1F5911A72452AB74003E15BD /* MineAddActivityViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MineAddActivityViewController.h; sourceTree = "<group>"; };
 		1F5911A82452AB74003E15BD /* MineAddActivityViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MineAddActivityViewController.m; sourceTree = "<group>"; };
 		1F5911AA2452AB8E003E15BD /* MineEditActivityViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MineEditActivityViewController.h; sourceTree = "<group>"; };
@@ -4032,6 +4035,8 @@
 				B3A87D32242B022F002AECE9 /* MineOfferScoreTableViewCell.m */,
 				1F0768C52462F0F800B37831 /* MineAddOfferScoreTableViewCell.h */,
 				1F0768C62462F0F800B37831 /* MineAddOfferScoreTableViewCell.m */,
+				1F1D68182472269700299BE4 /* MineSelectOfferScoreTableViewCell.h */,
+				1F1D68192472269700299BE4 /* MineSelectOfferScoreTableViewCell.m */,
 			);
 			path = "Offer(Offer)";
 			sourceTree = "<group>";
@@ -4845,6 +4850,7 @@
 				B376F01823A10FC7004E6FBC /* ZXPDF417HighLevelEncoder.m in Sources */,
 				B376F02E23A10FC7004E6FBC /* ZXDataMatrixEdifactEncoder.m in Sources */,
 				B376EFD723A10FC7004E6FBC /* ZXAztecToken.m in Sources */,
+				1F1D681A2472269700299BE4 /* MineSelectOfferScoreTableViewCell.m in Sources */,
 				B3667A0E23F14C5B006505FC /* AvalonsoftPhotoModel.m in Sources */,
 				B3667A3F23F15444006505FC /* AFSecurityPolicy.m in Sources */,
 				B376F05323A10FC7004E6FBC /* ZXAI013x0x1xDecoder.m in Sources */,

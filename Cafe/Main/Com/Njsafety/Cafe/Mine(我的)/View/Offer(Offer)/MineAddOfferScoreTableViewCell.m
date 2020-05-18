@@ -8,6 +8,12 @@
 
 #import "MineAddOfferScoreTableViewCell.h"
 
+@interface MineAddOfferScoreTableViewCell()
+
+@property (nonatomic, strong) MineResultModel *model;
+
+@end
+
 @implementation MineAddOfferScoreTableViewCell
 
 //纯代码创建 tableviewcell，重写该方法
@@ -345,6 +351,8 @@
 
 - (void)updateCellWithModel:(MineResultModel *)model
 {
+    self.model = model;
+    
     NSString *scoreType = model.examType;
     
     NSString *totalScoreTitle = model.totalScoreTitle;
@@ -368,7 +376,7 @@
     [_scoreTypeLabel setText:scoreType];
     
     //总分
-    if(![totalScoreTitle isEqualToString:@""] && totalScoreTitle != nil){
+    if([totalScoreTitle isKindOfClass:[NSString class]] && totalScoreTitle.length > 0){
         _totalScoreView.hidden = NO;
         
         [_totalScoreTitleLabel setText:totalScoreTitle];
@@ -376,7 +384,7 @@
     }
     
     //分数一
-    if(![scoreOneTitle isEqualToString:@""] && scoreOneTitle != nil){
+    if([scoreOneTitle isKindOfClass:[NSString class]] && scoreOneTitle.length > 0){
         _scoreOneView.hidden = NO;
         
         [_scoreOneTitleLabel setText:scoreOneTitle];
@@ -384,7 +392,7 @@
     }
     
     //分数二
-    if(![scoreTwoTitle isEqualToString:@""] && scoreTwoTitle != nil){
+    if([scoreTwoTitle isKindOfClass:[NSString class]] && scoreTwoTitle.length > 0){
         _scoreTwoView.hidden = NO;
         
         [_scoreTwoTitleLabel setText:scoreTwoTitle];
@@ -392,7 +400,7 @@
     }
     
     //分数三
-    if(![scoreThreeTitle isEqualToString:@""] && scoreThreeTitle != nil){
+    if([scoreThreeTitle isKindOfClass:[NSString class]] && scoreThreeTitle.length > 0){
         _scoreThreeView.hidden = NO;
         
         [_scoreThreeTitleLabel setText:scoreThreeTitle];
@@ -400,7 +408,7 @@
     }
     
     //分数四
-    if(![scoreFourTitle isEqualToString:@""] && scoreFourTitle != nil){
+    if([scoreFourTitle isKindOfClass:[NSString class]] && scoreFourTitle.length > 0){
         _scoreFourView.hidden = NO;
         
         [_scoreFourTitleLabel setText:scoreFourTitle];
@@ -408,7 +416,7 @@
     }
     
     //分数五
-    if(![scoreFiveTitle isEqualToString:@""] && scoreFiveTitle != nil){
+    if([scoreFiveTitle isKindOfClass:[NSString class]] && scoreFiveTitle.length > 0){
         _scoreFiveView.hidden = NO;
         
         [_scoreFiveTitleLabel setText:scoreFiveTitle];
@@ -430,8 +438,8 @@
 
 - (void)selectButtonClick
 {
-    if (self.delegate && [self.delegate respondsToSelector:@selector(actionOfSelect)]) {
-        [self.delegate actionOfSelect];
+    if (self.delegate && [self.delegate respondsToSelector:@selector(actionOfSelect:)]) {
+        [self.delegate actionOfSelect:self.model];
     }
 }
 

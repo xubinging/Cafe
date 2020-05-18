@@ -7,43 +7,26 @@
 //
 
 #import "MineSelectOfferViewController.h"
-//#import "MineResultShowContentEditViewController.h"
+#import "MineResultModel.h"
+#import "MineSelectOfferScoreTableViewCell.h"
+
 
 #define TEXTFIELD_TAG 10000
 
-@interface MineSelectOfferViewController ()<UITextFieldDelegate>
+@interface MineSelectOfferViewController ()<UITableViewDelegate, UITableViewDataSource>
 
 {
-    @private UIButton *backButton;              //左上角返回按钮
+    @private UIButton *backButton;
+    @private UIButton *sureButton;
+    @private UIView *splitView;
     @private UIView *navigationView;
     
     @private UIView *contentView;
-    @private UIScrollView *contentScrollView;   //滑动视图
-    @private UIButton *operateButton;           //本页操作按钮
-    @private UIButton *clickableOperateButton;  //可点击的操作按钮
-    
-    @private UITextField *typeTextField;        //考试类型
-    @private UITextField *dateTextField;        //考试日期
-    @private UITextField *locationTextField;    //考试地点
-    @private UITextField *orgTextField;         //机构
-    @private UITextField *resultLTextField;     //L
-    @private UITextField *resultSTextField;     //S
-    @private UITextField *resultRTextField;     //R
-    @private UITextField *resultWTextField;     //W
-    @private UITextField *resultScoreTextField; //总分
-    @private UIButton *uploadFileButton;        //上传附件按钮
-    
-    @private NSString *type;
-    @private NSString *date;
-    @private NSString *location;
-    @private NSString *org;
-    @private NSString *resultL;
-    @private NSString *resultS;
-    @private NSString *resultR;
-    @private NSString *resultW;
-    @private NSString *resultScore;
-    
+    @private MineResultModel *selectModel;
 }
+
+@property (nonatomic,strong) NSMutableArray *detailArray;
+@property (nonatomic,strong) UITableView *detailTableView;
 
 @end
 
@@ -54,19 +37,20 @@
     
     [self initVars];
     [self initSharedPreferences];
-    [self getParentVars];
     [self initNavigationView];
     [self initView];
-    [self initScrollView];
-    [self setListener];
-    [self setData];
+    [self queryMineExamScoreList];
+}
+
+- (NSMutableArray *)detailArray
+{
+    return _detailArray?:(_detailArray = [NSMutableArray array]);
 }
 
 #pragma mark - 初始化一些参数 -
 -(void)initVars
 {
     self.view.backgroundColor = RGBA_GGCOLOR(249, 249, 249, 1);
-
 }
 
 #pragma mark - 初始化数据 -
@@ -80,65 +64,6 @@
     }
 }
 
-#pragma mark - 获取父页面参数 -
--(void)getParentVars
-{
-    if(_dataDic != nil){
-        if(_dataDic[@"type"]){
-            type = _dataDic[@"type"];
-        }else{
-            type = @"";
-        }
-        
-        if(_dataDic[@"date"]){
-            date = _dataDic[@"date"];
-        }else{
-            date = @"";
-        }
-        
-        if(_dataDic[@"location"]){
-            location = _dataDic[@"location"];
-        }else{
-            location = @"";
-        }
-        
-        if(_dataDic[@"org"]){
-            org = _dataDic[@"org"];
-        }else{
-            org = @"";
-        }
-        
-        if(_dataDic[@"resultL"]){
-            resultL = _dataDic[@"resultL"];
-        }else{
-            resultL = @"";
-        }
-        
-        if(_dataDic[@"resultS"]){
-            resultS = _dataDic[@"resultS"];
-        }else{
-            resultS = @"";
-        }
-        
-        if(_dataDic[@"resultR"]){
-            resultR = _dataDic[@"resultR"];
-        }else{
-            resultR = @"";
-        }
-        
-        if(_dataDic[@"resultW"]){
-            resultW = _dataDic[@"resultW"];
-        }else{
-            resultW = @"";
-        }
-        
-        if(_dataDic[@"resultScore"]){
-            resultScore = _dataDic[@"resultScore"];
-        }else{
-            resultScore = @"";
-        }
-    }
-}
 
 #pragma mark - 初始化导航视图 -
 -(void)initNavigationView
@@ -159,26 +84,35 @@
     [backButton mas_makeConstraints:^(MASConstraintMaker *make){
         make.left.equalTo(navigationView).offset(10);
         make.bottom.equalTo(navigationView).offset(-11);
-        make.size.mas_equalTo(CGSizeMake(22, 22));
+        make.size.mas_equalTo(CGSizeMake(16, 16));
     }];
-    //设置点击不变色
     backButton.adjustsImageWhenHighlighted = NO;
-    [backButton setBackgroundImage:[UIImage imageNamed:@"home_foreign_back"] forState:UIControlStateNormal];
+    [backButton setBackgroundImage:[UIImage imageNamed:@"login_del_back"] forState:UIControlStateNormal];
     [backButton addTarget:self action:@selector(backButtonClick) forControlEvents:UIControlEventTouchUpInside];
     
-    //标题
-    UILabel *titleLabel = [UILabel new];
-    [navigationView addSubview:titleLabel];
-    [titleLabel mas_makeConstraints:^(MASConstraintMaker *make){
-        make.left.equalTo(navigationView).offset((SCREEN_WIDTH-150)/2);
-        make.bottom.equalTo(navigationView).offset(-10);
-        make.size.mas_equalTo(CGSizeMake(150, 24));
+    //右上角确定按钮
+    sureButton = [UIButton new];
+    [navigationView addSubview:sureButton];
+    [sureButton mas_makeConstraints:^(MASConstraintMaker *make){
+        make.right.equalTo(navigationView).offset(-10);
+        make.bottom.equalTo(navigationView).offset(-12);
+        make.size.mas_equalTo(CGSizeMake(40, 20));
     }];
-    titleLabel.numberOfLines = 0;
-    titleLabel.textAlignment = NSTextAlignmentCenter;
-    titleLabel.alpha = 1.0;
-    NSMutableAttributedString *titleLabelString = [[NSMutableAttributedString alloc] initWithString:@"晒晒成绩"attributes: @{NSFontAttributeName: [UIFont fontWithName:@"PingFangSC-Medium" size: 17],NSForegroundColorAttributeName: [UIColor colorWithRed:34/255.0 green:34/255.0 blue:34/255.0 alpha:1.0]}];
-    titleLabel.attributedText = titleLabelString;
+    sureButton.adjustsImageWhenHighlighted = NO;
+    NSMutableAttributedString *saveButtonString = [[NSMutableAttributedString alloc] initWithString:@"确定"attributes: @{NSFontAttributeName: [UIFont fontWithName:@"PingFangSC-Regular" size: 18],NSForegroundColorAttributeName: [UIColor colorWithRed:32/255.0 green:188/255.0 blue:255/255.0 alpha:1.0]}];
+    [sureButton setAttributedTitle:saveButtonString forState:UIControlStateNormal];
+    [sureButton addTarget:self action:@selector(sureButtonClick) forControlEvents:UIControlEventTouchUpInside];
+    
+    //分割线
+    UIView *splitView = [UIView new];
+    [navigationView addSubview:splitView];
+    [splitView mas_makeConstraints:^(MASConstraintMaker *make){
+        make.bottom.equalTo(navigationView).offset(-1);
+        make.left.equalTo(navigationView).offset(10);
+        make.right.equalTo(navigationView).offset(-10);
+        make.height.equalTo(@1);
+    }];
+    splitView.layer.backgroundColor = [UIColor colorWithRed:229/255.0 green:237/255.0 blue:240/255.0 alpha:1.0].CGColor;
 }
 
 #pragma mark - 初始化视图 -
@@ -188,504 +122,230 @@
     contentView = [UIView new];
     [self.view addSubview:contentView];
     [contentView mas_makeConstraints:^(MASConstraintMaker *make){
-        make.top.equalTo(navigationView.mas_bottom).offset(10);
-        make.left.equalTo(self.view).offset(10);
-        make.right.equalTo(self.view).offset(-10);
-        make.bottom.equalTo(self.view).offset(-80-TabbarSafeBottomMargin);
+        make.top.equalTo(navigationView.mas_bottom);
+        make.left.equalTo(self.view);
+        make.right.equalTo(self.view);
+        make.bottom.equalTo(self.view).offset(-TabbarSafeBottomMargin);
     }];
     contentView.layer.backgroundColor = [UIColor colorWithRed:255/255.0 green:255/255.0 blue:255/255.0 alpha:1.0].CGColor;
-    contentView.layer.cornerRadius = 8;
+    contentView.layer.cornerRadius = 10;
     contentView.layer.shadowColor = [UIColor colorWithRed:0/255.0 green:0/255.0 blue:0/255.0 alpha:0.05].CGColor;
     contentView.layer.shadowOffset = CGSizeMake(0,0);
     contentView.layer.shadowOpacity = 1;
     contentView.layer.shadowRadius = 10;
-    
-    //先加2个按钮
-    //不可点击的
-    operateButton = [UIButton new];
-    [contentView addSubview:operateButton];
-    [operateButton mas_makeConstraints:^(MASConstraintMaker *make){
-        make.bottom.equalTo(contentView).offset(-35);
-        make.left.equalTo(contentView).offset(15);
-        make.right.equalTo(contentView).offset(-15);
-        make.height.mas_equalTo(@46);
-    }];
-    operateButton.layer.backgroundColor = [UIColor colorWithRed:158/255.0 green:226/255.0 blue:255/255.0 alpha:1.0].CGColor;
-    operateButton.layer.cornerRadius = 23;
-    
-    NSMutableAttributedString *operateButtonString = [[NSMutableAttributedString alloc] initWithString:@"保存" attributes: @{NSFontAttributeName: [UIFont fontWithName:@"PingFangSC-Regular" size: 16],NSForegroundColorAttributeName: [UIColor colorWithRed:255/255.0 green:255/255.0 blue:255/255.0 alpha:1.0]}];
-    [operateButton setAttributedTitle:operateButtonString forState:UIControlStateNormal];
-    
-    //可点击的
-    clickableOperateButton = [UIButton new];
-    [contentView addSubview:clickableOperateButton];
-    [clickableOperateButton mas_makeConstraints:^(MASConstraintMaker *make){
-        make.bottom.equalTo(contentView).offset(-35);
-        make.left.equalTo(contentView).offset(15);
-        make.right.equalTo(contentView).offset(-15);
-        make.height.mas_equalTo(@46);
-    }];
-    clickableOperateButton.layer.cornerRadius = 23;
-    clickableOperateButton.layer.shadowColor = [UIColor colorWithRed:32/255.0 green:188/255.0 blue:255/255.0 alpha:0.3].CGColor;
-    clickableOperateButton.layer.shadowOffset = CGSizeMake(0,5);
-    clickableOperateButton.layer.shadowOpacity = 1;
-    clickableOperateButton.layer.shadowRadius = 15;
-    
-    //设置文字
-    NSMutableAttributedString *clickableOperateButtonString = [[NSMutableAttributedString alloc] initWithString:@"保存" attributes: @{NSFontAttributeName: [UIFont fontWithName:@"PingFangSC-Regular" size: 16],NSForegroundColorAttributeName: [UIColor colorWithRed:255/255.0 green:255/255.0 blue:255/255.0 alpha:1.0]}];
-    [clickableOperateButton setAttributedTitle:clickableOperateButtonString forState:UIControlStateNormal];
-    
-    [self.view layoutIfNeeded];
-    
-    // gradient
-    CAGradientLayer *gl = [CAGradientLayer layer];
-    gl.frame = clickableOperateButton.bounds;
-    gl.startPoint = CGPointMake(0.92, 0.13);
-    gl.endPoint = CGPointMake(0, 0.96);
-    gl.colors = @[(__bridge id)[UIColor colorWithRed:32/255.0 green:188/255.0 blue:255/255.0 alpha:1.0].CGColor, (__bridge id)[UIColor colorWithRed:0/255.0 green:154/255.0 blue:255/255.0 alpha:1.0].CGColor];
-    gl.locations = @[@(0), @(1.0f)];
-    gl.cornerRadius = 23;
-    //添加到最底层，否则会覆盖文字
-    [clickableOperateButton.layer insertSublayer:gl atIndex:0];
-}
 
-#pragma mark - 初始化滑动视图 -
--(void)initScrollView
-{
-    //可滑动部分
-    contentScrollView = [UIScrollView new];
-    [contentView addSubview:contentScrollView];
-    [contentScrollView mas_makeConstraints:^(MASConstraintMaker *make){
+    //列表
+    _detailTableView = [UITableView new];
+    [contentView addSubview:_detailTableView];
+    [_detailTableView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(contentView);
-        make.bottom.equalTo(operateButton.mas_top).offset(-30);
         make.left.equalTo(contentView);
         make.right.equalTo(contentView);
+        make.height.mas_equalTo(@(3*48));
     }];
-    [contentScrollView setBackgroundColor:[UIColor clearColor]];
-    contentScrollView.showsVerticalScrollIndicator = NO;
-    //内容尺寸是固定的
-    [contentScrollView setContentSize:CGSizeMake(SCREEN_WIDTH-20, 1050)];
+    [_detailTableView setBackgroundColor:[UIColor clearColor]];
+    _detailTableView.bounces = YES;
+    _detailTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+    [_detailTableView registerClass:[MineSelectOfferScoreTableViewCell class] forCellReuseIdentifier:@"MineSelectOfferScoreTableViewCell"];
+    _detailTableView.delegate = self;
+    _detailTableView.dataSource = self;
+    //这句话可以设置tableview没有数据时不显示横线
+    _detailTableView.tableFooterView = [[UIView alloc]initWithFrame:CGRectZero];
+    _detailTableView.showsVerticalScrollIndicator = NO;
+    _detailTableView.contentInset = UIEdgeInsetsMake(0, 0, 44 * 3, 0);
+}
+
+#pragma mark - 设置cell行高 -
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return 44;
+}
+
+#pragma mark - 设置section数量 -
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
+    return 1;
+}
+
+#pragma mark - 设置每个section中row的数量 -
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    return self.detailArray.count;
+}
+
+#pragma mark - 获取cell -
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+
+    MineSelectOfferScoreTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"MineSelectOfferScoreTableViewCell"];
+
+    [cell updateCellWithModel:self.detailArray[indexPath.row]];
+
+    return cell;
+}
+
+#pragma mark - 设置header高度 -
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+{
+    return 44;
+}
+
+#pragma mark - 设置header样式 -
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
+{
+    UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, tableView.frame.size.width, 44)];
+    view.backgroundColor = [UIColor whiteColor];
+    [self setupSubViewsWithType:self.model.examType view:view];
+    return view;
+}
+
+#pragma mark - 点击cell -
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    for (NSInteger i=0; i<self.detailArray.count; i++) {
+        MineResultModel *model = self.detailArray[i];
+        if (i == indexPath.row) {
+            model.isSelected = YES;
+            model.examType = [self bridgeExamType:model.examType];
+            selectModel = model;
+        } else {
+            model.isSelected = NO;
+        }
         
-    //***** 考试类型 *****//
-    UILabel *typeLabel = [[UILabel alloc] initWithFrame:CGRectMake(15, 28, SCREEN_WIDTH - 20 - 30, 20)];
-    [contentScrollView addSubview:typeLabel];
-    [self setTitleLabelStyle:typeLabel withName:@"考试类型"];
-
-    UIImageView *typeNextStep = [UIImageView new];
-    [contentScrollView addSubview:typeNextStep];
-    [typeNextStep mas_makeConstraints:^(MASConstraintMaker *make){
-        make.top.equalTo(typeLabel.mas_bottom).offset(19);
-        make.right.equalTo(typeLabel);
-        make.size.mas_equalTo(CGSizeMake(7, 14));
-    }];
-    [typeNextStep setImage:[UIImage imageNamed:@"mine_nextstep"]];
-
-    typeTextField = [UITextField new];
-    [contentScrollView addSubview:typeTextField];
-    [typeTextField mas_makeConstraints:^(MASConstraintMaker *make){
-        make.top.equalTo(typeLabel.mas_bottom).offset(1);
-        make.left.equalTo(typeLabel);
-        make.right.equalTo(typeNextStep.mas_left).offset(-15);
-        make.height.equalTo(@50);
-    }];
-    [self setTextFieldStyle:typeTextField withTag:1];
-
-    UIView *countrySplitView = [UIView new];
-    [contentScrollView addSubview:countrySplitView];
-    [countrySplitView mas_makeConstraints:^(MASConstraintMaker *make){
-        make.top.equalTo(typeTextField.mas_bottom).offset(1);
-        make.left.equalTo(typeLabel).offset(-5);
-        make.right.equalTo(typeLabel).offset(5);
-        make.height.mas_equalTo(@1);
-    }];
-    [countrySplitView setBackgroundColor:RGBA_GGCOLOR(238, 238, 238, 1)];
+        [self.detailArray replaceObjectAtIndex:i withObject:model];
+    }
     
-    
-    //***** 考试日期 *****//
-    UILabel *dateLabel = [UILabel new];
-    [contentScrollView addSubview:dateLabel];
-    [dateLabel mas_makeConstraints:^(MASConstraintMaker *make){
-        make.top.equalTo(countrySplitView.mas_bottom).offset(28);
-        make.left.equalTo(countrySplitView).offset(5);
-        make.size.mas_equalTo(CGSizeMake(SCREEN_WIDTH - 20 - 30, 20));
-    }];
-    [self setTitleLabelStyle:dateLabel withName:@"考试日期"];
-
-    UIImageView *dateNextStep = [UIImageView new];
-    [contentScrollView addSubview:dateNextStep];
-    [dateNextStep mas_makeConstraints:^(MASConstraintMaker *make){
-        make.top.equalTo(dateLabel.mas_bottom).offset(19);
-        make.right.equalTo(dateLabel);
-        make.size.mas_equalTo(CGSizeMake(7, 14));
-    }];
-    [dateNextStep setImage:[UIImage imageNamed:@"mine_nextstep"]];
-
-    dateTextField = [UITextField new];
-    [contentScrollView addSubview:dateTextField];
-    [dateTextField mas_makeConstraints:^(MASConstraintMaker *make){
-        make.top.equalTo(dateLabel.mas_bottom).offset(1);
-        make.left.equalTo(dateLabel);
-        make.right.equalTo(dateNextStep.mas_left).offset(-15);
-        make.height.equalTo(@50);
-    }];
-    [self setTextFieldStyle:dateTextField withTag:2];
-
-    UIView *dateSplitView = [UIView new];
-    [contentScrollView addSubview:dateSplitView];
-    [dateSplitView mas_makeConstraints:^(MASConstraintMaker *make){
-        make.top.equalTo(dateTextField.mas_bottom).offset(1);
-        make.left.equalTo(dateLabel).offset(-5);
-        make.right.equalTo(dateLabel).offset(5);
-        make.height.mas_equalTo(@1);
-    }];
-    [dateSplitView setBackgroundColor:RGBA_GGCOLOR(238, 238, 238, 1)];
-    
-    
-    //***** 考试地点 *****//
-    UILabel *locationLabel = [UILabel new];
-    [contentScrollView addSubview:locationLabel];
-    [locationLabel mas_makeConstraints:^(MASConstraintMaker *make){
-        make.top.equalTo(dateSplitView.mas_bottom).offset(28);
-        make.left.equalTo(dateSplitView).offset(5);
-        make.size.mas_equalTo(CGSizeMake(SCREEN_WIDTH - 20 - 30, 20));
-    }];
-    [self setTitleLabelStyle:locationLabel withName:@"考试地点"];
-
-    UIImageView *locationNextStep = [UIImageView new];
-    [contentScrollView addSubview:locationNextStep];
-    [locationNextStep mas_makeConstraints:^(MASConstraintMaker *make){
-        make.top.equalTo(locationLabel.mas_bottom).offset(19);
-        make.right.equalTo(locationLabel);
-        make.size.mas_equalTo(CGSizeMake(7, 14));
-    }];
-    [locationNextStep setImage:[UIImage imageNamed:@"mine_nextstep"]];
-
-    locationTextField = [UITextField new];
-    [contentScrollView addSubview:locationTextField];
-    [locationTextField mas_makeConstraints:^(MASConstraintMaker *make){
-        make.top.equalTo(locationLabel.mas_bottom).offset(1);
-        make.left.equalTo(locationLabel);
-        make.right.equalTo(locationNextStep.mas_left).offset(-15);
-        make.height.equalTo(@50);
-    }];
-    [self setTextFieldStyle:locationTextField withTag:3];
-
-    UIView *locationSplitView = [UIView new];
-    [contentScrollView addSubview:locationSplitView];
-    [locationSplitView mas_makeConstraints:^(MASConstraintMaker *make){
-        make.top.equalTo(locationTextField.mas_bottom).offset(1);
-        make.left.equalTo(locationLabel).offset(-5);
-        make.right.equalTo(locationLabel).offset(5);
-        make.height.mas_equalTo(@1);
-    }];
-    [locationSplitView setBackgroundColor:RGBA_GGCOLOR(238, 238, 238, 1)];
-    
-    
-    //***** 参加的培训机构 *****//
-    UILabel *orgLabel = [UILabel new];
-    [contentScrollView addSubview:orgLabel];
-    [orgLabel mas_makeConstraints:^(MASConstraintMaker *make){
-        make.top.equalTo(locationSplitView.mas_bottom).offset(28);
-        make.left.equalTo(locationSplitView).offset(5);
-        make.size.mas_equalTo(CGSizeMake(SCREEN_WIDTH - 20 - 30, 20));
-    }];
-    [self setTitleLabelStyle:orgLabel withName:@"参加的培训机构"];
-
-    UIImageView *orgNextStep = [UIImageView new];
-    [contentScrollView addSubview:orgNextStep];
-    [orgNextStep mas_makeConstraints:^(MASConstraintMaker *make){
-        make.top.equalTo(orgLabel.mas_bottom).offset(19);
-        make.right.equalTo(orgLabel);
-        make.size.mas_equalTo(CGSizeMake(7, 14));
-    }];
-    [orgNextStep setImage:[UIImage imageNamed:@"mine_nextstep"]];
-
-    orgTextField = [UITextField new];
-    [contentScrollView addSubview:orgTextField];
-    [orgTextField mas_makeConstraints:^(MASConstraintMaker *make){
-        make.top.equalTo(orgLabel.mas_bottom).offset(1);
-        make.left.equalTo(orgLabel);
-        make.right.equalTo(orgNextStep.mas_left).offset(-15);
-        make.height.equalTo(@50);
-    }];
-    [self setTextFieldStyle:orgTextField withTag:4];
-
-    UIView *orgSplitView = [UIView new];
-    [contentScrollView addSubview:orgSplitView];
-    [orgSplitView mas_makeConstraints:^(MASConstraintMaker *make){
-        make.top.equalTo(orgTextField.mas_bottom).offset(1);
-        make.left.equalTo(orgLabel).offset(-5);
-        make.right.equalTo(orgLabel).offset(5);
-        make.height.mas_equalTo(@1);
-    }];
-    [orgSplitView setBackgroundColor:RGBA_GGCOLOR(238, 238, 238, 1)];
-
-
-    //***** L *****//
-    UILabel *resultLLabel = [UILabel new];
-    [contentScrollView addSubview:resultLLabel];
-    [resultLLabel mas_makeConstraints:^(MASConstraintMaker *make){
-        make.top.equalTo(orgSplitView.mas_bottom).offset(28);
-        make.left.equalTo(orgSplitView).offset(5);
-        make.size.mas_equalTo(CGSizeMake(SCREEN_WIDTH - 20 - 30, 20));
-    }];
-    [self setTitleLabelStyle:resultLLabel withName:@"L"];
-
-    UIImageView *resultLNextStep = [UIImageView new];
-    [contentScrollView addSubview:resultLNextStep];
-    [resultLNextStep mas_makeConstraints:^(MASConstraintMaker *make){
-        make.top.equalTo(resultLLabel.mas_bottom).offset(19);
-        make.right.equalTo(resultLLabel);
-        make.size.mas_equalTo(CGSizeMake(7, 14));
-    }];
-    [resultLNextStep setImage:[UIImage imageNamed:@"mine_nextstep"]];
-
-    resultLTextField = [UITextField new];
-    [contentScrollView addSubview:resultLTextField];
-    [resultLTextField mas_makeConstraints:^(MASConstraintMaker *make){
-        make.top.equalTo(resultLLabel.mas_bottom).offset(1);
-        make.left.equalTo(resultLLabel);
-        make.right.equalTo(resultLNextStep.mas_left).offset(-15);
-        make.height.equalTo(@50);
-    }];
-    [self setTextFieldStyle:resultLTextField withTag:5];
-
-    UIView *resultLSplitView = [UIView new];
-    [contentScrollView addSubview:resultLSplitView];
-    [resultLSplitView mas_makeConstraints:^(MASConstraintMaker *make){
-        make.top.equalTo(resultLTextField.mas_bottom).offset(1);
-        make.left.equalTo(resultLLabel).offset(-5);
-        make.right.equalTo(resultLLabel).offset(5);
-        make.height.mas_equalTo(@1);
-    }];
-    [resultLSplitView setBackgroundColor:RGBA_GGCOLOR(238, 238, 238, 1)];
-
-
-    //***** S *****//
-    UILabel *resultSLabel = [UILabel new];
-    [contentScrollView addSubview:resultSLabel];
-    [resultSLabel mas_makeConstraints:^(MASConstraintMaker *make){
-        make.top.equalTo(resultLSplitView.mas_bottom).offset(28);
-        make.left.equalTo(resultLSplitView).offset(5);
-        make.size.mas_equalTo(CGSizeMake(SCREEN_WIDTH - 20 - 30, 20));
-    }];
-    [self setTitleLabelStyle:resultSLabel withName:@"S"];
-
-    UIImageView *resultSNextStep = [UIImageView new];
-    [contentScrollView addSubview:resultSNextStep];
-    [resultSNextStep mas_makeConstraints:^(MASConstraintMaker *make){
-        make.top.equalTo(resultSLabel.mas_bottom).offset(19);
-        make.right.equalTo(resultSLabel);
-        make.size.mas_equalTo(CGSizeMake(7, 14));
-    }];
-    [resultSNextStep setImage:[UIImage imageNamed:@"mine_nextstep"]];
-
-    resultSTextField = [UITextField new];
-    [contentScrollView addSubview:resultSTextField];
-    [resultSTextField mas_makeConstraints:^(MASConstraintMaker *make){
-        make.top.equalTo(resultSLabel.mas_bottom).offset(1);
-        make.left.equalTo(resultSLabel);
-        make.right.equalTo(resultSNextStep.mas_left).offset(-15);
-        make.height.equalTo(@50);
-    }];
-    [self setTextFieldStyle:resultSTextField withTag:6];
-
-    UIView *resultSSplitView = [UIView new];
-    [contentScrollView addSubview:resultSSplitView];
-    [resultSSplitView mas_makeConstraints:^(MASConstraintMaker *make){
-        make.top.equalTo(resultSTextField.mas_bottom).offset(1);
-        make.left.equalTo(resultSLabel).offset(-5);
-        make.right.equalTo(resultSLabel).offset(5);
-        make.height.mas_equalTo(@1);
-    }];
-    [resultSSplitView setBackgroundColor:RGBA_GGCOLOR(238, 238, 238, 1)];
-    
-    
-    //***** R *****//
-    UILabel *resultRLabel = [UILabel new];
-    [contentScrollView addSubview:resultRLabel];
-    [resultRLabel mas_makeConstraints:^(MASConstraintMaker *make){
-        make.top.equalTo(resultSSplitView.mas_bottom).offset(28);
-        make.left.equalTo(resultSSplitView).offset(5);
-        make.size.mas_equalTo(CGSizeMake(SCREEN_WIDTH - 20 - 30, 20));
-    }];
-    [self setTitleLabelStyle:resultRLabel withName:@"R"];
-
-    UIImageView *resultRNextStep = [UIImageView new];
-    [contentScrollView addSubview:resultRNextStep];
-    [resultRNextStep mas_makeConstraints:^(MASConstraintMaker *make){
-        make.top.equalTo(resultRLabel.mas_bottom).offset(19);
-        make.right.equalTo(resultRLabel);
-        make.size.mas_equalTo(CGSizeMake(7, 14));
-    }];
-    [resultRNextStep setImage:[UIImage imageNamed:@"mine_nextstep"]];
-
-    resultRTextField = [UITextField new];
-    [contentScrollView addSubview:resultRTextField];
-    [resultRTextField mas_makeConstraints:^(MASConstraintMaker *make){
-        make.top.equalTo(resultRLabel.mas_bottom).offset(1);
-        make.left.equalTo(resultRLabel);
-        make.right.equalTo(resultSNextStep.mas_left).offset(-15);
-        make.height.equalTo(@50);
-    }];
-    [self setTextFieldStyle:resultRTextField withTag:7];
-
-    UIView *resultRSplitView = [UIView new];
-    [contentScrollView addSubview:resultRSplitView];
-    [resultRSplitView mas_makeConstraints:^(MASConstraintMaker *make){
-        make.top.equalTo(resultRTextField.mas_bottom).offset(1);
-        make.left.equalTo(resultRLabel).offset(-5);
-        make.right.equalTo(resultRLabel).offset(5);
-        make.height.mas_equalTo(@1);
-    }];
-    [resultRSplitView setBackgroundColor:RGBA_GGCOLOR(238, 238, 238, 1)];
-    
-    
-    //***** W *****//
-    UILabel *resultWLabel = [UILabel new];
-    [contentScrollView addSubview:resultWLabel];
-    [resultWLabel mas_makeConstraints:^(MASConstraintMaker *make){
-        make.top.equalTo(resultRSplitView.mas_bottom).offset(28);
-        make.left.equalTo(resultRSplitView).offset(5);
-        make.size.mas_equalTo(CGSizeMake(SCREEN_WIDTH - 20 - 30, 20));
-    }];
-    [self setTitleLabelStyle:resultWLabel withName:@"W"];
-
-    UIImageView *resultWNextStep = [UIImageView new];
-    [contentScrollView addSubview:resultWNextStep];
-    [resultWNextStep mas_makeConstraints:^(MASConstraintMaker *make){
-        make.top.equalTo(resultWLabel.mas_bottom).offset(19);
-        make.right.equalTo(resultWLabel);
-        make.size.mas_equalTo(CGSizeMake(7, 14));
-    }];
-    [resultWNextStep setImage:[UIImage imageNamed:@"mine_nextstep"]];
-
-    resultWTextField = [UITextField new];
-    [contentScrollView addSubview:resultWTextField];
-    [resultWTextField mas_makeConstraints:^(MASConstraintMaker *make){
-        make.top.equalTo(resultWLabel.mas_bottom).offset(1);
-        make.left.equalTo(resultWLabel);
-        make.right.equalTo(resultWNextStep.mas_left).offset(-15);
-        make.height.equalTo(@50);
-    }];
-    [self setTextFieldStyle:resultWTextField withTag:8];
-
-    UIView *resultWSplitView = [UIView new];
-    [contentScrollView addSubview:resultWSplitView];
-    [resultWSplitView mas_makeConstraints:^(MASConstraintMaker *make){
-        make.top.equalTo(resultWTextField.mas_bottom).offset(1);
-        make.left.equalTo(resultWLabel).offset(-5);
-        make.right.equalTo(resultWLabel).offset(5);
-        make.height.mas_equalTo(@1);
-    }];
-    [resultWSplitView setBackgroundColor:RGBA_GGCOLOR(238, 238, 238, 1)];
-    
-    
-    //***** 总分 *****//
-    UILabel *resultScoreLabel = [UILabel new];
-    [contentScrollView addSubview:resultScoreLabel];
-    [resultScoreLabel mas_makeConstraints:^(MASConstraintMaker *make){
-        make.top.equalTo(resultWSplitView.mas_bottom).offset(28);
-        make.left.equalTo(resultWSplitView).offset(5);
-        make.size.mas_equalTo(CGSizeMake(SCREEN_WIDTH - 20 - 30, 20));
-    }];
-    [self setTitleLabelStyle:resultScoreLabel withName:@"总分"];
-
-    UIImageView *resultScoreNextStep = [UIImageView new];
-    [contentScrollView addSubview:resultScoreNextStep];
-    [resultScoreNextStep mas_makeConstraints:^(MASConstraintMaker *make){
-        make.top.equalTo(resultScoreLabel.mas_bottom).offset(19);
-        make.right.equalTo(resultScoreLabel);
-        make.size.mas_equalTo(CGSizeMake(7, 14));
-    }];
-    [resultScoreNextStep setImage:[UIImage imageNamed:@"mine_nextstep"]];
-
-    resultScoreTextField = [UITextField new];
-    [contentScrollView addSubview:resultScoreTextField];
-    [resultScoreTextField mas_makeConstraints:^(MASConstraintMaker *make){
-        make.top.equalTo(resultScoreLabel.mas_bottom).offset(1);
-        make.left.equalTo(resultScoreLabel);
-        make.right.equalTo(resultScoreNextStep.mas_left).offset(-15);
-        make.height.equalTo(@50);
-    }];
-    [self setTextFieldStyle:resultScoreTextField withTag:9];
-
-    UIView *resultScoreSplitView = [UIView new];
-    [contentScrollView addSubview:resultScoreSplitView];
-    [resultScoreSplitView mas_makeConstraints:^(MASConstraintMaker *make){
-        make.top.equalTo(resultScoreTextField.mas_bottom).offset(1);
-        make.left.equalTo(resultScoreLabel).offset(-5);
-        make.right.equalTo(resultScoreLabel).offset(5);
-        make.height.mas_equalTo(@1);
-    }];
-    [resultScoreSplitView setBackgroundColor:RGBA_GGCOLOR(238, 238, 238, 1)];
-    
-    
-    //上传照片
-    UILabel *uploadPicLabel = [UILabel new];
-    [contentScrollView addSubview:uploadPicLabel];
-    [uploadPicLabel mas_makeConstraints:^(MASConstraintMaker *make){
-        make.top.equalTo(resultScoreSplitView.mas_bottom).offset(15);
-        make.left.equalTo(resultWSplitView).offset(5);
-        make.size.mas_equalTo(CGSizeMake(SCREEN_WIDTH - 20 - 30, 20));
-    }];
-    [self setTitleLabelStyle:uploadPicLabel withName:@"上传成绩"];
-    
-    //上传附件按钮
-    uploadFileButton = [UIButton new];
-    [contentScrollView addSubview:uploadFileButton];
-    [uploadFileButton mas_makeConstraints:^(MASConstraintMaker *make){
-        make.top.equalTo(uploadPicLabel.mas_bottom).offset(15);
-        make.left.equalTo(uploadPicLabel);
-        make.size.mas_equalTo(CGSizeMake(78, 78));
-    }];
-    [uploadFileButton setImage:[UIImage imageNamed:@"mine_upload_file"] forState:UIControlStateNormal];
-    [uploadFileButton setAdjustsImageWhenHighlighted:NO];
-    
-    //说明文字
-    UILabel *detailLabel = [UILabel new];
-    [contentScrollView addSubview:detailLabel];
-    [detailLabel mas_makeConstraints:^(MASConstraintMaker *make){
-        make.top.equalTo(uploadFileButton).offset(30);
-        make.left.equalTo(uploadFileButton.mas_right).offset(10);
-        make.size.mas_equalTo(CGSizeMake(220, 18));
-    }];
-    detailLabel.numberOfLines = 0;
-    detailLabel.textAlignment = NSTextAlignmentLeft;
-    detailLabel.alpha = 1.0;
-
-    NSMutableAttributedString *detailLabelString = [[NSMutableAttributedString alloc] initWithString:@"支持png,jpg,jpeg等格式,大小不超过5M" attributes: @{NSFontAttributeName: [UIFont fontWithName:@"PingFangSC-Regular" size: 12],NSForegroundColorAttributeName: [UIColor colorWithRed:170/255.0 green:170/255.0 blue:170/255.0 alpha:1.0]}];
-    detailLabel.attributedText = detailLabelString;
-    
+    [self.detailTableView reloadData];
 }
 
-#pragma mark - 设置控件监听事件 -
--(void)setListener
+- (void)setupSubViewsWithType:(NSString *)type view:(UIView *)view
 {
-    //2个操作按钮
-    operateButton.hidden = NO;
-    operateButton.userInteractionEnabled = NO;
-    
-    clickableOperateButton.hidden = YES;
-    //添加事件
-    [clickableOperateButton addTarget:self action:@selector(saveButtonClick) forControlEvents:UIControlEventTouchUpInside];
-}
+    UILabel *totalScoreLabel = [UILabel new];
+    [view addSubview:totalScoreLabel];
+    [totalScoreLabel mas_makeConstraints:^(MASConstraintMaker *make){
+        make.top.equalTo(view);
+        make.left.equalTo(view);
+        make.size.mas_equalTo(CGSizeMake((SCREEN_WIDTH - 20)/7, 44));
+    }];
+    totalScoreLabel.numberOfLines = 0;
+    totalScoreLabel.textAlignment = NSTextAlignmentCenter;
+    totalScoreLabel.alpha = 1.0;
+    [totalScoreLabel setFont:[UIFont fontWithName:@"PingFangSC-Medium" size:16]];
 
-#pragma mark - 设置参数 -
--(void)setData
-{
-    typeTextField.text = type;
-    dateTextField.text = date;
-    locationTextField.text = location;
-    orgTextField.text = org;
-    resultLTextField.text = resultL;
-    resultSTextField.text = resultS;
-    resultRTextField.text = resultR;
-    resultWTextField.text = resultW;
-    resultScoreTextField.text = resultScore;
+
+    UILabel *scoreOneLabel = [UILabel new];
+    [view addSubview:scoreOneLabel];
+    [scoreOneLabel mas_makeConstraints:^(MASConstraintMaker *make){
+        make.top.equalTo(view);
+        make.left.equalTo(totalScoreLabel.mas_right);
+        make.size.mas_equalTo(CGSizeMake((SCREEN_WIDTH - 20)/7, 44));
+    }];
+    scoreOneLabel.numberOfLines = 0;
+    scoreOneLabel.textAlignment = NSTextAlignmentCenter;
+    scoreOneLabel.alpha = 1.0;
+    [scoreOneLabel setFont:[UIFont fontWithName:@"PingFangSC-Medium" size:16]];
+
+            
+    UILabel *scoreTwoLabel = [UILabel new];
+    [view addSubview:scoreTwoLabel];
+    [scoreTwoLabel mas_makeConstraints:^(MASConstraintMaker *make){
+        make.top.equalTo(view);
+        make.left.equalTo(scoreOneLabel.mas_right);
+        make.size.mas_equalTo(CGSizeMake((SCREEN_WIDTH - 20)/7, 44));
+    }];
+    scoreTwoLabel.numberOfLines = 0;
+    scoreTwoLabel.textAlignment = NSTextAlignmentCenter;
+    scoreTwoLabel.alpha = 1.0;
+    [scoreTwoLabel setFont:[UIFont fontWithName:@"PingFangSC-Medium" size:16]];
+
+
+    UILabel *scoreThreeLabel = [UILabel new];
+    [view addSubview:scoreThreeLabel];
+    [scoreThreeLabel mas_makeConstraints:^(MASConstraintMaker *make){
+        make.top.equalTo(view);
+        make.left.equalTo(scoreTwoLabel.mas_right);
+        make.size.mas_equalTo(CGSizeMake((SCREEN_WIDTH - 20)/7, 44));
+    }];
+    scoreThreeLabel.numberOfLines = 0;
+    scoreThreeLabel.textAlignment = NSTextAlignmentCenter;
+    scoreThreeLabel.alpha = 1.0;
+    [scoreThreeLabel setFont:[UIFont fontWithName:@"PingFangSC-Medium" size:16]];
+
+
+    UILabel *scoreFourLabel = [UILabel new];
+    [view addSubview:scoreFourLabel];
+    [scoreFourLabel mas_makeConstraints:^(MASConstraintMaker *make){
+        make.top.equalTo(view);
+        make.left.equalTo(scoreThreeLabel.mas_right);
+        make.size.mas_equalTo(CGSizeMake((SCREEN_WIDTH - 20)/7, 44));
+    }];
+    scoreFourLabel.numberOfLines = 0;
+    scoreFourLabel.textAlignment = NSTextAlignmentCenter;
+    scoreFourLabel.alpha = 1.0;
+    [scoreFourLabel setFont:[UIFont fontWithName:@"PingFangSC-Medium" size:16]];
+
+
+    UILabel *scoreFiveLabel = [UILabel new];
+    [view addSubview:scoreFiveLabel];
+    [scoreFiveLabel mas_makeConstraints:^(MASConstraintMaker *make){
+        make.top.equalTo(view);
+        make.left.equalTo(scoreFourLabel.mas_right);
+        make.size.mas_equalTo(CGSizeMake((SCREEN_WIDTH - 20)/6, 44));
+    }];
+    scoreFiveLabel.numberOfLines = 0;
+    scoreFiveLabel.textAlignment = NSTextAlignmentCenter;
+    scoreFiveLabel.alpha = 1.0;
+    [scoreFiveLabel setFont:[UIFont fontWithName:@"PingFangSC-Medium" size:16]];
     
-    //判断保存按钮是否可点击
-    [self isShowSavaButton];
+    
+    if ([type isEqualToString:@"TOEFL"] || [type isEqualToString:@"IELTS"]) {
+        totalScoreLabel.text = @"总分";
+        scoreOneLabel.text = @"L";
+        scoreTwoLabel.text = @"S";
+        scoreThreeLabel.text = @"R";
+        scoreFourLabel.text = @"W";
+    }
+
+    
+    if ([type isEqualToString:@"GRE"]) {
+        totalScoreLabel.text = @"总分";
+        scoreOneLabel.text = @"V";
+        scoreTwoLabel.text = @"Q";
+        scoreThreeLabel.text = @"AW";
+    }
+    
+    if ([type isEqualToString:@"GMAT"]) {
+        totalScoreLabel.text = @"总分";
+        scoreOneLabel.text = @"V";
+        scoreTwoLabel.text = @"Q";
+        scoreThreeLabel.text = @"AW";
+        scoreFourLabel.text = @"IR";
+    }
+        
+    if ([type isEqualToString:@"SAT"]) {
+        totalScoreLabel.text = @"总分";
+        scoreOneLabel.text = @"EBRW";
+        scoreTwoLabel.text = @"M";
+        scoreThreeLabel.text = @"ER";
+        scoreFourLabel.text = @"EA";
+        scoreFiveLabel.text = @"EW";
+    }
+    
+    if ([type isEqualToString:@"SSAT"]) {
+        totalScoreLabel.text = @"总分";
+        scoreOneLabel.text = @"Q";
+        scoreTwoLabel.text = @"V";
+        scoreThreeLabel.text = @"R";
+    }
+    
+    if ([type isEqualToString:@"ACT"]) {
+        totalScoreLabel.text = @"总分";
+        scoreOneLabel.text = @"R";
+        scoreTwoLabel.text = @"E";
+        scoreThreeLabel.text = @"M";
+        scoreFourLabel.text = @"S";
+        scoreFiveLabel.text = @"W";
+    }
 }
 
 #pragma mark - 返回按钮点击 -
@@ -695,194 +355,115 @@
 }
 
 #pragma mark - 保存按钮点击 -
--(void)saveButtonClick
+-(void)sureButtonClick
 {
-    //模拟保存成功
-    [AvalonsoftToast showWithMessage:@"保存成功" image:@"login_success" duration:1];
-    
-    //延迟推出
-    [self performSelector:@selector(saveSuccess) withObject:nil afterDelay:1.5];
-}
-
--(void)saveSuccess{
-    //设置回调
-    NSDictionary *sendDataDic = @{@"type":type,
-                                  @"date":date,
-                                  @"location":location,
-                                  @"org":org,
-                                  @"resultL":resultL,
-                                  @"resultS":resultS,
-                                  @"resultR":resultR,
-                                  @"resultW":resultW,
-                                  @"resultScore":resultScore
-    };
-    
-    //Block传值step 3:传值类将要传的值传入自己的block中
-    self.sendValueBlock(sendDataDic);
+    if (self.sendValueBlock) {
+        self.sendValueBlock(selectModel);
+    }
     
     [self.navigationController popViewControllerAnimated:YES];
 }
 
-#pragma mark - UITextFieldDelegate -
-- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
+
+#pragma mark - 网络请求
+- (void)queryMineExamScoreList
 {
-    
-    NSInteger tfTag = textField.tag - TEXTFIELD_TAG;
-    
-    if(tfTag == 1){
-        //考试类型
-        [AvalonsoftPickerView showStringPickerWithTitle:@"" DataSource:@[@"ACT", @"SSAT", @"TOEFL", @"SAT", @"GMAT"] DefaultSelValue:@"TOEFL" IsAutoSelect:NO ResultBlock:^(id selectValue, id selectRow){
-            //回调
+    __weak typeof(self) weakSelf = self;
+    [AvalonsoftHasNetwork avalonsoft_hasNetwork:^(bool has) {
+        if (has) {
+            NSMutableDictionary *root = [NSMutableDictionary dictionary];
+            [root setValue:[_UserInfo accountId] forKey:@"accountId"];
+            [root setValue:@"0" forKey:@"delSign"];
             
-            self->type = selectValue;
-            self->typeTextField.text = selectValue;
+            [[AvalonsoftHttpClient avalonsoftHttpClient] requestWithAction:COMMON_SERVER_URL actionName:MINE_MY_EXAM_SCORE_LIST method:HttpRequestPost paramenters:root prepareExecute:^{
+                
+            } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull responseObject) {
+                __strong typeof(weakSelf) strongSelf = weakSelf;
+                
+                NSLog(@"handleNetworkRequestWithResponseObject responseObject=%@",responseObject);
+                _M *responseModel = [_M createResponseJsonObj:responseObject];
+                NSLog(@"handleNetworkRequestWithResponseObject %ld %@",responseModel.rescode,responseModel.msg);
+                
+                @try {
+                    if(responseModel.rescode == 200){
+                        NSDictionary *rspData = responseModel.data;
+                        NSArray *rspDataArray = rspData[@"dataList"];
+                       [strongSelf.detailArray removeAllObjects];
+                       for(int i=0; i<rspDataArray.count; i++){
+                           MineResultModel *model = [MineResultModel modelWithDict:rspDataArray[i]];
+                           NSString *curExamType = [strongSelf bridgeExamType:model.examType];
+                           if ([self.model.examType isEqualToString:curExamType]) {
+                               [strongSelf.detailArray addObject:model];
+                           }
+                       }
+                        
+                        [strongSelf resetSize];
+                        [strongSelf.detailTableView reloadData];
+                    }
+                } @catch (NSException *exception) {
+                    @throw exception;
+                    //给出提示信息
+                    [AvalonsoftMsgAlertView showWithTitle:@"信息" content:@"系统发生错误，请与平台管理员联系解决。"  buttonTitles:@[@"关闭"] buttonClickedBlock:nil];
+                }
+                
+            } failure:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error) {
+                //请求失败
+                NSLog(@"%@",error);
+            }];
             
-            //判断保存按钮是否可点击
-            [self isShowSavaButton];
-
-        }];
-
-    }else if(tfTag == 2){
-        //考试日期
-        NSDate *now = [NSDate date];
-        NSDateFormatter *fmt = [[NSDateFormatter alloc] init];
-        fmt.dateFormat = @"yyyy-MM-dd HH:mm:ss";
-        NSString *nowStr = [fmt stringFromDate:now];
-
-        [AvalonsoftPickerView showDatePickerWithTitle:@"" DateType:UIDatePickerModeDate DefaultSelValue:@"" MinDateStr:@"1900-01-01 00:00:00" MaxDateStr:nowStr IsAutoSelect:NO Manager:nil ResultBlock:^(NSString *selectValue){
-            //回调
-            self->date = [selectValue stringByReplacingOccurrencesOfString:@"-" withString:@"/"];
-            self->dateTextField.text = [selectValue stringByReplacingOccurrencesOfString:@"-" withString:@"/"];
-            
-            //判断保存按钮是否可点击
-            [self isShowSavaButton];
-
-        }];
-
-    }else {
-    
-        NSString *title = @"";
-        NSString *content = @"";
-        if(tfTag == 3){
-            title = @"考试地点";
-            content = location;
-            
-        }else if(tfTag == 4){
-            title = @"参加的培训机构";
-            content = org;
-            
-        }else if(tfTag == 5){
-            title = @"L";
-            content = resultL;
-        
-        }else if(tfTag == 6){
-            title = @"S";
-            content = resultS;
-        
-        }else if(tfTag == 7){
-            title = @"R";
-            content = resultR;
-        
-        }else if(tfTag == 8){
-            title = @"W";
-            content = resultW;
-        
-        }else if(tfTag == 9){
-            title = @"总分";
-            content = resultScore;
+        } else {
+            //没网
+            //            [AvalonsoftMsgAlertView showWithTitle:@"信息" content:@"请检查网络" buttonTitles:@[@"关闭"] buttonClickedBlock:nil];
         }
-        
-        //通过字典将值传到后台
-        NSDictionary *sendDataDic = @{@"title":title,
-                                      @"content":content
-        };
-        
-//        MineResultShowContentEditViewController *contentEditVC = [[MineResultShowContentEditViewController alloc] init];
-        //设置block回调
-//        [contentEditVC setSendValueBlock:^(NSDictionary *valueDict){
-//            //回调函数
-//            NSString *returnContent = valueDict[@"content"];
-//
-//            if(tfTag == 3){
-//                self->location = returnContent;
-//                self->locationTextField.text = returnContent;;
-//
-//            }else if(tfTag == 4){
-//                self->org = returnContent;
-//                self->orgTextField.text = returnContent;;
-//
-//            }else if(tfTag == 5){
-//                self->resultL = returnContent;
-//                self->resultLTextField.text = returnContent;;
-//
-//            }else if(tfTag == 6){
-//                self->resultS = returnContent;
-//                self->resultSTextField.text = returnContent;;
-//
-//            }else if(tfTag == 7){
-//                self->resultR = returnContent;
-//                self->resultRTextField.text = returnContent;;
-//
-//            }else if(tfTag == 8){
-//                self->resultW = returnContent;
-//                self->resultWTextField.text = returnContent;;
-//
-//            }else if(tfTag == 9){
-//                self->resultScore = returnContent;
-//                self->resultScoreTextField.text = returnContent;;
-//            }
-//
-//            //判断保存按钮是否可点击
-//            [self isShowSavaButton];
-//
-//        }];
-        
-//        contentEditVC.dataDic = sendDataDic;
-//        [self.navigationController pushViewController:contentEditVC animated:YES];
-    
+    }];
+}
+
+- (NSString *)bridgeExamType:(NSString *)examType
+{
+    NSString *curExamType = examType;
+    //考试类型:类型1->TOEFL，类型2->IELTS，类型3->GRE，类型4->GMAT，类型5->SAT，类型6->SSAT，类型7->ACT
+    if ([curExamType isKindOfClass:[NSString class]]) {
+        switch (curExamType.integerValue) {
+            case 1:
+                curExamType = @"TOEFL";
+                break;
+            case 2:
+                curExamType = @"IELTS";
+                break;
+            case 3:
+                curExamType = @"GRE";
+                break;
+            case 4:
+                curExamType = @"GMAT";
+                break;
+            case 5:
+                curExamType = @"SAT";
+                break;
+            case 6:
+                curExamType = @"SSAT";
+                break;
+            case 7:
+                curExamType = @"ACT";
+                break;
+                
+            default:
+                break;
+        }
     }
     
-    return NO;
+    return curExamType;
 }
 
-#pragma mark - 统一设置标题label格式 -
--(void)setTitleLabelStyle:(UILabel *)titleLabel withName:(NSString *)labelName
+-(void)resetSize
 {
-    titleLabel.numberOfLines = 0;
-    titleLabel.textAlignment = NSTextAlignmentLeft;
-    titleLabel.alpha = 1.0;
-    NSMutableAttributedString *titleLabelString = [[NSMutableAttributedString alloc] initWithString:labelName attributes: @{NSFontAttributeName: [UIFont fontWithName:@"PingFangSC-Regular" size: 14],NSForegroundColorAttributeName: [UIColor colorWithRed:102/255.0 green:102/255.0 blue:102/255.0 alpha:1.0]}];
-    titleLabel.attributedText = titleLabelString;
-}
-
-#pragma mark - 统一textfield格式 -
--(void)setTextFieldStyle:(UITextField *)textField withTag:(NSInteger)tag
-{
-    textField.tag = tag + TEXTFIELD_TAG;
-    textField.delegate = self;
-    [textField setTextAlignment:NSTextAlignmentLeft];
-    textField.clearButtonMode = UITextFieldViewModeNever;
-    textField.borderStyle = UITextBorderStyleNone;
-    //设置输入后文字样式
-    [textField setTextColor:RGBA_GGCOLOR(51, 51, 51, 1)];
-    [textField setFont:[UIFont fontWithName:@"PingFangSC-Medium" size:16]];
-}
-
-#pragma mark - 判断是否显示保存按钮 -
--(void)isShowSavaButton
-{
-    if(![type isEqualToString:@""] && ![date isEqualToString:@""] && ![location isEqualToString:@""]
-       && ![org isEqualToString:@""] && ![resultL isEqualToString:@""] && ![resultS isEqualToString:@""]
-       && ![resultR isEqualToString:@""] && ![resultW isEqualToString:@""] && ![resultScore isEqualToString:@""]){
-        
-        operateButton.hidden = YES;
-        clickableOperateButton.hidden = NO;
-        
-    }else{
-        
-        operateButton.hidden = NO;
-        clickableOperateButton.hidden = YES;
+    CGFloat detailTableViewHeight = 0;
+    if(self.detailArray.count != 0){
+        detailTableViewHeight = 44*self.detailArray.count;
     }
+    
+    [_detailTableView mas_updateConstraints:^(MASConstraintMaker *make){
+        make.height.mas_equalTo(@(detailTableViewHeight));
+    }];
 }
 
 @end

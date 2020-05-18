@@ -633,12 +633,14 @@
             model.scoreBTitle = @"S";
             model.scoreCTitle = @"R";
             model.scoreDTitle = @"W";
+            model.totalScoreTitle = @"总分";
         } else if (i == 2) {
             //GRE
             model.examType = @"GRE";
             model.scoreATitle = @"L";
             model.scoreBTitle = @"Q";
             model.scoreCTitle = @"AW";
+            model.totalScoreTitle = @"总分";
         } else if (i == 3) {
             //GMAT
             model.examType = @"GMAT";
@@ -646,6 +648,7 @@
             model.scoreBTitle = @"Q";
             model.scoreCTitle = @"AW";
             model.scoreDTitle = @"IR";
+            model.totalScoreTitle = @"总分";
         } else if (i == 4) {
             //SAT
             model.examType = @"SAT";
@@ -654,6 +657,7 @@
             model.scoreCTitle = @"ER";
             model.scoreDTitle = @"EA";
             model.scoreETitle = @"EW";
+            model.totalScoreTitle = @"总分";
         } else if (i == 5) {
             //ACT
             model.examType = @"ACT";
@@ -662,6 +666,7 @@
             model.scoreCTitle = @"M";
             model.scoreDTitle = @"S";
             model.scoreETitle = @"W";
+            model.totalScoreTitle = @"总分";
         }
         
         [self.scoreArray addObject:model];
@@ -978,10 +983,61 @@
 }
 
 #pragma mark - MineSelectButtonDelegate
-- (void)actionOfSelect
+- (void)actionOfSelect:(MineResultModel *)model
 {
     MineSelectOfferViewController *selectVC = [MineSelectOfferViewController new];
+    selectVC.model = model;
     [self.navigationController pushViewController:selectVC animated:YES];
+    
+    __weak typeof(self) weakSelf = self;
+    [selectVC setSendValueBlock:^(MineResultModel *model){
+        __strong typeof(weakSelf) strongSelf = weakSelf;
+        
+        for (NSInteger i = 0; i < strongSelf.scoreArray.count; i++) {
+            MineResultModel *curModel = strongSelf.scoreArray[i];
+            if ([curModel.examType isEqualToString:model.examType]) {
+                curModel.examScore = model.examScore;
+                curModel.scoreA = model.scoreA;
+                curModel.scoreB = model.scoreB;
+                curModel.scoreC = model.scoreC;
+                curModel.scoreD = model.scoreD;
+                curModel.scoreE = model.scoreE;
+
+                [strongSelf.scoreArray replaceObjectAtIndex:i withObject:curModel];
+            }
+        }
+        
+        [strongSelf.scoreTableView reloadData];
+        
+//        for (MineResultModel *curModel in strongSelf.scoreArray) {
+//            if ([curModel.examType isEqualToString:model.examType]) {
+//
+//                curModel.examScore = model.examScore;
+//                curModel.scoreA = model.scoreA;
+//                curModel.scoreB = model.scoreB;
+//                curModel.scoreC = model.scoreC;
+//                curModel.scoreD = model.scoreD;
+//                curModel.scoreE = model.scoreE;
+//            }
+//        }
+        
+    
+
+//        if ([model.examType isEqualToString:@"TOEFL"]) {
+//
+//        } else if ([model.examType isEqualToString:@"IELTS"]) {
+//
+//        } else if ([model.examType isEqualToString:@"GRE"]) {
+//
+//        } else if ([model.examType isEqualToString:@"GMAT"]) {
+//
+//        } else if ([model.examType isEqualToString:@"SAT"]) {
+//
+//        } else if ([model.examType isEqualToString:@"ACT"]) {
+//
+//        }
+    
+    }];
 }
 
 
@@ -998,30 +1054,10 @@
     [showVC setSendValueBlock:^(MineResultModel *model){
         __strong typeof(weakSelf) strongSelf = weakSelf;
         
-//        [strongSelf queryMineExamScoreList];
+        ///TODO
     }];
 }
 @end
-
-
-
-
-
-//-(void)resetSize
-//{
-//    CGFloat scoreTableViewHeight = 0;
-//    if(self.scoreArray.count != 0){
-//        scoreTableViewHeight = K_ScoreTableView_CellHeight*self.scoreArray.count + 10*self.scoreArray.count;
-//    }
-//
-//    [_scoreTableView mas_updateConstraints:^(MASConstraintMaker *make){
-//        make.height.mas_equalTo(@(scoreTableViewHeight));
-//    }];
-//
-//    //设置内容视图尺寸
-//    [contentView setContentSize:CGSizeMake(SCREEN_WIDTH, 10 + 6*K_DetailTableView_CellHeight + 10 + 42 + scoreTableViewHeight + 10 + 150 + 250)];
-//
-//}
 
 
 
