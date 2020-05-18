@@ -40,32 +40,15 @@
 
     
     @private NSString *country;
+    @private NSString *school;
     @private NSString *studyStage;
+    @private NSString *major;
+    @private NSString *agentCompany;
+    @private NSString *internationalSchool;
     @private NSString *internationalDate1;
     @private NSString *internationalDate2;
-
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    @private UITextField *locationTextField;
-    @private UITextField *positionTextField;
-    @private UITextField *startDateTextField;
-    @private UITextField *endDateTextField;
-   
-    @private NSString *companyName;
-    @private NSString *location;
-    @private NSString *position;
-    @private NSString *startDate;
-    @private NSString *endDate;
-    @private NSString *Description;
+    @private NSString *gpa;
+    @private NSString *contentText;
 }
 
 @property (nonatomic,strong) UITableView *scoreTableView;
@@ -738,21 +721,7 @@
 #pragma mark - 保存按钮点击 -
 -(void)saveButtonClick
 {
-    if (!companyName.length) {
-        [AvalonsoftToast showWithMessage:@"公司名称不能为空！"];
-    } else if (!location.length) {
-        [AvalonsoftToast showWithMessage:@"公司所在地不能为空！"];
-    } else if (!position.length) {
-        [AvalonsoftToast showWithMessage:@"职位不能为空！"];
-    } else if (!startDate.length) {
-        [AvalonsoftToast showWithMessage:@"开始时间不能为空！"];
-    } else if (!endDate.length) {
-        [AvalonsoftToast showWithMessage:@"结束时间不能为空！"];
-    } else if (!Description.length) {
-        [AvalonsoftToast showWithMessage:@"活动描述不能为空！"];
-    } else {
-        [self saveMineAddWorkList];
-    }
+    [self saveMineAddOfferList];
 }
 
 #pragma mark - UITextFieldDelegate -
@@ -869,18 +838,28 @@
 - (void)textFieldDidChange:(UITextField*) sender {
     NSInteger tfTag = sender.tag - TEXTFIELD_TAG;
     switch (tfTag) {
-        case 1: {
-            companyName = sender.text;
+        case 2: {
+            school = sender.text;
         }
             break;
 
-        case 2: {
-            location = sender.text;
+        case 4: {
+            major = sender.text;
         }
             break;
             
-        case 3: {
-            position = sender.text;
+        case 5: {
+            agentCompany = sender.text;
+        }
+            break;
+            
+        case 6: {
+            internationalSchool = sender.text;
+        }
+            break;
+            
+        case 9: {
+            gpa = sender.text;
         }
             break;
                     
@@ -888,6 +867,7 @@
             break;
     }
 }
+
 
 #pragma mark - touch screen hide soft keyboard -
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
@@ -898,7 +878,7 @@
 
 - (void)textViewDidChange:(UITextView *)textView
 {
-    Description = textView.text;
+    contentText = textView.text;
 }
 
 - (void)resignFirstResponderForTextFields
@@ -911,63 +891,6 @@
     [internationalSchoolTextField resignFirstResponder];
     [gpaTextField resignFirstResponder];
 }
-
-#pragma mark - 网络请求
-- (void)saveMineAddWorkList
-{
-    __weak typeof(self) weakSelf = self;
-    [AvalonsoftHasNetwork avalonsoft_hasNetwork:^(bool has) {
-        __strong typeof(weakSelf) strongSelf = weakSelf;
-
-        if (has) {
-            NSMutableDictionary *root = [NSMutableDictionary dictionary];
-            [root setValue:[_UserInfo accountId] forKey:@"accountId"];
-            [root setValue:strongSelf->companyName forKey:@"companyName"];
-            [root setValue:strongSelf->location forKey:@"location"];
-            [root setValue:strongSelf->position forKey:@"position"];
-            [root setValue:strongSelf->startDate forKey:@"workStartDate"];
-            [root setValue:strongSelf->endDate forKey:@"workEndDate"];
-            [root setValue:strongSelf->Description forKey:@"description"];
-
-            
-            [[AvalonsoftHttpClient avalonsoftHttpClient] requestWithAction:COMMON_SERVER_URL actionName:MINE_MY_WORK_ADD method:HttpRequestPost paramenters:root prepareExecute:^{
-                
-            } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull responseObject) {
-                
-                NSLog(@"handleNetworkRequestWithResponseObject responseObject=%@",responseObject);
-                _M *responseModel = [_M createResponseJsonObj:responseObject];
-                NSLog(@"handleNetworkRequestWithResponseObject %ld %@",responseModel.rescode,responseModel.msg);
-                
-                @try {
-                    if(responseModel.rescode == 200){
-                        NSMutableDictionary *sendDic = [NSMutableDictionary dictionary];
-                        strongSelf.sendValueBlock(sendDic);
-                        
-                        //保存成功
-                        [AvalonsoftToast showWithMessage:@"保存成功" image:@"login_success" duration:1];
-                        [strongSelf.navigationController popViewControllerAnimated:YES];
-                    }
-                } @catch (NSException *exception) {
-                    @throw exception;
-                    //给出提示信息
-                    [AvalonsoftMsgAlertView showWithTitle:@"信息" content:@"系统发生错误，请与平台管理员联系解决。"  buttonTitles:@[@"关闭"] buttonClickedBlock:nil];
-                    [strongSelf.navigationController popViewControllerAnimated:YES];
-                }
-                
-            } failure:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error) {
-                //请求失败
-                NSLog(@"%@",error);
-                [strongSelf.navigationController popViewControllerAnimated:YES];
-            }];
-            
-        } else {
-            //没网
-            //            [AvalonsoftMsgAlertView showWithTitle:@"信息" content:@"请检查网络" buttonTitles:@[@"关闭"] buttonClickedBlock:nil];
-            [strongSelf.navigationController popViewControllerAnimated:YES];
-        }
-    }];
-}
-
 
 #pragma mark - 上传图片
 - (void)uploadOffer
@@ -1006,37 +929,7 @@
                 [strongSelf.scoreArray replaceObjectAtIndex:i withObject:curModel];
             }
         }
-        
         [strongSelf.scoreTableView reloadData];
-        
-//        for (MineResultModel *curModel in strongSelf.scoreArray) {
-//            if ([curModel.examType isEqualToString:model.examType]) {
-//
-//                curModel.examScore = model.examScore;
-//                curModel.scoreA = model.scoreA;
-//                curModel.scoreB = model.scoreB;
-//                curModel.scoreC = model.scoreC;
-//                curModel.scoreD = model.scoreD;
-//                curModel.scoreE = model.scoreE;
-//            }
-//        }
-        
-    
-
-//        if ([model.examType isEqualToString:@"TOEFL"]) {
-//
-//        } else if ([model.examType isEqualToString:@"IELTS"]) {
-//
-//        } else if ([model.examType isEqualToString:@"GRE"]) {
-//
-//        } else if ([model.examType isEqualToString:@"GMAT"]) {
-//
-//        } else if ([model.examType isEqualToString:@"SAT"]) {
-//
-//        } else if ([model.examType isEqualToString:@"ACT"]) {
-//
-//        }
-    
     }];
 }
 
@@ -1049,15 +942,80 @@
     showVC.model = model;
     [self.navigationController pushViewController:showVC animated:YES];
 
-
     __weak typeof(self) weakSelf = self;
     [showVC setSendValueBlock:^(MineResultModel *model){
         __strong typeof(weakSelf) strongSelf = weakSelf;
         
-        ///TODO
+    }];
+}
+
+
+#pragma mark - 网络请求
+- (void)saveMineAddOfferList
+{
+    __weak typeof(self) weakSelf = self;
+    [AvalonsoftHasNetwork avalonsoft_hasNetwork:^(bool has) {
+        __strong typeof(weakSelf) strongSelf = weakSelf;
+
+        if (has) {
+            NSMutableDictionary *root = [NSMutableDictionary dictionary];
+//            [root setValue:[_UserInfo userId] forKey:@"userId"];
+            [root setValue:[_UserInfo accountId] forKey:@"userId"];
+            [root setValue:strongSelf->country forKey:@"country"];
+            [root setValue:strongSelf->school forKey:@"schoolNameEn"];
+            [root setValue:strongSelf->studyStage forKey:@"level"];
+            [root setValue:strongSelf->major forKey:@"majorName"];
+            [root setValue:strongSelf->agentCompany forKey:@"agencyCompanyName"];
+            [root setValue:strongSelf->internationalSchool forKey:@"internationalSchoolName"];
+            [root setValue:strongSelf->internationalSchool forKey:@"internationalSchoolName"];
+            [root setValue:strongSelf->internationalDate1 forKey:@"gpaDate"];
+            [root setValue:strongSelf->internationalDate2 forKey:@"gpaType"];
+            [root setValue:strongSelf->contentText forKey:@"examDesc"];
+            [root setValue:strongSelf->gpa forKey:@"gpaScore"];
+//            [root setValue:strongSelf->examScorea forKey:@"examScorea"];
+//            [root setValue:strongSelf->examScoreb forKey:@"examScoreb"];
+//            [root setValue:strongSelf->examScorec forKey:@"examScorec"];
+//            [root setValue:strongSelf->examScored forKey:@"examScored"];
+//            [root setValue:strongSelf->examScoree forKey:@"examScoree"];
+//            [root setValue:strongSelf->examScoref forKey:@"examScoref"];
+//            [root setValue:strongSelf->examScoreg forKey:@"examScoreg"];
+            ///TODO:xubing余下字段暂未上传
+//            other（其他国家或地区）
+//            schoolId（学校机构id）
+//            agencyCompany（代理留学公司的机构id）
+//            internationalSchool（就读国际学校的机构id）
+//            offerImgUrl（上传的offer图片）
+            
+            [[AvalonsoftHttpClient avalonsoftHttpClient] requestWithAction:COMMON_SERVER_URL actionName:MINE_MY_OFFER_ADD method:HttpRequestPost paramenters:root prepareExecute:^{
+                
+            } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull responseObject) {
+                
+                NSLog(@"handleNetworkRequestWithResponseObject responseObject=%@",responseObject);
+                _M *responseModel = [_M createResponseJsonObj:responseObject];
+                NSLog(@"handleNetworkRequestWithResponseObject %ld %@",responseModel.rescode,responseModel.msg);
+                
+                @try {
+                    if(responseModel.rescode == 200){
+                        
+                        //保存成功
+                        [AvalonsoftToast showWithMessage:@"保存成功" image:@"login_success" duration:1];
+                        [strongSelf.navigationController popViewControllerAnimated:YES];
+                    }
+                } @catch (NSException *exception) {
+                    @throw exception;
+                    //给出提示信息
+                    [AvalonsoftMsgAlertView showWithTitle:@"信息" content:@"系统发生错误，请与平台管理员联系解决。"  buttonTitles:@[@"关闭"] buttonClickedBlock:nil];
+                }
+                
+            } failure:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error) {
+                //请求失败
+                NSLog(@"%@",error);
+            }];
+            
+        } else {
+            //没网
+            //            [AvalonsoftMsgAlertView showWithTitle:@"信息" content:@"请检查网络" buttonTitles:@[@"关闭"] buttonClickedBlock:nil];
+        }
     }];
 }
 @end
-
-
-
