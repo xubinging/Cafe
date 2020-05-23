@@ -32,8 +32,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) MineResultModel *ssatScore;                 //SSAT
 @property (nonatomic, strong) MineResultModel *actScore;                  //ACT
 
-@property (nonatomic, copy) NSString *gpaScore;                      //GPA成绩
-@property (nonatomic, copy) NSString *gpaDate;                      //GPA就读时间
+@property (nonatomic, copy) NSString *gpaScore;                           //GPA成绩
+@property (nonatomic, copy) NSString *gpaDate;                            //GPA就读时间
+
+@property (nonatomic, copy) NSString *offerImgUrl;                        //offer图片
 
 
 @property (nonatomic, copy) NSString *content;              //内容

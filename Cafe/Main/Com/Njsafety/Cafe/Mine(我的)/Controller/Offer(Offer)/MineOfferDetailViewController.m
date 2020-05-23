@@ -449,8 +449,15 @@
         self.model.toeflScore.scoreCTitle = @"R";
         self.model.toeflScore.scoreDTitle = @"W";
         [_scoreArray addObject:self.model.toeflScore];
-        
-        [contentImageView sd_setImageWithURL:[NSURL URLWithString:[_F createFileLoadUrl:self.model.toeflScore.scoreFile]]];
+    } else {
+        MineResultModel *toeflScore = [MineResultModel new];
+        toeflScore.examType = @"TOEFL";
+        toeflScore.totalScoreTitle = @"总分";
+        toeflScore.scoreATitle = @"L";
+        toeflScore.scoreBTitle = @"S";
+        toeflScore.scoreCTitle = @"R";
+        toeflScore.scoreDTitle = @"W";
+        [_scoreArray addObject:toeflScore];
     }
     
     
@@ -463,8 +470,15 @@
         self.model.ieltsScore.scoreCTitle = @"R";
         self.model.ieltsScore.scoreDTitle = @"W";
         [_scoreArray addObject:self.model.ieltsScore];
-        
-        [contentImageView sd_setImageWithURL:[NSURL URLWithString:[_F createFileLoadUrl:self.model.ieltsScore.scoreFile]]];
+    } else {
+        MineResultModel *ieltsScore = [MineResultModel new];
+        ieltsScore.examType = @"IELTS";
+        ieltsScore.totalScoreTitle = @"总分";
+        ieltsScore.scoreATitle = @"L";
+        ieltsScore.scoreBTitle = @"S";
+        ieltsScore.scoreCTitle = @"R";
+        ieltsScore.scoreDTitle = @"W";
+        [_scoreArray addObject:ieltsScore];
     }
 
     
@@ -476,8 +490,14 @@
         self.model.greScore.scoreBTitle = @"Q";
         self.model.greScore.scoreCTitle = @"AW";
         [_scoreArray addObject:self.model.greScore];
-
-        [contentImageView sd_setImageWithURL:[NSURL URLWithString:[_F createFileLoadUrl:self.model.greScore.scoreFile]]];
+    } else {
+        MineResultModel *greScore = [MineResultModel new];
+        greScore.examType = @"GRE";
+        greScore.totalScoreTitle = @"总分";
+        greScore.scoreATitle = @"L";
+        greScore.scoreBTitle = @"Q";
+        greScore.scoreCTitle = @"AW";
+        [_scoreArray addObject:greScore];
     }
 
     
@@ -490,9 +510,17 @@
         self.model.gmatScore.scoreCTitle = @"AW";
         self.model.gmatScore.scoreDTitle = @"IR";
         [_scoreArray addObject:self.model.gmatScore];
-         
-        [contentImageView sd_setImageWithURL:[NSURL URLWithString:[_F createFileLoadUrl:self.model.gmatScore.scoreFile]]];
+    } else {
+        MineResultModel *gmatScore = [MineResultModel new];
+        gmatScore.examType = @"GMAT";
+        gmatScore.totalScoreTitle = @"总分";
+        gmatScore.scoreATitle = @"V";
+        gmatScore.scoreBTitle = @"Q";
+        gmatScore.scoreCTitle = @"AW";
+        gmatScore.scoreDTitle = @"IR";
+        [_scoreArray addObject:gmatScore];
     }
+
 
     
     //SAT
@@ -504,9 +532,17 @@
         self.model.satScore.scoreCTitle = @"ER";
         self.model.satScore.scoreDTitle = @"EA";
         [_scoreArray addObject:self.model.satScore];
-         
-        [contentImageView sd_setImageWithURL:[NSURL URLWithString:[_F createFileLoadUrl:self.model.satScore.scoreFile]]];
+    } else {
+        MineResultModel *satScore = [MineResultModel new];
+        satScore.examType = @"SAT";
+        satScore.totalScoreTitle = @"总分";
+        satScore.scoreATitle = @"EBRW";
+        satScore.scoreBTitle = @"M";
+        satScore.scoreCTitle = @"ER";
+        satScore.scoreDTitle = @"EA";
+        [_scoreArray addObject:satScore];
     }
+
 
     
     //ACT
@@ -518,10 +554,18 @@
         self.model.actScore.scoreCTitle = @"M";
         self.model.actScore.scoreDTitle = @"S";
         [_scoreArray addObject:self.model.actScore];
-
-        [contentImageView sd_setImageWithURL:[NSURL URLWithString:[_F createFileLoadUrl:self.model.actScore.scoreFile]]];
+    } else {
+        MineResultModel *actScore = [MineResultModel new];
+        actScore.examType = @"ACT";
+        actScore.totalScoreTitle = @"总分";
+        actScore.scoreATitle = @"R";
+        actScore.scoreBTitle = @"E";
+        actScore.scoreCTitle = @"M";
+        actScore.scoreDTitle = @"S";
+        [_scoreArray addObject:actScore];
     }
 
+    [contentImageView sd_setImageWithURL:[NSURL URLWithString:[_F createFileLoadUrl:self.model.offerImgUrl]]];
         
     //GPA数据
     NSString *gpa = self.model.gpaScore;
@@ -729,6 +773,8 @@
                     if(responseModel.rescode == 200){
                         NSDictionary *rspData = responseModel.data;
                         strongSelf.model = [MineOfferModel modelWithDict:rspData];
+                        [strongSelf.detailArray removeAllObjects];
+                        [strongSelf.scoreArray removeAllObjects];
                         [strongSelf setData];
                         [strongSelf.detailTableView reloadData];
                         [strongSelf.scoreTableView reloadData];
