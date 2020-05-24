@@ -7,11 +7,10 @@
 //
 
 #import "MineLearningDetailViewController.h"
-
 #import "MineLearningModel.h"
-
 #import "MineDetailCommonModel.h"
 #import "MineDetailCommonTableViewCell.h"
+#import "MineAddLearningViewController.h"
 
 @interface MineLearningDetailViewController ()<UITableViewDelegate,UITableViewDataSource>
 
@@ -366,19 +365,19 @@
 
 - (void)editButtonClick
 {
-//    moreActionView.hidden = YES;
-//    [moreActionView removeFromSuperview];
-//
-//    MineAddOfferViewController *showVC = [MineAddOfferViewController new];
-//    showVC.model = self.model;
-//    [self.navigationController pushViewController:showVC animated:YES];
-//
-//    __weak typeof(self) weakSelf = self;
-//    [showVC setSendValueBlock:^(MineOfferModel *model){
-//        __strong typeof(weakSelf) strongSelf = weakSelf;
-//
-//        [strongSelf setData];
-//    }];
+    moreActionView.hidden = YES;
+    [moreActionView removeFromSuperview];
+
+    MineAddLearningViewController *showVC = [MineAddLearningViewController new];
+    showVC.model = self.model;
+    [self.navigationController pushViewController:showVC animated:YES];
+
+    __weak typeof(self) weakSelf = self;
+    [showVC setSendValueBlock:^(MineLearningModel *model){
+        __strong typeof(weakSelf) strongSelf = weakSelf;
+
+        [strongSelf queryMineLearningDetails];
+    }];
 }
 
 - (void)deleteButtonClick
@@ -423,54 +422,6 @@
                     //给出提示信息
                     [AvalonsoftMsgAlertView showWithTitle:@"信息" content:@"系统发生错误，请与平台管理员联系解决。"  buttonTitles:@[@"关闭"] buttonClickedBlock:nil];
                 }
-            } failure:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error) {
-                //请求失败
-                NSLog(@"%@",error);
-            }];
-            
-        } else {
-            //没网
-            //            [AvalonsoftMsgAlertView showWithTitle:@"信息" content:@"请检查网络" buttonTitles:@[@"关闭"] buttonClickedBlock:nil];
-        }
-    }];
-}
-
-- (void)deleteMineLearning2
-{
-    __weak typeof(self) weakSelf = self;
-    [AvalonsoftHasNetwork avalonsoft_hasNetwork:^(bool has) {
-        __strong typeof(weakSelf) strongSelf = weakSelf;
-
-        if (has) {
-            NSMutableDictionary *root = [NSMutableDictionary dictionary];
-            [root setValue:strongSelf.model.ID forKey:@"id"];
-
-            
-            [[AvalonsoftHttpClient avalonsoftHttpClient] requestWithAction:COMMON_SERVER_URL actionName:MINE_MY_LEARNING_DELETE method:HttpRequestPost paramenters:root prepareExecute:^{
-                
-            } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull responseObject) {
-                
-                NSLog(@"handleNetworkRequestWithResponseObject responseObject=%@",responseObject);
-                _M *responseModel = [_M createResponseJsonObj:responseObject];
-                NSLog(@"handleNetworkRequestWithResponseObject %ld %@",responseModel.rescode,responseModel.msg);
-                
-                @try {
-                    if(responseModel.rescode == 200){
-                        NSDictionary *rspData = responseModel.data;
-                        MineLearningModel *model = [MineLearningModel modelWithDict:rspData];
-
-                        if (self.sendValueBlock) {
-                            self.sendValueBlock(model);
-                        }
-                        
-                        [strongSelf.navigationController popViewControllerAnimated:YES];
-                    }
-                } @catch (NSException *exception) {
-                    @throw exception;
-                    //给出提示信息
-                    [AvalonsoftMsgAlertView showWithTitle:@"信息" content:@"系统发生错误，请与平台管理员联系解决。"  buttonTitles:@[@"关闭"] buttonClickedBlock:nil];
-                }
-                
             } failure:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error) {
                 //请求失败
                 NSLog(@"%@",error);

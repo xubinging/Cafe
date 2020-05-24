@@ -29,6 +29,21 @@
         model.ID = [NSString stringWithFormat:@"%@",ID];
     }
     
+    
+    NSString *programStartDate = dict[@"programStartDate"];
+    if ([programStartDate isKindOfClass:[NSString class]]) {
+        model.programStartDate = programStartDate;
+    } else {
+        model.programStartDate = [NSString stringWithFormat:@"%@",programStartDate];;
+    }
+    
+    NSString *programEndDate = dict[@"programEndDate"];
+    if ([programEndDate isKindOfClass:[NSString class]]) {
+        model.programEndDate = programEndDate;
+    } else {
+        model.programEndDate = [NSString stringWithFormat:@"%@",programEndDate];;
+    }
+    
     return model;
 }
 
