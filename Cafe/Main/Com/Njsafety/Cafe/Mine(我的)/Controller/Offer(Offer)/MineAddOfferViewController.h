@@ -7,16 +7,16 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "MineResultModel.h"
+#import "MineOfferModel.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface MineAddOfferViewController : UIViewController
 
 //Block传值step 1：定义block为传值block的属性
-@property (nonatomic,copy)void(^sendValueBlock)(MineResultModel *model);
+@property (nonatomic,copy)void(^sendValueBlock)(MineOfferModel *model);
 
-@property (nonatomic, strong) MineResultModel *model;
+@property (nonatomic, strong) MineOfferModel *model;
 
 @end
 

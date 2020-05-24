@@ -203,6 +203,10 @@ NSString * const MINE_MY_OFFER_DETAILS = @"cuser/eduuseroffer/query?id";
 NSString * const MINE_MY_OFFER_ADD = @"cuser/eduuseroffer/add";
 //offer编辑
 NSString * const MINE_MY_OFFER_UPDATE = @"cuser/eduuseroffer/update";
+//offer删除
+NSString * const MINE_MY_OFFER_DELETE = @"cuser/eduuseroffer/softDeleteById";
+
+
 
 
 

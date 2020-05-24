@@ -607,15 +607,15 @@
     moreActionView.hidden = YES;
     [moreActionView removeFromSuperview];
     
-    
     MineResultShowViewController *showVC = [MineResultShowViewController new];
     showVC.model = self.model;
     [self.navigationController pushViewController:showVC animated:YES];
 
-    //设置block回调
+    __weak typeof(self) weakSelf = self;
     [showVC setSendValueBlock:^(MineResultModel *model){
+        __strong typeof(weakSelf) strongSelf = weakSelf;
 
-        [self setData];
+        [strongSelf setData];
     }];
 }
 

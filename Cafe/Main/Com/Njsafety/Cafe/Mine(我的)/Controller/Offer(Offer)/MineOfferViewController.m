@@ -246,13 +246,13 @@
 -(void)addButtonClick
 {
     MineAddOfferViewController *showVC = [MineAddOfferViewController new];
-    MineResultModel *model = [MineResultModel new];
+    MineOfferModel *model = [MineOfferModel new];
     showVC.model = model;
     [self.navigationController pushViewController:showVC animated:YES];
 
     //设置block回调
     __weak typeof(self) weakSelf = self;
-    [showVC setSendValueBlock:^(MineResultModel *model){
+    [showVC setSendValueBlock:^(MineOfferModel *model){
        __strong typeof(weakSelf) strongSelf = weakSelf;
 
        [strongSelf queryMineOfferList];

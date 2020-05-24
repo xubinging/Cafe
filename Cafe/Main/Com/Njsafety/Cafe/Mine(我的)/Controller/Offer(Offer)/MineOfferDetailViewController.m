@@ -7,7 +7,7 @@
 //
 
 #import "MineOfferDetailViewController.h"
-
+#import "MineAddOfferViewController.h"
 #import "MineOfferModel.h"
 #import "MineResultModel.h"
 #import "MineDetailCommonModel.h"           //信息列表
@@ -25,6 +25,7 @@
     @private UIView *navigationView;
     @private UIButton *backButton;          //左上角返回按钮
     @private UIButton *rightButton;         //右侧按钮
+    @private UIView *moreActionView;
     
     @private UIScrollView *contentView;     //内容
     
@@ -116,7 +117,7 @@
         make.top.equalTo(backButton).offset(1);
         make.size.mas_equalTo(CGSizeMake(30, 20));
     }];
-    NSMutableAttributedString *rightButtonString = [[NSMutableAttributedString alloc] initWithString:@"编辑" attributes: @{NSFontAttributeName: [UIFont fontWithName:@"PingFangSC-Regular" size: 14],NSForegroundColorAttributeName: [UIColor colorWithRed:32/255.0 green:188/255.0 blue:255/255.0 alpha:1.0]}];
+    NSMutableAttributedString *rightButtonString = [[NSMutableAttributedString alloc] initWithString:@"更多" attributes: @{NSFontAttributeName: [UIFont fontWithName:@"PingFangSC-Regular" size: 14],NSForegroundColorAttributeName: [UIColor colorWithRed:32/255.0 green:188/255.0 blue:255/255.0 alpha:1.0]}];
     [rightButton setAttributedTitle:rightButtonString forState:UIControlStateNormal];
     //右上角按钮点击
     [rightButton addTarget:self action:@selector(rightButtonClick) forControlEvents:UIControlEventTouchUpInside];
@@ -708,44 +709,80 @@
     [self.navigationController popViewControllerAnimated:YES];
 }
 
-#pragma mark - 编辑按钮点击 -
+#pragma mark - 更多按钮点击 -
 -(void)rightButtonClick
 {
-//    NSDictionary *sendDic = @{
-//        @"type":type,
-//        @"date":date,
-//        @"location":location,
-//        @"org":org,
-//        @"resultL":resultL,
-//        @"resultS":resultS,
-//        @"resultR":resultR,
-//        @"resultW":resultW,
-//        @"resultScore":resultScore
-//    };
-//
-//    MineResultShowViewController *showVC = [MineResultShowViewController new];
-//
-//    //设置block回调
-//    [showVC setSendValueBlock:^(NSDictionary *valueDict){
-//
-//        //回调函数
-//        self->type = valueDict[@"type"];
-//        self->date = valueDict[@"date"];
-//        self->location = valueDict[@"location"];
-//        self->org = valueDict[@"org"];
-//        self->resultL = valueDict[@"resultL"];
-//        self->resultS = valueDict[@"resultS"];
-//        self->resultR = valueDict[@"resultR"];
-//        self->resultW = valueDict[@"resultW"];
-//        self->resultScore = valueDict[@"resultScore"];
-//
-//        [self setData];
-//
-//    }];
-//
-//    showVC.dataDic = sendDic;
-//
-//    [self.navigationController pushViewController:showVC animated:YES];
+    moreActionView = [UIView new];
+    [self.view addSubview:moreActionView];
+    [moreActionView mas_makeConstraints:^(MASConstraintMaker *make){
+        make.top.equalTo(rightButton.mas_bottom).offset(5);
+        make.right.equalTo(rightButton);
+        make.size.mas_equalTo(CGSizeMake(80, 80));
+    }];
+    moreActionView.layer.cornerRadius = 10;
+    moreActionView.layer.masksToBounds = YES;
+    [moreActionView setBackgroundColor:[UIColor whiteColor]];
+    
+    UIButton *editButton = [UIButton new];
+    [moreActionView addSubview:editButton];
+    [editButton mas_makeConstraints:^(MASConstraintMaker *make){
+        make.top.equalTo(moreActionView);
+        make.left.equalTo(moreActionView);
+        make.size.mas_equalTo(CGSizeMake(80, 40));
+    }];
+    editButton.adjustsImageWhenHighlighted = NO;
+    NSMutableAttributedString *editButtonString = [[NSMutableAttributedString alloc] initWithString:@"编辑" attributes: @{NSFontAttributeName: [UIFont fontWithName:@"PingFangSC-Regular" size: 14],NSForegroundColorAttributeName: [UIColor blackColor]}];
+    [editButton setAttributedTitle:editButtonString forState:UIControlStateNormal];
+    [editButton addTarget:self action:@selector(editButtonClick) forControlEvents:UIControlEventTouchUpInside];
+    
+    
+    UIView *splitView = [UIView new];
+    [moreActionView addSubview:splitView];
+    [splitView mas_makeConstraints:^(MASConstraintMaker *make){
+        make.top.equalTo(editButton.mas_bottom).offset(1);
+        make.left.equalTo(moreActionView).offset(5);
+        make.right.equalTo(moreActionView).offset(-5);
+        make.height.mas_equalTo(@1);
+    }];
+    [splitView setBackgroundColor:RGBA_GGCOLOR(238, 238, 238, 1)];
+    [moreActionView layoutIfNeeded];
+
+    
+    UIButton *deleteButton = [UIButton new];
+    [moreActionView addSubview:deleteButton];
+    [deleteButton mas_makeConstraints:^(MASConstraintMaker *make){
+        make.top.equalTo(editButton.mas_bottom);
+        make.left.equalTo(moreActionView);
+        make.size.mas_equalTo(CGSizeMake(80, 40));
+    }];
+    deleteButton.adjustsImageWhenHighlighted = NO;
+    NSMutableAttributedString *deleteButtonString = [[NSMutableAttributedString alloc] initWithString:@"删除" attributes: @{NSFontAttributeName: [UIFont fontWithName:@"PingFangSC-Regular" size: 14],NSForegroundColorAttributeName: [UIColor blackColor]}];
+    [deleteButton setAttributedTitle:deleteButtonString forState:UIControlStateNormal];
+    [deleteButton addTarget:self action:@selector(deleteButtonClick) forControlEvents:UIControlEventTouchUpInside];
+}
+
+- (void)editButtonClick
+{
+    moreActionView.hidden = YES;
+    [moreActionView removeFromSuperview];
+    
+    MineAddOfferViewController *showVC = [MineAddOfferViewController new];
+    showVC.model = self.model;
+    [self.navigationController pushViewController:showVC animated:YES];
+
+    __weak typeof(self) weakSelf = self;
+    [showVC setSendValueBlock:^(MineOfferModel *model){
+        __strong typeof(weakSelf) strongSelf = weakSelf;
+
+        [strongSelf setData];
+    }];
+}
+
+- (void)deleteButtonClick
+{
+    moreActionView.hidden = YES;
+    [moreActionView removeFromSuperview];
+    [self deleteMineOffer];
 }
 
 
@@ -784,6 +821,55 @@
                     //给出提示信息
                     [AvalonsoftMsgAlertView showWithTitle:@"信息" content:@"系统发生错误，请与平台管理员联系解决。"  buttonTitles:@[@"关闭"] buttonClickedBlock:nil];
                 }
+            } failure:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error) {
+                //请求失败
+                NSLog(@"%@",error);
+            }];
+            
+        } else {
+            //没网
+            //            [AvalonsoftMsgAlertView showWithTitle:@"信息" content:@"请检查网络" buttonTitles:@[@"关闭"] buttonClickedBlock:nil];
+        }
+    }];
+}
+
+- (void)deleteMineOffer
+{
+    __weak typeof(self) weakSelf = self;
+    [AvalonsoftHasNetwork avalonsoft_hasNetwork:^(bool has) {
+        __strong typeof(weakSelf) strongSelf = weakSelf;
+
+        if (has) {
+            NSMutableDictionary *root = [NSMutableDictionary dictionary];
+            [root setValue:[_UserInfo userId] forKey:@"userId"];
+            [root setValue:strongSelf.model.ID forKey:@"id"];
+
+            
+            [[AvalonsoftHttpClient avalonsoftHttpClient] requestWithAction:COMMON_SERVER_URL actionName:MINE_MY_OFFER_DELETE method:HttpRequestPost paramenters:root prepareExecute:^{
+                
+            } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull responseObject) {
+                
+                NSLog(@"handleNetworkRequestWithResponseObject responseObject=%@",responseObject);
+                _M *responseModel = [_M createResponseJsonObj:responseObject];
+                NSLog(@"handleNetworkRequestWithResponseObject %ld %@",responseModel.rescode,responseModel.msg);
+                
+                @try {
+                    if(responseModel.rescode == 200){
+                        NSDictionary *rspData = responseModel.data;
+                        MineOfferModel *model = [MineOfferModel modelWithDict:rspData];
+
+                        if (self.sendValueBlock) {
+                            self.sendValueBlock(model);
+                        }
+                        
+                        [strongSelf.navigationController popViewControllerAnimated:YES];
+                    }
+                } @catch (NSException *exception) {
+                    @throw exception;
+                    //给出提示信息
+                    [AvalonsoftMsgAlertView showWithTitle:@"信息" content:@"系统发生错误，请与平台管理员联系解决。"  buttonTitles:@[@"关闭"] buttonClickedBlock:nil];
+                }
+                
             } failure:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error) {
                 //请求失败
                 NSLog(@"%@",error);
