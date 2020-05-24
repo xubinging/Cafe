@@ -133,11 +133,11 @@
 - (void)updateCellWithModel:(MineLearningModel *)model
 {
     
-    NSString *name = model.name;
-    NSString *role = model.role;
-    NSString *startTime = model.startTime;
-    NSString *endTime = model.endTime;
-    NSString *content = model.content;
+    NSString *name = model.programName;
+    NSString *role = model.programRole;
+    NSString *startTime = model.programStartDate;
+    NSString *endTime = model.programEndDate;
+    NSString *content = model.programDescription;
     NSString *showLanguage = model.showLanguage;
 
     [_nameLabel setText:name];

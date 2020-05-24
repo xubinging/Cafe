@@ -22,6 +22,13 @@
     //对model进行批量赋值，将dict传入
     [model setValuesForKeysWithDictionary:dict];
     
+    NSString *ID = dict[@"id"];
+    if ([ID isKindOfClass:[NSString class]]) {
+        model.ID = ID;
+    } else {
+        model.ID = [NSString stringWithFormat:@"%@",ID];
+    }
+    
     return model;
 }
 

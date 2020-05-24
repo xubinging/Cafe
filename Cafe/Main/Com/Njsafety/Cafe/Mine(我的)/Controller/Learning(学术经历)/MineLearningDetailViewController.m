@@ -19,16 +19,15 @@
     @private UIView *navigationView;
     @private UIButton *backButton;          //左上角返回按钮
     @private UIButton *rightButton;         //右侧按钮
+    @private UIView *moreActionView;
     
     @private UIView *contentView;           //内容
     
-    @private UITextView *contentTextView;
-    
-    @private MineLearningModel *slctModel;
+    @private UITextView *contentTextView;    
 }
 
 @property (nonatomic,strong) UITableView *detailTableView;
-@property (nonatomic,strong) NSArray *detailArray;
+@property (nonatomic,strong) NSMutableArray *detailArray;
 
 @end
 
@@ -39,17 +38,21 @@
     
     [self initVars];
     [self initSharedPreferences];
-    [self getParentVars];
     [self initNavigationView];
     [self initView];
     [self setData];
+    [self queryMineLearningDetails];
+}
+
+- (NSMutableArray *)detailArray
+{
+    return _detailArray?:(_detailArray = [NSMutableArray array]);
 }
 
 #pragma mark - 初始化一些参数 -
 -(void)initVars
 {
     self.view.backgroundColor = RGBA_GGCOLOR(249, 249, 249, 1);
-    
 }
 
 #pragma mark - 初始化数据 -
@@ -60,14 +63,6 @@
     } @catch (NSException *exception) {
         @throw exception;
         
-    }
-}
-
-#pragma mark - 获取父页面参数 -
--(void)getParentVars
-{
-    if(_dataDic != nil){
-        slctModel = _dataDic[@"slctModel"];
     }
 }
 
@@ -106,7 +101,7 @@
         make.top.equalTo(backButton).offset(1);
         make.size.mas_equalTo(CGSizeMake(30, 20));
     }];
-    NSMutableAttributedString *rightButtonString = [[NSMutableAttributedString alloc] initWithString:@"编辑" attributes: @{NSFontAttributeName: [UIFont fontWithName:@"PingFangSC-Regular" size: 14],NSForegroundColorAttributeName: [UIColor colorWithRed:32/255.0 green:188/255.0 blue:255/255.0 alpha:1.0]}];
+    NSMutableAttributedString *rightButtonString = [[NSMutableAttributedString alloc] initWithString:@"更多" attributes: @{NSFontAttributeName: [UIFont fontWithName:@"PingFangSC-Regular" size: 14],NSForegroundColorAttributeName: [UIColor colorWithRed:32/255.0 green:188/255.0 blue:255/255.0 alpha:1.0]}];
     [rightButton setAttributedTitle:rightButtonString forState:UIControlStateNormal];
     //右上角按钮点击
     [rightButton addTarget:self action:@selector(rightButtonClick) forControlEvents:UIControlEventTouchUpInside];
@@ -180,17 +175,13 @@
 #pragma mark - 设置参数 -
 -(void)setData
 {
-    //造数据
-    _detailArray = nil;
-    NSMutableArray *tempArray = [NSMutableArray array];
-
-    NSString *name = slctModel.name;
-    NSString *role = slctModel.role;
-    NSString *startTime = slctModel.startTime;
-    NSString *endTime = slctModel.endTime;
-    NSString *content = slctModel.content;
+    NSString *name = self.model.programName;
+    NSString *role = self.model.programRole;
+    NSString *startTime = self.model.programStartDate;
+    NSString *endTime = self.model.programEndDate;
+    NSString *content = self.model.programDescription;
     
-    NSString *showLanguage = slctModel.showLanguage;
+    NSString *showLanguage = self.model.showLanguage;
     
     for(int i=0; i<4; i++){
         if(i==0){
@@ -199,12 +190,12 @@
                 title = @"Project Name:";
             }
             
-            NSDictionary *dic = @{
-                @"title":title,
-                @"content":name
-            };
-            MineDetailCommonModel *model = [MineDetailCommonModel modelWithDict:dic];
-            [tempArray addObject:model];
+            MineDetailCommonModel *curModel = [MineDetailCommonModel new];
+            curModel.title = title;
+            if (name) {
+                curModel.content = name;
+            }
+            [self.detailArray addObject:curModel];
             
         }else if(i==1){
             NSString *title = @"项目角色:";
@@ -212,12 +203,12 @@
                 title = @"Project Role:";
             }
             
-            NSDictionary *dic = @{
-                @"title":title,
-                @"content":role
-            };
-            MineDetailCommonModel *model = [MineDetailCommonModel modelWithDict:dic];
-            [tempArray addObject:model];
+            MineDetailCommonModel *curModel = [MineDetailCommonModel new];
+            curModel.title = title;
+            if (role) {
+                curModel.content = role;
+            }
+            [self.detailArray addObject:curModel];
             
         }else if(i==2){
             NSString *title = @"开始时间:";
@@ -225,12 +216,12 @@
                 title = @"Start Time:";
             }
             
-            NSDictionary *dic = @{
-                @"title":title,
-                @"content":startTime
-            };
-            MineDetailCommonModel *model = [MineDetailCommonModel modelWithDict:dic];
-            [tempArray addObject:model];
+            MineDetailCommonModel *curModel = [MineDetailCommonModel new];
+            curModel.title = title;
+            if (startTime) {
+                curModel.content = startTime;
+            }
+            [self.detailArray addObject:curModel];
             
         }else if(i==3){
             NSString *title = @"结束时间:";
@@ -238,17 +229,15 @@
                 title = @"End Time:";
             }
             
-            NSDictionary *dic = @{
-                @"title":title,
-                @"content":endTime
-            };
-            MineDetailCommonModel *model = [MineDetailCommonModel modelWithDict:dic];
-            [tempArray addObject:model];
+            MineDetailCommonModel *curModel = [MineDetailCommonModel new];
+            curModel.title = title;
+            if (endTime) {
+                curModel.content = endTime;
+            }
+            [self.detailArray addObject:curModel];
         }
     }
     
-    _detailArray = [tempArray copy];
-
     //设置内容
     if(![content isEqualToString:@""]){
         NSMutableAttributedString *string = [[NSMutableAttributedString alloc] initWithString:content attributes: @{NSFontAttributeName: [UIFont fontWithName:@"PingFangSC-Regular" size: 16],NSForegroundColorAttributeName: [UIColor colorWithRed:102/255.0 green:102/255.0 blue:102/255.0 alpha:1.0]}];
@@ -260,6 +249,7 @@
         
     }
 }
+
 
 //**********    tableView代理 begin   **********//
 #pragma mark - 设置cell行高 -
@@ -302,10 +292,6 @@
 #pragma mark - 设置header样式 -
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
-//    UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, tableView.frame.size.width, 10)];
-//    view.backgroundColor = [UIColor clearColor];
-//    return view;
-    
     return nil;
 }
 
@@ -320,55 +306,229 @@
 #pragma mark - 返回按钮点击 -
 -(void)backButtonClick
 {
-    //设置回调
-    NSDictionary *sendDataDic = @{
-        @"modelReturn":slctModel
-    };
-    
-    //Block传值step 3:传值类将要传的值传入自己的block中
-    self.sendValueBlock(sendDataDic);
-    
+    if (self.sendValueBlock) {
+        self.sendValueBlock(self.model);
+    }
     [self.navigationController popViewControllerAnimated:YES];
 }
 
-#pragma mark - 编辑按钮点击 -
+#pragma mark - 更多按钮点击 -
 -(void)rightButtonClick
 {
-//    NSDictionary *sendDic = @{
-//        @"type":type,
-//        @"date":date,
-//        @"location":location,
-//        @"org":org,
-//        @"resultL":resultL,
-//        @"resultS":resultS,
-//        @"resultR":resultR,
-//        @"resultW":resultW,
-//        @"resultScore":resultScore
-//    };
+    moreActionView = [UIView new];
+    [self.view addSubview:moreActionView];
+    [moreActionView mas_makeConstraints:^(MASConstraintMaker *make){
+        make.top.equalTo(rightButton.mas_bottom).offset(5);
+        make.right.equalTo(rightButton);
+        make.size.mas_equalTo(CGSizeMake(80, 80));
+    }];
+    moreActionView.layer.cornerRadius = 10;
+    moreActionView.layer.masksToBounds = YES;
+    [moreActionView setBackgroundColor:[UIColor whiteColor]];
+    
+    UIButton *editButton = [UIButton new];
+    [moreActionView addSubview:editButton];
+    [editButton mas_makeConstraints:^(MASConstraintMaker *make){
+        make.top.equalTo(moreActionView);
+        make.left.equalTo(moreActionView);
+        make.size.mas_equalTo(CGSizeMake(80, 40));
+    }];
+    editButton.adjustsImageWhenHighlighted = NO;
+    NSMutableAttributedString *editButtonString = [[NSMutableAttributedString alloc] initWithString:@"编辑" attributes: @{NSFontAttributeName: [UIFont fontWithName:@"PingFangSC-Regular" size: 14],NSForegroundColorAttributeName: [UIColor blackColor]}];
+    [editButton setAttributedTitle:editButtonString forState:UIControlStateNormal];
+    [editButton addTarget:self action:@selector(editButtonClick) forControlEvents:UIControlEventTouchUpInside];
+    
+    
+    UIView *splitView = [UIView new];
+    [moreActionView addSubview:splitView];
+    [splitView mas_makeConstraints:^(MASConstraintMaker *make){
+        make.top.equalTo(editButton.mas_bottom).offset(1);
+        make.left.equalTo(moreActionView).offset(5);
+        make.right.equalTo(moreActionView).offset(-5);
+        make.height.mas_equalTo(@1);
+    }];
+    [splitView setBackgroundColor:RGBA_GGCOLOR(238, 238, 238, 1)];
+    [moreActionView layoutIfNeeded];
+
+    
+    UIButton *deleteButton = [UIButton new];
+    [moreActionView addSubview:deleteButton];
+    [deleteButton mas_makeConstraints:^(MASConstraintMaker *make){
+        make.top.equalTo(editButton.mas_bottom);
+        make.left.equalTo(moreActionView);
+        make.size.mas_equalTo(CGSizeMake(80, 40));
+    }];
+    deleteButton.adjustsImageWhenHighlighted = NO;
+    NSMutableAttributedString *deleteButtonString = [[NSMutableAttributedString alloc] initWithString:@"删除" attributes: @{NSFontAttributeName: [UIFont fontWithName:@"PingFangSC-Regular" size: 14],NSForegroundColorAttributeName: [UIColor blackColor]}];
+    [deleteButton setAttributedTitle:deleteButtonString forState:UIControlStateNormal];
+    [deleteButton addTarget:self action:@selector(deleteButtonClick) forControlEvents:UIControlEventTouchUpInside];
+}
+
+- (void)editButtonClick
+{
+//    moreActionView.hidden = YES;
+//    [moreActionView removeFromSuperview];
 //
-//    MineResultShowViewController *showVC = [MineResultShowViewController new];
-//
-//    //设置block回调
-//    [showVC setSendValueBlock:^(NSDictionary *valueDict){
-//
-//        //回调函数
-//        self->type = valueDict[@"type"];
-//        self->date = valueDict[@"date"];
-//        self->location = valueDict[@"location"];
-//        self->org = valueDict[@"org"];
-//        self->resultL = valueDict[@"resultL"];
-//        self->resultS = valueDict[@"resultS"];
-//        self->resultR = valueDict[@"resultR"];
-//        self->resultW = valueDict[@"resultW"];
-//        self->resultScore = valueDict[@"resultScore"];
-//
-//        [self setData];
-//
-//    }];
-//
-//    showVC.dataDic = sendDic;
-//
+//    MineAddOfferViewController *showVC = [MineAddOfferViewController new];
+//    showVC.model = self.model;
 //    [self.navigationController pushViewController:showVC animated:YES];
+//
+//    __weak typeof(self) weakSelf = self;
+//    [showVC setSendValueBlock:^(MineOfferModel *model){
+//        __strong typeof(weakSelf) strongSelf = weakSelf;
+//
+//        [strongSelf setData];
+//    }];
+}
+
+- (void)deleteButtonClick
+{
+    moreActionView.hidden = YES;
+    [moreActionView removeFromSuperview];
+    [self deleteMineLearning];
+}
+
+
+
+#pragma mark - 网络请求
+-(void)queryMineLearningDetails
+{
+    __weak typeof(self) weakSelf = self;
+    [AvalonsoftHasNetwork avalonsoft_hasNetwork:^(bool has) {
+        __strong typeof(weakSelf) strongSelf = weakSelf;
+
+        if (has) {
+            NSMutableDictionary *root = [NSMutableDictionary dictionary];
+            NSString *url = [[NSString alloc] init];
+            NSString *ID = self.model.ID;
+            url = [COMMON_SERVER_URL stringByAppendingFormat:@"/%@%@",MINE_MY_LEARNING_DETAILS, ID];
+            
+            [[AvalonsoftHttpClient avalonsoftHttpClient] requestWithActionUrlAndParam:url method:HttpRequestPost paramenters:root prepareExecute:^{
+            } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull responseObject) {
+                //处理网络请求结果
+                NSLog(@"handleNetworkRequestWithResponseObject responseObject=%@",responseObject);
+                _M *responseModel = [_M createResponseJsonObj:responseObject];
+                NSLog(@"handleNetworkRequestWithResponseObject %ld %@",responseModel.rescode,responseModel.msg);
+                
+                @try {
+                    if(responseModel.rescode == 200){
+                        NSDictionary *rspData = responseModel.data;
+                        strongSelf.model = [MineLearningModel modelWithDict:rspData];
+                        [strongSelf.detailArray removeAllObjects];
+                        [strongSelf setData];
+                        [strongSelf.detailTableView reloadData];
+                    }
+                } @catch (NSException *exception) {
+                    @throw exception;
+                    //给出提示信息
+                    [AvalonsoftMsgAlertView showWithTitle:@"信息" content:@"系统发生错误，请与平台管理员联系解决。"  buttonTitles:@[@"关闭"] buttonClickedBlock:nil];
+                }
+            } failure:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error) {
+                //请求失败
+                NSLog(@"%@",error);
+            }];
+            
+        } else {
+            //没网
+            //            [AvalonsoftMsgAlertView showWithTitle:@"信息" content:@"请检查网络" buttonTitles:@[@"关闭"] buttonClickedBlock:nil];
+        }
+    }];
+}
+
+- (void)deleteMineLearning2
+{
+    __weak typeof(self) weakSelf = self;
+    [AvalonsoftHasNetwork avalonsoft_hasNetwork:^(bool has) {
+        __strong typeof(weakSelf) strongSelf = weakSelf;
+
+        if (has) {
+            NSMutableDictionary *root = [NSMutableDictionary dictionary];
+            [root setValue:strongSelf.model.ID forKey:@"id"];
+
+            
+            [[AvalonsoftHttpClient avalonsoftHttpClient] requestWithAction:COMMON_SERVER_URL actionName:MINE_MY_LEARNING_DELETE method:HttpRequestPost paramenters:root prepareExecute:^{
+                
+            } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull responseObject) {
+                
+                NSLog(@"handleNetworkRequestWithResponseObject responseObject=%@",responseObject);
+                _M *responseModel = [_M createResponseJsonObj:responseObject];
+                NSLog(@"handleNetworkRequestWithResponseObject %ld %@",responseModel.rescode,responseModel.msg);
+                
+                @try {
+                    if(responseModel.rescode == 200){
+                        NSDictionary *rspData = responseModel.data;
+                        MineLearningModel *model = [MineLearningModel modelWithDict:rspData];
+
+                        if (self.sendValueBlock) {
+                            self.sendValueBlock(model);
+                        }
+                        
+                        [strongSelf.navigationController popViewControllerAnimated:YES];
+                    }
+                } @catch (NSException *exception) {
+                    @throw exception;
+                    //给出提示信息
+                    [AvalonsoftMsgAlertView showWithTitle:@"信息" content:@"系统发生错误，请与平台管理员联系解决。"  buttonTitles:@[@"关闭"] buttonClickedBlock:nil];
+                }
+                
+            } failure:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error) {
+                //请求失败
+                NSLog(@"%@",error);
+            }];
+            
+        } else {
+            //没网
+            //            [AvalonsoftMsgAlertView showWithTitle:@"信息" content:@"请检查网络" buttonTitles:@[@"关闭"] buttonClickedBlock:nil];
+        }
+    }];
+}
+
+
+-(void)deleteMineLearning
+{
+    __weak typeof(self) weakSelf = self;
+    [AvalonsoftHasNetwork avalonsoft_hasNetwork:^(bool has) {
+        __strong typeof(weakSelf) strongSelf = weakSelf;
+
+        if (has) {
+            NSMutableDictionary *root = [NSMutableDictionary dictionary];
+            NSString *url = [[NSString alloc] init];
+            NSString *ID = self.model.ID;
+            url = [COMMON_SERVER_URL stringByAppendingFormat:@"/%@?id=%@",MINE_MY_LEARNING_DELETE, ID];
+            
+            [[AvalonsoftHttpClient avalonsoftHttpClient] requestWithActionUrlAndParam:url method:HttpRequestPost paramenters:root prepareExecute:^{
+            } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull responseObject) {
+                //处理网络请求结果
+                NSLog(@"handleNetworkRequestWithResponseObject responseObject=%@",responseObject);
+                _M *responseModel = [_M createResponseJsonObj:responseObject];
+                NSLog(@"handleNetworkRequestWithResponseObject %ld %@",responseModel.rescode,responseModel.msg);
+                
+                @try {
+                    if(responseModel.rescode == 200){
+                        NSDictionary *rspData = responseModel.data;
+                        MineLearningModel *model = [MineLearningModel modelWithDict:rspData];
+
+                        if (self.sendValueBlock) {
+                            self.sendValueBlock(model);
+                        }
+
+                        [strongSelf.navigationController popViewControllerAnimated:YES];
+                    }
+                } @catch (NSException *exception) {
+                    @throw exception;
+                    //给出提示信息
+                    [AvalonsoftMsgAlertView showWithTitle:@"信息" content:@"系统发生错误，请与平台管理员联系解决。"  buttonTitles:@[@"关闭"] buttonClickedBlock:nil];
+                }
+            } failure:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error) {
+                //请求失败
+                NSLog(@"%@",error);
+            }];
+            
+        } else {
+            //没网
+            //            [AvalonsoftMsgAlertView showWithTitle:@"信息" content:@"请检查网络" buttonTitles:@[@"关闭"] buttonClickedBlock:nil];
+        }
+    }];
 }
 
 @end

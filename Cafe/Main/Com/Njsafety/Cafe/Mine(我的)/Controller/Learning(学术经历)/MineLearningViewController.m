@@ -26,7 +26,7 @@
 }
 
 @property (nonatomic,strong) UITableView *learningTableView;
-@property (nonatomic,strong) NSArray *learningArray;
+@property (nonatomic,strong) NSMutableArray *learningArray;
 
 @end
 
@@ -39,41 +39,19 @@
     [self initSharedPreferences];
     [self initNavigationView];
     [self initView];
+    [self queryMineLearningList];
+}
+
+- (NSMutableArray *)learningArray
+{
+    return _learningArray?:(_learningArray = [NSMutableArray array]);
 }
 
 #pragma mark - 初始化一些参数 -
 -(void)initVars
 {
     self.view.backgroundColor = RGBA_GGCOLOR(249, 249, 249, 1);
-    
     isShowChinese = YES;
-    
-    //造数据
-    _learningArray = nil;
-    NSMutableArray *tempArray = [NSMutableArray array];
-
-    for(int i=0; i<20; i++){
-
-        NSString *showLanguage = @"ZH";
-        NSInteger index = i+1;
-
-        NSDictionary *dic = @{
-            @"index":@(index),
-            @"name":[NSString stringWithFormat:@"创业大赛 %ld",index],
-            @"role":[NSString stringWithFormat:@"志愿者%ld",index],
-            @"startTime":@"2018-08-10",
-            @"endTime":@"2018-08-20",
-            @"content":@"创业大赛创业大赛创业大赛创业大赛创业大赛创业大赛创业大赛创业大赛创业大赛创业大赛创业大赛创业…",
-            @"showLanguage":showLanguage
-        };
-        
-        MineLearningModel *model = [MineLearningModel modelWithDict:dic];
-        [tempArray addObject:model];
-
-    }
-
-    _learningArray = [tempArray copy];
-    
 }
 
 #pragma mark - 初始化数据 -
@@ -242,33 +220,18 @@
 #pragma mark - 点击cell -
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    
-    MineLearningModel *slctModel = self.learningArray[indexPath.section];
-
-    NSDictionary *sendDic = @{
-        @"slctModel":slctModel
-    };
-
+    MineLearningModel *model = self.learningArray[indexPath.section];
     MineLearningDetailViewController *detailVC = [MineLearningDetailViewController new];
+    detailVC.model = model;
+    [self.navigationController pushViewController:detailVC animated:YES];
 
     //设置block回调
-    [detailVC setSendValueBlock:^(NSDictionary *valueDict){
-        //回调函数
-        MineLearningModel *modelReturn = valueDict[@"modelReturn"];
-
-        slctModel.name = modelReturn.name;
-        slctModel.role = modelReturn.role;
-        slctModel.startTime = modelReturn.startTime;
-        slctModel.endTime = modelReturn.endTime;
-        slctModel.content = modelReturn.content;
-
-        [self.learningTableView reloadData];
+    __weak typeof(self) weakSelf = self;
+    [detailVC setSendValueBlock:^(MineLearningModel *model){
+        __strong typeof(weakSelf) strongSelf = weakSelf;
+             
+        [strongSelf queryMineLearningList];
     }];
-
-    detailVC.dataDic = sendDic;
-
-    [self.navigationController pushViewController:detailVC animated:YES];
-    
 }
 
 //**********    tableView代理 end   **********//
@@ -374,4 +337,52 @@
     }
 }
 
+
+#pragma mark - 网络请求
+- (void)queryMineLearningList
+{
+    __weak typeof(self) weakSelf = self;
+    [AvalonsoftHasNetwork avalonsoft_hasNetwork:^(bool has) {
+        if (has) {
+            NSMutableDictionary *root = [NSMutableDictionary dictionary];
+            [root setValue:[_UserInfo accountId] forKey:@"accountId"];
+            
+            [[AvalonsoftHttpClient avalonsoftHttpClient] requestWithAction:COMMON_SERVER_URL actionName:MINE_MY_LEARNING_LIST method:HttpRequestPost paramenters:root prepareExecute:^{
+                
+            } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull responseObject) {
+                __strong typeof(weakSelf) strongSelf = weakSelf;
+                
+                NSLog(@"handleNetworkRequestWithResponseObject responseObject=%@",responseObject);
+                _M *responseModel = [_M createResponseJsonObj:responseObject];
+                NSLog(@"handleNetworkRequestWithResponseObject %ld %@",responseModel.rescode,responseModel.msg);
+                
+                @try {
+                    if(responseModel.rescode == 200){
+                        NSDictionary *rspData = responseModel.data;
+                        NSArray *rspDataArray = rspData[@"dataList"];
+                        [strongSelf.learningArray removeAllObjects];
+                        for(int i=0; i<rspDataArray.count; i++){
+                           MineLearningModel *model = [MineLearningModel modelWithDict:rspDataArray[i]];
+                           [strongSelf.learningArray addObject:model];
+                        }
+
+                        [strongSelf.learningTableView reloadData];
+                    }
+                } @catch (NSException *exception) {
+                    @throw exception;
+                    //给出提示信息
+                    [AvalonsoftMsgAlertView showWithTitle:@"信息" content:@"系统发生错误，请与平台管理员联系解决。"  buttonTitles:@[@"关闭"] buttonClickedBlock:nil];
+                }
+                
+            } failure:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error) {
+                //请求失败
+                NSLog(@"%@",error);
+            }];
+            
+        } else {
+            //没网
+            //            [AvalonsoftMsgAlertView showWithTitle:@"信息" content:@"请检查网络" buttonTitles:@[@"关闭"] buttonClickedBlock:nil];
+        }
+    }];
+}
 @end

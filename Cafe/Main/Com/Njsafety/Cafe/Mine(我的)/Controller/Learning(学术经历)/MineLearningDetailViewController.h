@@ -7,16 +7,16 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "MineLearningModel.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface MineLearningDetailViewController : UIViewController
 
 //Block传值step 1：定义block为传值block的属性
-@property (nonatomic,copy)void(^sendValueBlock)(NSDictionary *valueDict);
+@property (nonatomic,copy)void(^sendValueBlock)(MineLearningModel *model);
 
-//接受父页面参数的字典
-@property (nonatomic, strong) NSDictionary *dataDic;
+@property (nonatomic, strong) MineLearningModel *model;
 
 @end
 

@@ -205,7 +205,16 @@ NSString * const MINE_MY_OFFER_ADD = @"cuser/eduuseroffer/add";
 NSString * const MINE_MY_OFFER_UPDATE = @"cuser/eduuseroffer/update";
 //offer删除
 NSString * const MINE_MY_OFFER_DELETE = @"cuser/eduuseroffer/softDeleteById";
-
+//学术经历列表
+NSString * const MINE_MY_LEARNING_LIST = @"eduUser/eduusercextracurricular/queryPageList";
+//学术经历详情
+NSString * const MINE_MY_LEARNING_DETAILS = @"eduUser/eduusercextracurricular/query?id=";
+//学术经历新增
+NSString * const MINE_MY_LEARNING_ADD = @"eduUser/eduusercextracurricular/add";
+//学术经历编辑
+NSString * const MINE_MY_LEARNING_UPDATE = @"eduUser/eduusercextracurricular/update";
+//学术经历删除
+NSString * const MINE_MY_LEARNING_DELETE = @"eduUser/eduusercextracurricular/delete";
 
 
 
