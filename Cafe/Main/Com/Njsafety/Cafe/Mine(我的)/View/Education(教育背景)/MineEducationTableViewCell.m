@@ -215,9 +215,9 @@
 - (void)updateCellWithModel:(MineEducationModel *)model
 {
     NSString *country = model.country;
-    NSString *school = model.school;
-    NSString *stage = model.stage;
-    NSString *state = model.state;
+    NSString *school = model.institutionName;
+    NSString *stage = model.level;
+    NSString *state = model.status;
     NSString *showLanguage = model.showLanguage;
     
     NSString *showState = @"";

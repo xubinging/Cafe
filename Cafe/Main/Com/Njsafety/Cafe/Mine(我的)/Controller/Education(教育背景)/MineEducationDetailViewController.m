@@ -20,16 +20,16 @@
     @private UIView *navigationView;
     @private UIButton *backButton;          //左上角返回按钮
     @private UIButton *rightButton;         //右侧按钮
-    
+    @private UIView *moreActionView;
+
     @private UIView *contentView;           //内容
     
     @private UISwitch *showSwitch;          //显示开关
     
-    @private MineEducationModel *slctModel;
 }
 
 @property (nonatomic,strong) UITableView *detailTableView;
-@property (nonatomic,strong) NSArray *detailArray;
+@property (nonatomic,strong) NSMutableArray *detailArray;
 
 @end
 
@@ -40,17 +40,21 @@
     
     [self initVars];
     [self initSharedPreferences];
-    [self getParentVars];
     [self initNavigationView];
     [self initView];
     [self setData];
+    [self queryMineEducationDetails];
+}
+
+- (NSMutableArray *)detailArray
+{
+    return _detailArray?:(_detailArray = [NSMutableArray array]);
 }
 
 #pragma mark - 初始化一些参数 -
 -(void)initVars
 {
     self.view.backgroundColor = RGBA_GGCOLOR(249, 249, 249, 1);
-    
 }
 
 #pragma mark - 初始化数据 -
@@ -61,14 +65,6 @@
     } @catch (NSException *exception) {
         @throw exception;
         
-    }
-}
-
-#pragma mark - 获取父页面参数 -
--(void)getParentVars
-{
-    if(_dataDic != nil){
-        slctModel = _dataDic[@"slctModel"];
     }
 }
 
@@ -107,7 +103,7 @@
         make.top.equalTo(backButton).offset(1);
         make.size.mas_equalTo(CGSizeMake(30, 20));
     }];
-    NSMutableAttributedString *rightButtonString = [[NSMutableAttributedString alloc] initWithString:@"编辑" attributes: @{NSFontAttributeName: [UIFont fontWithName:@"PingFangSC-Regular" size: 14],NSForegroundColorAttributeName: [UIColor colorWithRed:32/255.0 green:188/255.0 blue:255/255.0 alpha:1.0]}];
+    NSMutableAttributedString *rightButtonString = [[NSMutableAttributedString alloc] initWithString:@"更多" attributes: @{NSFontAttributeName: [UIFont fontWithName:@"PingFangSC-Regular" size: 14],NSForegroundColorAttributeName: [UIColor colorWithRed:32/255.0 green:188/255.0 blue:255/255.0 alpha:1.0]}];
     [rightButton setAttributedTitle:rightButtonString forState:UIControlStateNormal];
     //右上角按钮点击
     [rightButton addTarget:self action:@selector(rightButtonClick) forControlEvents:UIControlEventTouchUpInside];
@@ -200,21 +196,17 @@
 #pragma mark - 设置参数 -
 -(void)setData
 {
-    //造数据
-    _detailArray = nil;
-    NSMutableArray *tempArray = [NSMutableArray array];
-
-    NSString *country = slctModel.country;
-    NSString *school = slctModel.school;
-    NSString *stage = slctModel.stage;
-    NSString *startTime = slctModel.startTime;
-    NSString *endTime = slctModel.endTime;
-    NSString *degreeType = slctModel.degreeType;
-    NSString *major = slctModel.major;
-    NSString *score = slctModel.score;
-    NSString *state = slctModel.state;
+    NSString *country = self.model.country;
+    NSString *school = self.model.institutionName;
+    NSString *stage = self.model.level;
+    NSString *startTime = self.model.startTime;
+    NSString *endTime = self.model.graduationDate;
+    NSString *degreeType = self.model.degreeType;
+    NSString *major = self.model.major;
+    NSString *score = self.model.grades;
+    NSString *status = self.model.status;
     
-    NSString *showLanguage = slctModel.showLanguage;
+    NSString *showLanguage = self.model.showLanguage;
     
     for(int i=0; i<9; i++){
         if(i==0){
@@ -223,12 +215,12 @@
                 title = @"Country:";
             }
             
-            NSDictionary *dic = @{
-                @"title":title,
-                @"content":country
-            };
-            MineDetailCommonModel *model = [MineDetailCommonModel modelWithDict:dic];
-            [tempArray addObject:model];
+            MineDetailCommonModel *curModel = [MineDetailCommonModel new];
+            curModel.title = title;
+            if (country) {
+                curModel.content = country;
+            }
+            [self.detailArray addObject:curModel];
             
         }else if(i==1){
             NSString *title = @"学校/机构名称:";
@@ -236,12 +228,12 @@
                 title = @"School:";
             }
             
-            NSDictionary *dic = @{
-                @"title":title,
-                @"content":school
-            };
-            MineDetailCommonModel *model = [MineDetailCommonModel modelWithDict:dic];
-            [tempArray addObject:model];
+            MineDetailCommonModel *curModel = [MineDetailCommonModel new];
+            curModel.title = title;
+            if (school) {
+                curModel.content = school;
+            }
+            [self.detailArray addObject:curModel];
             
         }else if(i==2){
             NSString *title = @"教育阶段:";
@@ -249,12 +241,12 @@
                 title = @"Stage:";
             }
             
-            NSDictionary *dic = @{
-                @"title":title,
-                @"content":stage
-            };
-            MineDetailCommonModel *model = [MineDetailCommonModel modelWithDict:dic];
-            [tempArray addObject:model];
+            MineDetailCommonModel *curModel = [MineDetailCommonModel new];
+            curModel.title = title;
+            if (stage) {
+                curModel.content = stage;
+            }
+            [self.detailArray addObject:curModel];
             
         }else if(i==3){
             NSString *title = @"开始时间:";
@@ -262,12 +254,12 @@
                 title = @"Start Time:";
             }
             
-            NSDictionary *dic = @{
-                @"title":title,
-                @"content":startTime
-            };
-            MineDetailCommonModel *model = [MineDetailCommonModel modelWithDict:dic];
-            [tempArray addObject:model];
+            MineDetailCommonModel *curModel = [MineDetailCommonModel new];
+            curModel.title = title;
+            if (startTime) {
+                curModel.content = startTime;
+            }
+            [self.detailArray addObject:curModel];
             
         }else if(i==4){
             NSString *title = @"结束时间:";
@@ -275,12 +267,12 @@
                 title = @"End Time:";
             }
             
-            NSDictionary *dic = @{
-                @"title":title,
-                @"content":endTime
-            };
-            MineDetailCommonModel *model = [MineDetailCommonModel modelWithDict:dic];
-            [tempArray addObject:model];
+            MineDetailCommonModel *curModel = [MineDetailCommonModel new];
+            curModel.title = title;
+            if (endTime) {
+                curModel.content = endTime;
+            }
+            [self.detailArray addObject:curModel];
             
         }else if(i==5){
             NSString *title = @"学位类型:";
@@ -288,12 +280,12 @@
                 title = @"Degree Type:";
             }
             
-            NSDictionary *dic = @{
-                @"title":title,
-                @"content":degreeType
-            };
-            MineDetailCommonModel *model = [MineDetailCommonModel modelWithDict:dic];
-            [tempArray addObject:model];
+            MineDetailCommonModel *curModel = [MineDetailCommonModel new];
+            curModel.title = title;
+            if (degreeType) {
+                curModel.content = degreeType;
+            }
+            [self.detailArray addObject:curModel];
             
         }else if(i==6){
             NSString *title = @"专业:";
@@ -301,12 +293,12 @@
                 title = @"Major:";
             }
             
-            NSDictionary *dic = @{
-                @"title":title,
-                @"content":major
-            };
-            MineDetailCommonModel *model = [MineDetailCommonModel modelWithDict:dic];
-            [tempArray addObject:model];
+            MineDetailCommonModel *curModel = [MineDetailCommonModel new];
+            curModel.title = title;
+            if (major) {
+                curModel.content = major;
+            }
+            [self.detailArray addObject:curModel];
             
         }else if(i==7){
             NSString *title = @"成绩:";
@@ -314,12 +306,12 @@
                 title = @"Score:";
             }
             
-            NSDictionary *dic = @{
-                @"title":title,
-                @"content":score
-            };
-            MineDetailCommonModel *model = [MineDetailCommonModel modelWithDict:dic];
-            [tempArray addObject:model];
+            MineDetailCommonModel *curModel = [MineDetailCommonModel new];
+            curModel.title = title;
+            if (score) {
+                curModel.content = score;
+            }
+            [self.detailArray addObject:curModel];
             
         }else if(i==8){
             NSString *title = @"状态:";
@@ -327,33 +319,30 @@
                 title = @"State:";
             }
             
-            NSString *showState = @"";
-            if([state isEqualToString:@"0"]){
-                showState = @"未毕业 Not Graduated";
+            NSString *showStatus = @"";
+            if([status isEqualToString:@"0"]){
+                showStatus = @"未毕业 Not Graduated";
             }else{
-                showState = @"毕业 Graduated";
+                showStatus = @"毕业 Graduated";
             }
             
-            NSDictionary *dic = @{
-                @"title":title,
-                @"content":showState
-            };
-            MineDetailCommonModel *model = [MineDetailCommonModel modelWithDict:dic];
-            [tempArray addObject:model];
             
+            MineDetailCommonModel *curModel = [MineDetailCommonModel new];
+            curModel.title = title;
+            if (status) {
+                curModel.content = status;
+            }
+            [self.detailArray addObject:curModel];
         }
     }
     
-    _detailArray = [tempArray copy];
-    
     //设置开关状态
-    if([slctModel.showFlg isEqualToString:@"1"]){
+    if([self.model.showFlg isEqualToString:@"1"]){
         showSwitch.on = YES;
 
-    }else if([slctModel.showFlg isEqualToString:@"0"]){
+    }else if([self.model.showFlg isEqualToString:@"0"]){
         showSwitch.on = NO;
     }
-    
 }
 
 //**********    tableView代理 begin   **********//
@@ -397,10 +386,6 @@
 #pragma mark - 设置header样式 -
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
-//    UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, tableView.frame.size.width, 10)];
-//    view.backgroundColor = [UIColor clearColor];
-//    return view;
-    
     return nil;
 }
 
@@ -415,11 +400,11 @@
 #pragma mark - 提示音开关 -
 -(void)showSwitchChange:(UISwitch *)swi{
     if(swi.isOn){
-        slctModel.showFlg = @"1";
+        self.model.showFlg = @"1";
         [AvalonsoftToast showWithMessage:@"设置成功"];
         
     }else{
-        slctModel.showFlg = @"0";
+        self.model.showFlg = @"0";
         [AvalonsoftToast showWithMessage:@"已取消设置"];
     }
 }
@@ -427,55 +412,179 @@
 #pragma mark - 返回按钮点击 -
 -(void)backButtonClick
 {
-    //设置回调    
-    NSDictionary *sendDataDic = @{
-        @"modelReturn":slctModel
-    };
-    
-    //Block传值step 3:传值类将要传的值传入自己的block中
-    self.sendValueBlock(sendDataDic);
-    
-    [self.navigationController popViewControllerAnimated:YES];
+    if (self.sendValueBlock) {
+        self.sendValueBlock(self.model);
+    }
+    [self.navigationController popViewControllerAnimated:YES];    
 }
 
 #pragma mark - 编辑按钮点击 -
 -(void)rightButtonClick
 {
-//    NSDictionary *sendDic = @{
-//        @"type":type,
-//        @"date":date,
-//        @"location":location,
-//        @"org":org,
-//        @"resultL":resultL,
-//        @"resultS":resultS,
-//        @"resultR":resultR,
-//        @"resultW":resultW,
-//        @"resultScore":resultScore
-//    };
+    moreActionView = [UIView new];
+    [self.view addSubview:moreActionView];
+    [moreActionView mas_makeConstraints:^(MASConstraintMaker *make){
+        make.top.equalTo(rightButton.mas_bottom).offset(5);
+        make.right.equalTo(rightButton);
+        make.size.mas_equalTo(CGSizeMake(80, 80));
+    }];
+    moreActionView.layer.cornerRadius = 10;
+    moreActionView.layer.masksToBounds = YES;
+    [moreActionView setBackgroundColor:[UIColor whiteColor]];
+    
+    UIButton *editButton = [UIButton new];
+    [moreActionView addSubview:editButton];
+    [editButton mas_makeConstraints:^(MASConstraintMaker *make){
+        make.top.equalTo(moreActionView);
+        make.left.equalTo(moreActionView);
+        make.size.mas_equalTo(CGSizeMake(80, 40));
+    }];
+    editButton.adjustsImageWhenHighlighted = NO;
+    NSMutableAttributedString *editButtonString = [[NSMutableAttributedString alloc] initWithString:@"编辑" attributes: @{NSFontAttributeName: [UIFont fontWithName:@"PingFangSC-Regular" size: 14],NSForegroundColorAttributeName: [UIColor blackColor]}];
+    [editButton setAttributedTitle:editButtonString forState:UIControlStateNormal];
+    [editButton addTarget:self action:@selector(editButtonClick) forControlEvents:UIControlEventTouchUpInside];
+    
+    
+    UIView *splitView = [UIView new];
+    [moreActionView addSubview:splitView];
+    [splitView mas_makeConstraints:^(MASConstraintMaker *make){
+        make.top.equalTo(editButton.mas_bottom).offset(1);
+        make.left.equalTo(moreActionView).offset(5);
+        make.right.equalTo(moreActionView).offset(-5);
+        make.height.mas_equalTo(@1);
+    }];
+    [splitView setBackgroundColor:RGBA_GGCOLOR(238, 238, 238, 1)];
+    [moreActionView layoutIfNeeded];
+
+    
+    UIButton *deleteButton = [UIButton new];
+    [moreActionView addSubview:deleteButton];
+    [deleteButton mas_makeConstraints:^(MASConstraintMaker *make){
+        make.top.equalTo(editButton.mas_bottom);
+        make.left.equalTo(moreActionView);
+        make.size.mas_equalTo(CGSizeMake(80, 40));
+    }];
+    deleteButton.adjustsImageWhenHighlighted = NO;
+    NSMutableAttributedString *deleteButtonString = [[NSMutableAttributedString alloc] initWithString:@"删除" attributes: @{NSFontAttributeName: [UIFont fontWithName:@"PingFangSC-Regular" size: 14],NSForegroundColorAttributeName: [UIColor blackColor]}];
+    [deleteButton setAttributedTitle:deleteButtonString forState:UIControlStateNormal];
+    [deleteButton addTarget:self action:@selector(deleteButtonClick) forControlEvents:UIControlEventTouchUpInside];
+}
+
+- (void)editButtonClick
+{
+//    moreActionView.hidden = YES;
+//    [moreActionView removeFromSuperview];
 //
-//    MineResultShowViewController *showVC = [MineResultShowViewController new];
-//
-//    //设置block回调
-//    [showVC setSendValueBlock:^(NSDictionary *valueDict){
-//
-//        //回调函数
-//        self->type = valueDict[@"type"];
-//        self->date = valueDict[@"date"];
-//        self->location = valueDict[@"location"];
-//        self->org = valueDict[@"org"];
-//        self->resultL = valueDict[@"resultL"];
-//        self->resultS = valueDict[@"resultS"];
-//        self->resultR = valueDict[@"resultR"];
-//        self->resultW = valueDict[@"resultW"];
-//        self->resultScore = valueDict[@"resultScore"];
-//
-//        [self setData];
-//
-//    }];
-//
-//    showVC.dataDic = sendDic;
-//
+//    MineAddLearningViewController *showVC = [MineAddLearningViewController new];
+//    showVC.model = self.model;
 //    [self.navigationController pushViewController:showVC animated:YES];
+//
+//    __weak typeof(self) weakSelf = self;
+//    [showVC setSendValueBlock:^(MineLearningModel *model){
+//        __strong typeof(weakSelf) strongSelf = weakSelf;
+//
+//        [strongSelf queryMineLearningDetails];
+//    }];
+}
+
+- (void)deleteButtonClick
+{
+    moreActionView.hidden = YES;
+    [moreActionView removeFromSuperview];
+    [self deleteMineEducation];
+}
+
+#pragma mark - 网络请求
+-(void)queryMineEducationDetails
+{
+    __weak typeof(self) weakSelf = self;
+    [AvalonsoftHasNetwork avalonsoft_hasNetwork:^(bool has) {
+        __strong typeof(weakSelf) strongSelf = weakSelf;
+
+        if (has) {
+            NSMutableDictionary *root = [NSMutableDictionary dictionary];
+            NSString *url = [[NSString alloc] init];
+            NSString *ID = self.model.ID;
+            url = [COMMON_SERVER_URL stringByAppendingFormat:@"/%@%@",MINE_MY_EDUCATION_DETAILS, ID];
+            
+            [[AvalonsoftHttpClient avalonsoftHttpClient] requestWithActionUrlAndParam:url method:HttpRequestPost paramenters:root prepareExecute:^{
+            } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull responseObject) {
+                //处理网络请求结果
+                NSLog(@"handleNetworkRequestWithResponseObject responseObject=%@",responseObject);
+                _M *responseModel = [_M createResponseJsonObj:responseObject];
+                NSLog(@"handleNetworkRequestWithResponseObject %ld %@",responseModel.rescode,responseModel.msg);
+                
+                @try {
+                    if(responseModel.rescode == 200){
+                        NSDictionary *rspData = responseModel.data;
+                        strongSelf.model = [MineEducationModel modelWithDict:rspData];
+                        [strongSelf.detailArray removeAllObjects];
+                        [strongSelf setData];
+                        [strongSelf.detailTableView reloadData];
+                    }
+                } @catch (NSException *exception) {
+                    @throw exception;
+                    //给出提示信息
+                    [AvalonsoftMsgAlertView showWithTitle:@"信息" content:@"系统发生错误，请与平台管理员联系解决。"  buttonTitles:@[@"关闭"] buttonClickedBlock:nil];
+                }
+            } failure:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error) {
+                //请求失败
+                NSLog(@"%@",error);
+            }];
+            
+        } else {
+            //没网
+            //            [AvalonsoftMsgAlertView showWithTitle:@"信息" content:@"请检查网络" buttonTitles:@[@"关闭"] buttonClickedBlock:nil];
+        }
+    }];
+}
+
+
+-(void)deleteMineEducation
+{
+    __weak typeof(self) weakSelf = self;
+    [AvalonsoftHasNetwork avalonsoft_hasNetwork:^(bool has) {
+        __strong typeof(weakSelf) strongSelf = weakSelf;
+
+        if (has) {
+            NSMutableDictionary *root = [NSMutableDictionary dictionary];
+            NSString *url = [[NSString alloc] init];
+            NSString *ID = self.model.ID;
+            url = [COMMON_SERVER_URL stringByAppendingFormat:@"/%@?id=%@",MINE_MY_EDUCATION_DELETE, ID];
+            
+            [[AvalonsoftHttpClient avalonsoftHttpClient] requestWithActionUrlAndParam:url method:HttpRequestPost paramenters:root prepareExecute:^{
+            } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull responseObject) {
+                //处理网络请求结果
+                NSLog(@"handleNetworkRequestWithResponseObject responseObject=%@",responseObject);
+                _M *responseModel = [_M createResponseJsonObj:responseObject];
+                NSLog(@"handleNetworkRequestWithResponseObject %ld %@",responseModel.rescode,responseModel.msg);
+                
+                @try {
+                    if(responseModel.rescode == 200){
+                        NSDictionary *rspData = responseModel.data;
+                        MineEducationModel *model = [MineEducationModel modelWithDict:rspData];
+
+                        if (self.sendValueBlock) {
+                            self.sendValueBlock(model);
+                        }
+
+                        [strongSelf.navigationController popViewControllerAnimated:YES];
+                    }
+                } @catch (NSException *exception) {
+                    @throw exception;
+                    //给出提示信息
+                    [AvalonsoftMsgAlertView showWithTitle:@"信息" content:@"系统发生错误，请与平台管理员联系解决。"  buttonTitles:@[@"关闭"] buttonClickedBlock:nil];
+                }
+            } failure:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error) {
+                //请求失败
+                NSLog(@"%@",error);
+            }];
+            
+        } else {
+            //没网
+            //            [AvalonsoftMsgAlertView showWithTitle:@"信息" content:@"请检查网络" buttonTitles:@[@"关闭"] buttonClickedBlock:nil];
+        }
+    }];
 }
 
 @end

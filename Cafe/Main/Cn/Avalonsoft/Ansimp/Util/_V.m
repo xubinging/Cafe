@@ -215,6 +215,16 @@ NSString * const MINE_MY_LEARNING_ADD = @"eduUser/eduusercextracurricular/add";
 NSString * const MINE_MY_LEARNING_UPDATE = @"eduUser/eduusercextracurricular/update";
 //学术经历删除
 NSString * const MINE_MY_LEARNING_DELETE = @"eduUser/eduusercextracurricular/delete";
+//教育背景列表
+NSString * const MINE_MY_EDUCATION_LIST = @"cuser/eduuserceducation/queryPageList";
+//教育背景详情
+NSString * const MINE_MY_EDUCATION_DETAILS = @"cuser/eduuserceducation/query?id=";
+//教育背景新增
+NSString * const MINE_MY_EDUCATION_ADD = @"cuser/eduuserceducation/add";
+//教育背景编辑
+NSString * const MINE_MY_EDUCATION_UPDATE = @"cuser/eduuserceducation/update";
+//教育背景删除
+NSString * const MINE_MY_EDUCATION_DELETE = @"/cuser/eduuserceducation/delete";
 
 
 

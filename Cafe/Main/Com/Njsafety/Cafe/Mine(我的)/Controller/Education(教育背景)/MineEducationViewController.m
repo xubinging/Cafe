@@ -26,7 +26,7 @@
 }
 
 @property (nonatomic,strong) UITableView *educationTableView;
-@property (nonatomic,strong) NSArray *educationArray;
+@property (nonatomic,strong) NSMutableArray *educationArray;
 
 @end
 
@@ -39,46 +39,19 @@
     [self initSharedPreferences];
     [self initNavigationView];
     [self initView];
+    [self queryMineEducationList];
+}
+
+- (NSMutableArray *)educationArray
+{
+    return _educationArray?:(_educationArray = [NSMutableArray array]);
 }
 
 #pragma mark - 初始化一些参数 -
 -(void)initVars
 {
     self.view.backgroundColor = RGBA_GGCOLOR(249, 249, 249, 1);
-    
     isShowChinese = YES;
-    
-    //造数据
-    _educationArray = nil;
-    NSMutableArray *tempArray = [NSMutableArray array];
-
-    for(int i=0; i<20; i++){
-
-        NSString *showLanguage = @"ZH";
-        NSInteger index = i+1;
-
-        NSDictionary *dic = @{
-            @"index":@(index),
-            @"country":@"美国 United States",
-            @"school":@"国内预科9-16",
-            @"stage":@"文凭/本科:艺术 Art school",
-            @"startTime":@"2018-08-20",
-            @"endTime":@"2019-08-20",
-            @"degreeType":@"A. A.",
-            @"major":@"生物医学科学 Biomedical Sciences",
-            @"score":@"255",
-            @"state":[NSString stringWithFormat:@"%d",i%2],
-            @"showFlg":@"0",
-            @"showLanguage":showLanguage
-        };
-        
-        MineEducationModel *model = [MineEducationModel modelWithDict:dic];
-        [tempArray addObject:model];
-
-    }
-
-    _educationArray = [tempArray copy];
-    
 }
 
 #pragma mark - 初始化数据 -
@@ -247,47 +220,18 @@
 #pragma mark - 点击cell -
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    
-    MineEducationModel *slctModel = self.educationArray[indexPath.section];
-
-    NSDictionary *sendDic = @{
-        @"slctModel":slctModel
-    };
-
+    MineEducationModel *model = self.educationArray[indexPath.section];
     MineEducationDetailViewController *detailVC = [MineEducationDetailViewController new];
+    detailVC.model = model;
+    [self.navigationController pushViewController:detailVC animated:YES];
 
     //设置block回调
-    [detailVC setSendValueBlock:^(NSDictionary *valueDict){
-        //回调函数
-        MineEducationModel *modelReturn = valueDict[@"modelReturn"];
-
-        slctModel.country = modelReturn.country;
-        slctModel.school = modelReturn.school;
-        slctModel.stage = modelReturn.stage;
-        slctModel.startTime = modelReturn.startTime;
-        slctModel.endTime = modelReturn.endTime;
-        slctModel.degreeType = modelReturn.degreeType;
-        slctModel.major = modelReturn.major;
-        slctModel.score = modelReturn.score;
-        slctModel.state = modelReturn.state;
-        
-        //循环列表，设置其他项是否设置为头像下方显示的院校标志位为0
-        if([modelReturn.showFlg isEqualToString:@"1"]){
-            for(MineEducationModel *model in self.educationArray){
-                if(model.index != modelReturn.index){
-                    model.showFlg = @"0";
-                }
-            }
-        }
-
-        [self.educationTableView reloadData];
-
+    __weak typeof(self) weakSelf = self;
+    [detailVC setSendValueBlock:^(MineEducationModel *model){
+        __strong typeof(weakSelf) strongSelf = weakSelf;
+             
+        [strongSelf queryMineEducationList];
     }];
-
-    detailVC.dataDic = sendDic;
-
-    [self.navigationController pushViewController:detailVC animated:YES];
-    
 }
 
 //**********    tableView代理 end   **********//
@@ -301,64 +245,18 @@
 #pragma mark - 添加按钮 -
 -(void)addButtonClick
 {
-//    MineResultShowViewController *showVC = [MineResultShowViewController new];
+//    MineAddLearningViewController*showVC = [MineAddLearningViewController new];
+//    MineLearningModel *model = [MineLearningModel new];
+//    showVC.model = model;
+//    [self.navigationController pushViewController:showVC animated:YES];
 //
 //    //设置block回调
-//    [showVC setSendValueBlock:^(NSDictionary *valueDict){
-//        //回调函数
-//        NSString *type = valueDict[@"type"];
-//        NSString *date = valueDict[@"date"];
-//        NSString *location = valueDict[@"location"];
-//        NSString *org = valueDict[@"org"];
-//        NSString *resultL = valueDict[@"resultL"];
-//        NSString *resultS = valueDict[@"resultS"];
-//        NSString *resultR = valueDict[@"resultR"];
-//        NSString *resultW = valueDict[@"resultW"];
-//        NSString *resultScore = valueDict[@"resultScore"];
-//        NSString *showLanguage = @"";
+//    __weak typeof(self) weakSelf = self;
+//    [showVC setSendValueBlock:^(MineLearningModel *model){
+//       __strong typeof(weakSelf) strongSelf = weakSelf;
 //
-//        if(self->isShowChinese){
-//            showLanguage = @"ZH";
-//        }else{
-//            showLanguage = @"EN";
-//        }
-//
-//        NSMutableArray *tempArr = [NSMutableArray array];
-//        for(MineResultModel *model in self.resultArray){
-//            [tempArr addObject:model];
-//        }
-//
-//        //把刚才新加的数据加入到数据列表中
-//        NSDictionary *dic = @{
-//            @"resultIndex":@(tempArr.count + 1),
-//            @"resultType":type,
-//            @"resultDate":date,
-//            @"resultLocation":location,
-//            @"resultOrg":org,
-//            @"resultL":resultL,
-//            @"resultS":resultS,
-//            @"resultR":resultR,
-//            @"resultW":resultW,
-//            @"resultScore":resultScore,
-//            @"showLanguage":showLanguage
-//        };
-//
-//        MineResultModel *model = [MineResultModel modelWithDict:dic];
-//        [tempArr addObject:model];
-//
-//        //按照 resultIndex 进行降序排序，这里用的是描述类排序，排序字段一定要和类中写的一致
-//        NSSortDescriptor *resultIndexSortDesc = [[NSSortDescriptor alloc] initWithKey:@"resultIndex" ascending:NO];
-//        [tempArr sortUsingDescriptors:@[resultIndexSortDesc]];
-//
-//        self.resultArray = [tempArr copy];
-//
-//        [self.resultTableView reloadData];
-//
-//    }];
-//
-//    showVC.dataDic = @{};
-//
-//    [self.navigationController pushViewController:showVC animated:YES];
+//       [strongSelf queryMineLearningList];
+//    }];    
 }
 
 #pragma mark - 右侧按钮点击 -
@@ -391,6 +289,54 @@
         [self.educationTableView reloadData];
         
     }
+}
+
+#pragma mark - 网络请求
+- (void)queryMineEducationList
+{
+    __weak typeof(self) weakSelf = self;
+    [AvalonsoftHasNetwork avalonsoft_hasNetwork:^(bool has) {
+        if (has) {
+            NSMutableDictionary *root = [NSMutableDictionary dictionary];
+            [root setValue:[_UserInfo accountId] forKey:@"accountId"];
+            
+            [[AvalonsoftHttpClient avalonsoftHttpClient] requestWithAction:COMMON_SERVER_URL actionName:MINE_MY_EDUCATION_LIST method:HttpRequestPost paramenters:root prepareExecute:^{
+                
+            } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull responseObject) {
+                __strong typeof(weakSelf) strongSelf = weakSelf;
+                
+                NSLog(@"handleNetworkRequestWithResponseObject responseObject=%@",responseObject);
+                _M *responseModel = [_M createResponseJsonObj:responseObject];
+                NSLog(@"handleNetworkRequestWithResponseObject %ld %@",responseModel.rescode,responseModel.msg);
+                
+                @try {
+                    if(responseModel.rescode == 200){
+                        NSDictionary *rspData = responseModel.data;
+                        NSArray *rspDataArray = rspData[@"dataList"];
+                        [strongSelf.educationArray removeAllObjects];
+                        for(int i=0; i<rspDataArray.count; i++){
+                           MineEducationModel *model = [MineEducationModel modelWithDict:rspDataArray[i]];
+                           [strongSelf.educationArray addObject:model];
+                        }
+
+                        [strongSelf.educationTableView reloadData];
+                    }
+                } @catch (NSException *exception) {
+                    @throw exception;
+                    //给出提示信息
+                    [AvalonsoftMsgAlertView showWithTitle:@"信息" content:@"系统发生错误，请与平台管理员联系解决。"  buttonTitles:@[@"关闭"] buttonClickedBlock:nil];
+                }
+                
+            } failure:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error) {
+                //请求失败
+                NSLog(@"%@",error);
+            }];
+            
+        } else {
+            //没网
+            //            [AvalonsoftMsgAlertView showWithTitle:@"信息" content:@"请检查网络" buttonTitles:@[@"关闭"] buttonClickedBlock:nil];
+        }
+    }];
 }
 
 @end
