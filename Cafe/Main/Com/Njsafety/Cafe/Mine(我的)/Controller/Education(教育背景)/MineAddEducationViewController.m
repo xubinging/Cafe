@@ -555,10 +555,11 @@
 #pragma mark - 保存按钮点击 -
 -(void)saveButtonClick
 {
-    if (self.model.status.length > 0) {
-        [self editMineEducation];
-    } else {
+    if ([self.model.actionType isEqualToString:@"add"]) {
         [self saveMineEducation];
+
+    } else if ([self.model.actionType isEqualToString:@"edit"]) {
+        [self editMineEducation];
     }
 }
 

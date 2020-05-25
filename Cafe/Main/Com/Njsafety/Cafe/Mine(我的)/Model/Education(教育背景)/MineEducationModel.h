@@ -39,6 +39,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) NSString *showFlg;          //是否设为头像下方显示的院校
 @property (nonatomic, copy) NSString *showLanguage;     //CH -- 中文；EN -- 英文
 
+@property (nonatomic, copy) NSString *actionType;  
+
 //工厂方法，需要传入字典。可以完成model的创建和属性的b批量赋值。
 +(instancetype)modelWithDict:(NSDictionary *)dict;
 

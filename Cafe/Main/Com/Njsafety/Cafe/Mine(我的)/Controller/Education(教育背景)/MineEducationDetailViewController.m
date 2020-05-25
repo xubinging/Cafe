@@ -475,6 +475,7 @@
     [moreActionView removeFromSuperview];
 
     MineAddEducationViewController *showVC = [MineAddEducationViewController new];
+    self.model.actionType = @"edit";
     showVC.model = self.model;
     [self.navigationController pushViewController:showVC animated:YES];
 

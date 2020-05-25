@@ -246,6 +246,7 @@
 {
     MineAddEducationViewController *showVC = [MineAddEducationViewController new];
     MineEducationModel *model = [MineEducationModel new];
+    model.actionType = @"add";
     showVC.model = model;
     [self.navigationController pushViewController:showVC animated:YES];
 
