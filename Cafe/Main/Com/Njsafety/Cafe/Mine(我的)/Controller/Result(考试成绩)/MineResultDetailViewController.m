@@ -412,43 +412,71 @@
     
     //考试类型
     [_F setLabelStyle:resultTypeTitleLabel withName:@"考试类型" textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Regular" size:14] textColor:RGBA_GGCOLOR(193, 193, 193, 1)];
-    [_F setLabelStyle:resultTypeLabel withName:self.model.examType textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Medium" size:16] textColor:RGBA_GGCOLOR(32, 188, 255, 1)];
+    if (self.model.examType.length > 0) {
+        [_F setLabelStyle:resultTypeLabel withName:self.model.examType textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Medium" size:16] textColor:RGBA_GGCOLOR(32, 188, 255, 1)];
+    }
     
     //考试日期
     [_F setLabelStyle:resultDateTitleLabel withName:@"考试日期" textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Regular" size:14] textColor:RGBA_GGCOLOR(193, 193, 193, 1)];
-    [_F setLabelStyle:resultDateLabel withName:self.model.examDate textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Medium" size:16] textColor:RGBA_GGCOLOR(32, 188, 255, 1)];
+    if (self.model.examDate.length > 0) {
+        [_F setLabelStyle:resultDateLabel withName:self.model.examDate textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Medium" size:16] textColor:RGBA_GGCOLOR(32, 188, 255, 1)];
+    }
+ 
     
     //考试地点
     [_F setLabelStyle:resultLocationTitleLabel withName:@"考试地点" textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Regular" size:14] textColor:RGBA_GGCOLOR(193, 193, 193, 1)];
-    [_F setLabelStyle:resultLocationLabel withName:self.model.address textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Medium" size:16] textColor:RGBA_GGCOLOR(32, 188, 255, 1)];
+    if (self.model.address.length > 0) {
+        [_F setLabelStyle:resultLocationLabel withName:self.model.address textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Medium" size:16] textColor:RGBA_GGCOLOR(32, 188, 255, 1)];
+    }
+
     
     //参加的培训机构
     [_F setLabelStyle:resultOrgTitleLabel withName:@"参加的培训机构" textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Regular" size:14] textColor:RGBA_GGCOLOR(193, 193, 193, 1)];
-    [_F setLabelStyle:resultOrgLabel withName:self.model.examOrgan textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Medium" size:16] textColor:RGBA_GGCOLOR(32, 188, 255, 1)];
+    if (self.model.examOrgan.length > 0) {
+        [_F setLabelStyle:resultOrgLabel withName:self.model.examOrgan textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Medium" size:16] textColor:RGBA_GGCOLOR(32, 188, 255, 1)];
+    }
+
     
     //scoreA
     [_F setLabelStyle:scoreATitleLabel withName:scoreATitleName textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Regular" size:14] textColor:RGBA_GGCOLOR(193, 193, 193, 1)];
-    [_F setLabelStyle:scoreALabel withName:self.model.scoreA textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Medium" size:16] textColor:RGBA_GGCOLOR(32, 188, 255, 1)];
+    if (self.model.scoreA.length > 0) {
+        [_F setLabelStyle:scoreALabel withName:self.model.scoreA textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Medium" size:16] textColor:RGBA_GGCOLOR(32, 188, 255, 1)];
+    }
+
     
     //scoreB
     [_F setLabelStyle:scoreBTitleLabel withName:scoreBTitleName textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Regular" size:14] textColor:RGBA_GGCOLOR(193, 193, 193, 1)];
-    [_F setLabelStyle:scoreBLabel withName:self.model.scoreB textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Medium" size:16] textColor:RGBA_GGCOLOR(32, 188, 255, 1)];
+    if (self.model.scoreB.length > 0) {
+        [_F setLabelStyle:scoreBLabel withName:self.model.scoreB textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Medium" size:16] textColor:RGBA_GGCOLOR(32, 188, 255, 1)];
+    }
+
     
     //scoreC
     [_F setLabelStyle:scoreCTitleLabel withName:scoreCTitleName textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Regular" size:14] textColor:RGBA_GGCOLOR(193, 193, 193, 1)];
-    [_F setLabelStyle:scoreCLabel withName:self.model.scoreC textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Medium" size:16] textColor:RGBA_GGCOLOR(32, 188, 255, 1)];
+    if (self.model.scoreC.length > 0) {
+        [_F setLabelStyle:scoreCLabel withName:self.model.scoreC textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Medium" size:16] textColor:RGBA_GGCOLOR(32, 188, 255, 1)];
+    }
+
     
     //scoreD
     [_F setLabelStyle:scoreDTitleLabel withName:scoreDTitleName textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Regular" size:14] textColor:RGBA_GGCOLOR(193, 193, 193, 1)];
-    [_F setLabelStyle:scoreDLabel withName:self.model.scoreD textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Medium" size:16] textColor:RGBA_GGCOLOR(32, 188, 255, 1)];
+    if (self.model.scoreD.length > 0) {
+        [_F setLabelStyle:scoreDLabel withName:self.model.scoreD textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Medium" size:16] textColor:RGBA_GGCOLOR(32, 188, 255, 1)];
+    }
+
     
     //scoreE
     [_F setLabelStyle:scoreETitleLabel withName:scoreETitleName textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Regular" size:14] textColor:RGBA_GGCOLOR(193, 193, 193, 1)];
-    [_F setLabelStyle:scoreELabel withName:self.model.scoreE textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Medium" size:16] textColor:RGBA_GGCOLOR(32, 188, 255, 1)];
+    if (self.model.scoreE.length > 0) {
+        [_F setLabelStyle:scoreELabel withName:self.model.scoreE textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Medium" size:16] textColor:RGBA_GGCOLOR(32, 188, 255, 1)];
+    }
+
     
     //总分
     [_F setLabelStyle:examScoreTitleLabel withName:@"总分" textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Regular" size:14] textColor:RGBA_GGCOLOR(193, 193, 193, 1)];
-    [_F setLabelStyle:examScoreLabel withName:self.model.examScore textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Medium" size:16] textColor:RGBA_GGCOLOR(32, 188, 255, 1)];
+    if (self.model.examScore.length > 0) {
+        [_F setLabelStyle:examScoreLabel withName:self.model.examScore textAlignment:NSTextAlignmentCenter textFont:[UIFont fontWithName:@"PingFangSC-Medium" size:16] textColor:RGBA_GGCOLOR(32, 188, 255, 1)];
+    }
     
     [contentImageView sd_setImageWithURL:[NSURL URLWithString:[_F createFileLoadUrl:self.model.scoreFile]]];
 }
@@ -608,6 +636,7 @@
     [moreActionView removeFromSuperview];
     
     MineResultShowViewController *showVC = [MineResultShowViewController new];
+    self.model.actionType = @"edit";
     showVC.model = self.model;
     [self.navigationController pushViewController:showVC animated:YES];
 
@@ -615,7 +644,7 @@
     [showVC setSendValueBlock:^(MineResultModel *model){
         __strong typeof(weakSelf) strongSelf = weakSelf;
 
-        [strongSelf setData];
+        [strongSelf queryMineExamScore];
     }];
 }
 

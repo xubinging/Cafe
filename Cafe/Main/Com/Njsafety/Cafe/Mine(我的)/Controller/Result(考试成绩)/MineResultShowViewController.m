@@ -330,6 +330,8 @@
         make.height.equalTo(@50);
     }];
     [self setTextFieldStyle:orgTextField withTag:4];
+    [orgTextField addTarget:self action:@selector(textFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
+
 
     UIView *orgSplitView = [UIView new];
     [contentScrollView addSubview:orgSplitView];
@@ -368,6 +370,7 @@
        make.height.equalTo(@50);
     }];
     [self setTextFieldStyle:scoreATextField withTag:5];
+    [scoreATextField addTarget:self action:@selector(textFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
 
     UIView *scoreASplitView = [UIView new];
     [contentScrollView addSubview:scoreASplitView];
@@ -407,6 +410,8 @@
        make.height.equalTo(@50);
     }];
     [self setTextFieldStyle:scoreBTextField withTag:6];
+    [scoreBTextField addTarget:self action:@selector(textFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
+
 
     UIView *scoreBSplitView = [UIView new];
     [contentScrollView addSubview:scoreBSplitView];
@@ -446,6 +451,7 @@
        make.height.equalTo(@50);
     }];
     [self setTextFieldStyle:scoreCTextField withTag:7];
+    [scoreCTextField addTarget:self action:@selector(textFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
 
     scoreCSplitView = [UIView new];
     [contentScrollView addSubview:scoreCSplitView];
@@ -546,6 +552,7 @@
         make.height.equalTo(@50);
     }];
     [self setTextFieldStyle:examScoreTextField withTag:10];
+    [examScoreTextField addTarget:self action:@selector(textFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
 
     UIView *resultScoreSplitView = [UIView new];
     [contentScrollView addSubview:resultScoreSplitView];
@@ -627,6 +634,7 @@
         make.height.equalTo(@50);
     }];
     [self setTextFieldStyle:scoreDTextField withTag:8];
+    [scoreDTextField addTarget:self action:@selector(textFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
 
     UIView *scoreDSplitView = [UIView new];
     [contentScrollView addSubview:scoreDSplitView];
@@ -667,6 +675,7 @@
         make.height.equalTo(@50);
     }];
     [self setTextFieldStyle:examScoreTextField withTag:10];
+    [examScoreTextField addTarget:self action:@selector(textFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
 
     UIView *resultScoreSplitView = [UIView new];
     [contentScrollView addSubview:resultScoreSplitView];
@@ -746,6 +755,7 @@
         make.height.equalTo(@50);
     }];
     [self setTextFieldStyle:scoreDTextField withTag:8];
+    [scoreDTextField addTarget:self action:@selector(textFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
 
     UIView *scoreDSplitView = [UIView new];
     [contentScrollView addSubview:scoreDSplitView];
@@ -785,6 +795,7 @@
         make.height.equalTo(@50);
     }];
     [self setTextFieldStyle:scoreETextField withTag:9];
+    [scoreETextField addTarget:self action:@selector(textFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
 
     UIView *scoreESplitView = [UIView new];
     [contentScrollView addSubview:scoreESplitView];
@@ -825,6 +836,7 @@
         make.height.equalTo(@50);
     }];
     [self setTextFieldStyle:examScoreTextField withTag:10];
+    [examScoreTextField addTarget:self action:@selector(textFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
 
     UIView *resultScoreSplitView = [UIView new];
     [contentScrollView addSubview:resultScoreSplitView];
@@ -899,7 +911,11 @@
 #pragma mark - 保存按钮点击 -
 -(void)saveButtonClick
 {
-    [self editMineExamScore];
+    if ([self.model.actionType isEqualToString:@"add"]) {
+        [self saveMineExamScore];
+    } else if ([self.model.actionType isEqualToString:@"edit"]) {
+        [self editMineExamScore];
+    }
 }
 
 #pragma mark - UITextFieldDelegate -
@@ -976,6 +992,57 @@
     return NO;
 }
 
+#pragma mark - 输入框监听 -
+- (void)textFieldDidChange:(UITextField*) sender {
+    NSInteger tfTag = sender.tag - TEXTFIELD_TAG;
+    switch (tfTag) {
+        case 4: {
+            orgTextField.text = sender.text;
+            self.model.examOrgan = sender.text;
+        }
+            break;
+
+        case 5: {
+            scoreATextField.text = sender.text;
+            self.model.scoreA = sender.text;
+        }
+            break;
+            
+        case 6: {
+            scoreBTextField.text = sender.text;
+            self.model.scoreB = sender.text;
+        }
+            break;
+            
+        case 7: {
+            scoreCTextField.text = sender.text;
+            self.model.scoreC = sender.text;
+        }
+            break;
+            
+        case 8: {
+            scoreDTextField.text = sender.text;
+            self.model.scoreD = sender.text;
+        }
+            break;
+            
+        case 9: {
+            scoreETextField.text = sender.text;
+            self.model.scoreE = sender.text;
+        }
+            break;
+            
+        case 10: {
+            examScoreTextField.text = sender.text;
+            self.model.examScore = sender.text;
+        }
+            break;
+                    
+        default:
+            break;
+    }
+}
+
 #pragma mark - 统一设置标题label格式 -
 -(void)setTitleLabelStyle:(UILabel *)titleLabel withName:(NSString *)labelName
 {
@@ -1024,18 +1091,6 @@
     [examScoreTextField resignFirstResponder];
 }
 
-//- (void)clearData
-//{
-//    dateTextField.text = nil;
-//    locationTextField.text = nil;
-//    orgTextField.text = nil;
-//    scoreATextField.text = nil;
-//    scoreBTextField.text = nil;
-//    scoreCTextField.text = nil;
-//    scoreDTextField.text = nil;
-//    scoreETextField.text = nil;
-//    examScoreTextField.text = nil;
-//}
 
 #pragma mark - touch screen hide soft keyboard -
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
@@ -1046,6 +1101,74 @@
 
 
 #pragma mark - 网络请求
+- (void)saveMineExamScore
+{
+    __weak typeof(self) weakSelf = self;
+    [AvalonsoftHasNetwork avalonsoft_hasNetwork:^(bool has) {
+        __strong typeof(weakSelf) strongSelf = weakSelf;
+
+        if (has) {
+            NSMutableDictionary *root = [NSMutableDictionary dictionary];
+            [root setValue:strongSelf.model.examType forKey:@"examType"];
+            [root setValue:strongSelf.model.examScore forKey:@"examScore"];
+            [root setValue:strongSelf.model.examDate forKey:@"examDate"];
+            [root setValue:strongSelf.model.scoreA forKey:@"scoreA"];
+            [root setValue:strongSelf.model.scoreB forKey:@"scoreB"];
+            [root setValue:strongSelf.model.scoreC forKey:@"scoreC"];
+            [root setValue:strongSelf.model.scoreD forKey:@"scoreD"];
+            [root setValue:strongSelf.model.scoreE forKey:@"scoreE"];
+            [root setValue:strongSelf.model.ID forKey:@"id"];
+            [root setValue:strongSelf.model.areaType forKey:@"areaType"];
+            [root setValue:strongSelf.model.countryCode forKey:@"countryCode"];
+            [root setValue:strongSelf.model.countryName forKey:@"countryName"];
+            [root setValue:strongSelf.model.provincesCode forKey:@"provincesCode"];
+            [root setValue:strongSelf.model.provincesName forKey:@"provincesName"];
+            [root setValue:strongSelf.model.cityCode forKey:@"cityCode"];
+            [root setValue:strongSelf.model.cityName forKey:@"cityName"];
+            [root setValue:strongSelf.model.address forKey:@"address"];
+            [root setValue:strongSelf.model.examOrgan forKey:@"examOrgan"];
+            [root setValue:strongSelf.model.insid forKey:@"insid"];
+            [root setValue:strongSelf.model.scoreFile forKey:@"scoreFile"];
+            [root setValue:strongSelf.model.username forKey:@"nickname"];
+            [root setValue:[_UserInfo accountId] forKey:@"accountId"];
+            [root setValue:@"0" forKey:@"delSign"];
+            [[AvalonsoftHttpClient avalonsoftHttpClient] requestWithAction:COMMON_SERVER_URL actionName:MINE_MY_EXAM_SCORE_ADD method:HttpRequestPost paramenters:root prepareExecute:^{
+
+            } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull responseObject) {
+
+                NSLog(@"handleNetworkRequestWithResponseObject responseObject=%@",responseObject);
+                _M *responseModel = [_M createResponseJsonObj:responseObject];
+                NSLog(@"handleNetworkRequestWithResponseObject %ld %@",responseModel.rescode,responseModel.msg);
+
+                @try {
+                    if(responseModel.rescode == 200){
+                        NSDictionary *rspData = responseModel.data;
+                        MineResultModel *model = [MineResultModel modelWithDict:rspData];
+
+                        if (self.sendValueBlock) {
+                            self.sendValueBlock(model);
+                        }
+                        
+                        [strongSelf.navigationController popViewControllerAnimated:YES];
+                    }
+                } @catch (NSException *exception) {
+                    @throw exception;
+                    //给出提示信息
+                    [AvalonsoftMsgAlertView showWithTitle:@"信息" content:@"系统发生错误，请与平台管理员联系解决。"  buttonTitles:@[@"关闭"] buttonClickedBlock:nil];
+                }
+
+            } failure:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error) {
+                //请求失败
+                NSLog(@"%@",error);
+            }];
+
+        } else {
+            //没网
+            //            [AvalonsoftMsgAlertView showWithTitle:@"信息" content:@"请检查网络" buttonTitles:@[@"关闭"] buttonClickedBlock:nil];
+        }
+    }];
+}
+
 - (void)editMineExamScore
 {
     __weak typeof(self) weakSelf = self;

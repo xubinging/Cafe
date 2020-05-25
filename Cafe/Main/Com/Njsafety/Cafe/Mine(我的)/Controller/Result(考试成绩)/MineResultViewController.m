@@ -248,6 +248,7 @@
     MineResultShowViewController *showVC = [MineResultShowViewController new];
     MineResultModel *model = [MineResultModel new];
     model.examType = @"TOEFL";
+    model.actionType = @"add";
     showVC.model = model;
     [self.navigationController pushViewController:showVC animated:YES];
 
