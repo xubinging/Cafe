@@ -555,7 +555,11 @@
 #pragma mark - 保存按钮点击 -
 -(void)saveButtonClick
 {
-    [self saveMineEducation];
+    if (self.model.status.length > 0) {
+        [self editMineEducation];
+    } else {
+        [self saveMineEducation];
+    }
 }
 
 #pragma mark - UITextFieldDelegate -
@@ -763,6 +767,72 @@
             [root setValue:strongSelf.model.grades forKey:@"grades"];
             [root setValue:[_UserInfo accountId] forKey:@"accountId"];
             [[AvalonsoftHttpClient avalonsoftHttpClient] requestWithAction:COMMON_SERVER_URL actionName:MINE_MY_EDUCATION_ADD method:HttpRequestPost paramenters:root prepareExecute:^{
+
+            } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull responseObject) {
+
+                NSLog(@"handleNetworkRequestWithResponseObject responseObject=%@",responseObject);
+                _M *responseModel = [_M createResponseJsonObj:responseObject];
+                NSLog(@"handleNetworkRequestWithResponseObject %ld %@",responseModel.rescode,responseModel.msg);
+
+                @try {
+                    if(responseModel.rescode == 200){
+                        NSDictionary *rspData = responseModel.data;
+                        MineEducationModel *model = [MineEducationModel modelWithDict:rspData];
+
+                        if (self.sendValueBlock) {
+                            self.sendValueBlock(model);
+                        }
+
+                        [strongSelf.navigationController popViewControllerAnimated:YES];
+                    }
+                } @catch (NSException *exception) {
+                    @throw exception;
+                    //给出提示信息
+                    [AvalonsoftMsgAlertView showWithTitle:@"信息" content:@"系统发生错误，请与平台管理员联系解决。"  buttonTitles:@[@"关闭"] buttonClickedBlock:nil];
+                }
+
+            } failure:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error) {
+                //请求失败
+                NSLog(@"%@",error);
+            }];
+
+        } else {
+            //没网
+            //            [AvalonsoftMsgAlertView showWithTitle:@"信息" content:@"请检查网络" buttonTitles:@[@"关闭"] buttonClickedBlock:nil];
+        }
+    }];
+}
+
+
+- (void)editMineEducation
+{
+    __weak typeof(self) weakSelf = self;
+    [AvalonsoftHasNetwork avalonsoft_hasNetwork:^(bool has) {
+        __strong typeof(weakSelf) strongSelf = weakSelf;
+        if (has) {
+            NSMutableDictionary *root = [NSMutableDictionary dictionary];
+            [root setValue:strongSelf.model.addTime forKey:@"addTime"];
+            [root setValue:strongSelf.model.country forKey:@"country"];
+            [root setValue:strongSelf.model.countryName forKey:@"countryName"];
+            [root setValue:strongSelf.model.countryNameEn forKey:@"countryNameEn"];
+            [root setValue:strongSelf.model.degreeType forKey:@"degreeType"];
+            [root setValue:strongSelf.model.displayHome forKey:@"displayHome"];
+            [root setValue:strongSelf.model.examType forKey:@"examType"];
+            [root setValue:strongSelf.model.graduationDate forKey:@"graduationDate"];
+            [root setValue:strongSelf.model.ID forKey:@"id"];
+            [root setValue:strongSelf.model.highSchoolId forKey:@"highSchoolId"];
+            [root setValue:strongSelf.model.insId forKey:@"insId"];
+            [root setValue:strongSelf.model.institutionName forKey:@"institutionName"];
+            [root setValue:strongSelf.model.level forKey:@"level"];
+            [root setValue:strongSelf.model.major forKey:@"major"];
+            [root setValue:strongSelf.model.otherCountry forKey:@"otherCountry"];
+            [root setValue:@"false" forKey:@"showSchool"];
+            [root setValue:strongSelf.model.startTime forKey:@"startDate"];
+            [root setValue:strongSelf.model.status forKey:@"status"];
+            [root setValue:strongSelf.model.universityId forKey:@"universityId"];
+            [root setValue:strongSelf.model.grades forKey:@"grades"];
+            [root setValue:[_UserInfo accountId] forKey:@"accountId"];
+            [[AvalonsoftHttpClient avalonsoftHttpClient] requestWithAction:COMMON_SERVER_URL actionName:MINE_MY_EDUCATION_UPDATE method:HttpRequestPost paramenters:root prepareExecute:^{
 
             } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull responseObject) {
 

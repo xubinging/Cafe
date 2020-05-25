@@ -8,11 +8,10 @@
 //  教育背景详情
 
 #import "MineEducationDetailViewController.h"
-
 #import "MineEducationModel.h"
-
 #import "MineDetailCommonModel.h"
 #import "MineDetailCommonTableViewCell.h"
+#import "MineAddEducationViewController.h"
 
 @interface MineEducationDetailViewController ()<UITableViewDelegate,UITableViewDataSource>
 
@@ -472,19 +471,19 @@
 
 - (void)editButtonClick
 {
-//    moreActionView.hidden = YES;
-//    [moreActionView removeFromSuperview];
-//
-//    MineAddLearningViewController *showVC = [MineAddLearningViewController new];
-//    showVC.model = self.model;
-//    [self.navigationController pushViewController:showVC animated:YES];
-//
-//    __weak typeof(self) weakSelf = self;
-//    [showVC setSendValueBlock:^(MineLearningModel *model){
-//        __strong typeof(weakSelf) strongSelf = weakSelf;
-//
-//        [strongSelf queryMineLearningDetails];
-//    }];
+    moreActionView.hidden = YES;
+    [moreActionView removeFromSuperview];
+
+    MineAddEducationViewController *showVC = [MineAddEducationViewController new];
+    showVC.model = self.model;
+    [self.navigationController pushViewController:showVC animated:YES];
+
+    __weak typeof(self) weakSelf = self;
+    [showVC setSendValueBlock:^(MineEducationModel *model){
+        __strong typeof(weakSelf) strongSelf = weakSelf;
+
+        [strongSelf queryMineEducationDetails];
+    }];
 }
 
 - (void)deleteButtonClick
