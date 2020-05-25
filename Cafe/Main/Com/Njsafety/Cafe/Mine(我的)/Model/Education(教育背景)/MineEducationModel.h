@@ -17,6 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, copy) NSString *accountId;        //用户id
 @property (nonatomic, copy) NSString *country;          //国家
+@property (nonatomic, copy) NSString *addTime;          //创建时间
 @property (nonatomic, copy) NSString *countryName;      //国家名
 @property (nonatomic, copy) NSString *countryNameEn;    //国家英文名
 @property (nonatomic, copy) NSString *degreeType;       //学位类型
@@ -26,7 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) NSString *graduationDate;   //毕业时间
 @property (nonatomic, copy) NSString *highSchoolId;     //预置高中数据ID
 @property (nonatomic, copy) NSString *ID;
-@property (nonatomic, copy) NSString *insId;            //学校/机构I
+@property (nonatomic, copy) NSString *insId;            //学校/机构Id
 @property (nonatomic, copy) NSString *institutionName;  //学校/机构名称
 @property (nonatomic, copy) NSString *level;            //教育阶段
 @property (nonatomic, copy) NSString *major;            //专业

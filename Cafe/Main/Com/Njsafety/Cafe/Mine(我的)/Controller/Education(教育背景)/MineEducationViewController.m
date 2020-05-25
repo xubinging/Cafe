@@ -7,10 +7,9 @@
 //
 
 #import "MineEducationViewController.h"
-
 #import "MineEducationModel.h"
 #import "MineEducationTableViewCell.h"
-
+#import "MineAddEducationViewController.h"
 #import "MineEducationDetailViewController.h"   //教育背景详情
 
 @interface MineEducationViewController ()<UITableViewDelegate,UITableViewDataSource>
@@ -245,18 +244,18 @@
 #pragma mark - 添加按钮 -
 -(void)addButtonClick
 {
-//    MineAddLearningViewController*showVC = [MineAddLearningViewController new];
-//    MineLearningModel *model = [MineLearningModel new];
-//    showVC.model = model;
-//    [self.navigationController pushViewController:showVC animated:YES];
-//
-//    //设置block回调
-//    __weak typeof(self) weakSelf = self;
-//    [showVC setSendValueBlock:^(MineLearningModel *model){
-//       __strong typeof(weakSelf) strongSelf = weakSelf;
-//
-//       [strongSelf queryMineLearningList];
-//    }];    
+    MineAddEducationViewController *showVC = [MineAddEducationViewController new];
+    MineEducationModel *model = [MineEducationModel new];
+    showVC.model = model;
+    [self.navigationController pushViewController:showVC animated:YES];
+
+    //设置block回调
+    __weak typeof(self) weakSelf = self;
+    [showVC setSendValueBlock:^(MineEducationModel *model){
+       __strong typeof(weakSelf) strongSelf = weakSelf;
+
+       [strongSelf queryMineEducationList];
+    }];
 }
 
 #pragma mark - 右侧按钮点击 -

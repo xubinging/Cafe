@@ -12,6 +12,7 @@
 		1F186151244D954C009977B1 /* MineAddRewordAndSkillViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F186150244D954C009977B1 /* MineAddRewordAndSkillViewController.m */; };
 		1F186154244FDAD6009977B1 /* MineEditRewordAndSkillViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F186153244FDAD6009977B1 /* MineEditRewordAndSkillViewController.m */; };
 		1F19FDFE247A8EB600C9A6F1 /* MineAddLearningViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F19FDFD247A8EB600C9A6F1 /* MineAddLearningViewController.m */; };
+		1F19FE01247AF03200C9A6F1 /* MineAddEducationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F19FE00247AF03200C9A6F1 /* MineAddEducationViewController.m */; };
 		1F1D681A2472269700299BE4 /* MineSelectOfferScoreTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F1D68192472269700299BE4 /* MineSelectOfferScoreTableViewCell.m */; };
 		1F5911A92452AB74003E15BD /* MineAddActivityViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F5911A82452AB74003E15BD /* MineAddActivityViewController.m */; };
 		1F5911AC2452AB8E003E15BD /* MineEditActivityViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F5911AB2452AB8E003E15BD /* MineEditActivityViewController.m */; };
@@ -571,6 +572,8 @@
 		1F186153244FDAD6009977B1 /* MineEditRewordAndSkillViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MineEditRewordAndSkillViewController.m; sourceTree = "<group>"; };
 		1F19FDFC247A8EB600C9A6F1 /* MineAddLearningViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MineAddLearningViewController.h; sourceTree = "<group>"; };
 		1F19FDFD247A8EB600C9A6F1 /* MineAddLearningViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MineAddLearningViewController.m; sourceTree = "<group>"; };
+		1F19FDFF247AF03200C9A6F1 /* MineAddEducationViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MineAddEducationViewController.h; sourceTree = "<group>"; };
+		1F19FE00247AF03200C9A6F1 /* MineAddEducationViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MineAddEducationViewController.m; sourceTree = "<group>"; };
 		1F1D68182472269700299BE4 /* MineSelectOfferScoreTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MineSelectOfferScoreTableViewCell.h; sourceTree = "<group>"; };
 		1F1D68192472269700299BE4 /* MineSelectOfferScoreTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MineSelectOfferScoreTableViewCell.m; sourceTree = "<group>"; };
 		1F5911A72452AB74003E15BD /* MineAddActivityViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MineAddActivityViewController.h; sourceTree = "<group>"; };
@@ -3347,6 +3350,8 @@
 				B3A87C4F242B022E002AECE9 /* MineEducationViewController.m */,
 				B3A87C52242B022E002AECE9 /* MineEducationDetailViewController.h */,
 				B3A87C50242B022E002AECE9 /* MineEducationDetailViewController.m */,
+				1F19FDFF247AF03200C9A6F1 /* MineAddEducationViewController.h */,
+				1F19FE00247AF03200C9A6F1 /* MineAddEducationViewController.m */,
 			);
 			path = "Education(教育背景)";
 			sourceTree = "<group>";
@@ -4887,6 +4892,7 @@
 				B3667A3B23F15444006505FC /* AFHTTPSessionManager.m in Sources */,
 				B3A87DBB242B0230002AECE9 /* MyLikeCooperateSchoolViewCell.m in Sources */,
 				B376F03023A10FC7004E6FBC /* ZXDataMatrixC40Encoder.m in Sources */,
+				1F19FE01247AF03200C9A6F1 /* MineAddEducationViewController.m in Sources */,
 				B376F04823A10FC7004E6FBC /* ZXOneDReader.m in Sources */,
 				B3A4F95023A76ABD00BBBB34 /* SDImageCodersManager.m in Sources */,
 				B3A87D8D242B0230002AECE9 /* MyCollectionPostVC.m in Sources */,
