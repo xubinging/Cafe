@@ -21,11 +21,13 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) NSString *programRole;             //项目角色
 @property (nonatomic, copy) NSString *programStartDate;        //开始时间
 @property (nonatomic, copy) NSString *programEndDate;          //结束时间
-@property (nonatomic, copy) NSString *programDescription;          //内容
+@property (nonatomic, copy) NSString *programDescription;      //内容
 
 
 
 @property (nonatomic, copy) NSString *showLanguage;     //CH -- 中文；EN -- 英文
+
+@property (nonatomic, copy) NSString *actionType;    
 
 //工厂方法，需要传入字典。可以完成model的创建和属性的b批量赋值。
 +(instancetype)modelWithDict:(NSDictionary *)dict;

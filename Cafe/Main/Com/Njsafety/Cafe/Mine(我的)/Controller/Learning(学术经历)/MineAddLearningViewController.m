@@ -26,8 +26,6 @@
     @private UITextField *startDateTextField;
     @private UITextField *endDateTextField;
     @private UITextView *contentTextView;
-    
-    @private NSString *actionType;
 }
 
 @end
@@ -343,12 +341,6 @@
     startDateTextField.text = self.model.programStartDate;;
     endDateTextField.text = self.model.programEndDate;
     contentTextView.text = self.model.programDescription;
-    
-    if (self.model.programName.length > 0) {
-        actionType = @"edit";
-    } else {
-        actionType = @"add";
-    }
 }
 
 #pragma mark - 返回按钮点击 -
@@ -371,9 +363,9 @@
     } else if (!self.model.programDescription.length) {
         [AvalonsoftToast showWithMessage:@"活动描述不能为空！"];
     } else {
-        if ([actionType isEqualToString:@"add"]) {
+        if ([self.model.actionType isEqualToString:@"add"]) {
             [self saveMineAddLearning];
-        } else if ([actionType isEqualToString:@"edit"]) {
+        } else if ([self.model.actionType isEqualToString:@"edit"]) {
             [self editMineAddLearning];
         }
     }

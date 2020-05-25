@@ -248,6 +248,7 @@
 {
     MineAddLearningViewController*showVC = [MineAddLearningViewController new];
     MineLearningModel *model = [MineLearningModel new];
+    model.actionType = @"add";
     showVC.model = model;
     [self.navigationController pushViewController:showVC animated:YES];
 
