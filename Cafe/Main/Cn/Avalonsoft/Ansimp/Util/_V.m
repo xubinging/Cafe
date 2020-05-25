@@ -225,6 +225,16 @@ NSString * const MINE_MY_EDUCATION_ADD = @"cuser/eduuserceducation/add";
 NSString * const MINE_MY_EDUCATION_UPDATE = @"cuser/eduuserceducation/update";
 //教育背景删除
 NSString * const MINE_MY_EDUCATION_DELETE = @"/cuser/eduuserceducation/delete";
+//收到评论
+NSString * const MINE_MY_RECEIVE_REPLY_LIST = @"edu/forum/eduforumreply/queryReceiveReplyListByAccountId";
+//发布评论
+NSString * const MINE_MY_POST_REPLY_LIST = @"edu/forum/eduforumreply/queryPostReplyListByAccountId";
+//关注学校
+NSString * const MINE_MY_ABOARD_SELECT_LIST = @"eduInstitution/eduinstcconcern/selectListForAbroad";
+//关注机构
+NSString * const MINE_MY_INTERNAL_SELECT_LIST = @"eduInstitution/eduinstcconcern/selectForInternal";
+//发布
+//NSString * const MINE_MY_POST_LIST = @"edu/forum/eduforumpost/queryMyPostListByAccountId";
 
 
 
