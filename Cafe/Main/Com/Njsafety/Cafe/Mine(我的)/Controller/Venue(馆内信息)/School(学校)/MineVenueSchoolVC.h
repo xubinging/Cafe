@@ -12,6 +12,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface MineVenueSchoolVC : UIViewController
 
+- (void)getMyAboardSelectList;
+
 @end
 
 NS_ASSUME_NONNULL_END

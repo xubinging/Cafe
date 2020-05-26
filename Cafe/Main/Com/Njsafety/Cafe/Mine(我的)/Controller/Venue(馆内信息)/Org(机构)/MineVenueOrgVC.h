@@ -12,6 +12,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface MineVenueOrgVC : UIViewController
 
+- (void)getMyInternalSelectList;
+
 @end
 
 NS_ASSUME_NONNULL_END

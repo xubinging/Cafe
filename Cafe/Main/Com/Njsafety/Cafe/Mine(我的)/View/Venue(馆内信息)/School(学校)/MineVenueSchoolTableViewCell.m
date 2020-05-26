@@ -98,11 +98,11 @@
 
 - (void)updateCellWithModel:(MineVenueSchoolModel *)model
 {
-    UIImage *schoolIcon = model.schoolIcon;
-    NSString *schoolNameCh = model.schoolNameCh;
-    NSString *schoolNameEn = model.schoolNameEn;
+    NSString *schoolIcon = model.logo;
+    NSString *schoolNameCh = model.instnamecn;
+    NSString *schoolNameEn = model.instnameen;
     
-    [_schoolIconImageView setImage:schoolIcon];
+    [_schoolIconImageView sd_setImageWithURL:[NSURL URLWithString:[_F createFileLoadUrl:schoolIcon]]];
     
     //名称 -- 中文
     NSMutableAttributedString *namecChString = [[NSMutableAttributedString alloc] initWithString:schoolNameCh attributes: @{NSFontAttributeName: [UIFont fontWithName:@"PingFangSC-Medium" size: 15],NSForegroundColorAttributeName: [UIColor colorWithRed:34/255.0 green:34/255.0 blue:34/255.0 alpha:1.0]}];

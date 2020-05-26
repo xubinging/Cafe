@@ -11,10 +11,12 @@
 #import "MineVenuePostModel.h"
 #import "MineVenuePostTableViewCell.h"
 
+static NSInteger pageNum = 0;
+
 @interface MineVenuePostVC ()<UITableViewDelegate,UITableViewDataSource>
 
 @property (nonatomic,strong) UITableView *commentTableView;
-@property (nonatomic,strong) NSArray *commentArray;
+@property (nonatomic,strong) NSMutableArray *commentArray;
 
 @end
 
@@ -28,33 +30,38 @@
     [self initView];
 }
 
+- (NSMutableArray *)commentArray
+{
+    return _commentArray?:(_commentArray = [NSMutableArray array]);
+}
+
 #pragma mark - 初始化一些参数 -
 -(void)initVars
 {
     self.view.backgroundColor = RGBA_GGCOLOR(249, 249, 249, 1.0);
     
-    //造数据
-    _commentArray = nil;
-    NSMutableArray *tempArray = [NSMutableArray array];
-
-    for(int i=0; i<10;i++){
-        
-        NSInteger index = i+1;
-        
-        NSDictionary *dic = @{
-            @"index":@(index),
-            @"title":@"标题标题标题标题标题标题",
-            @"content":@"进入电脑后突然出现黑屏, 是什么原因?是电脑额问题吗?我需要找人修电脑吗?",
-            @"likeNum":@"123",
-            @"commentNum":@"765",
-            @"seeNum":@"123",
-            @"time":@"10月6日 13:38"
-        };
-        MineVenuePostModel *model = [MineVenuePostModel modelWithDict:dic];
-        [tempArray addObject:model];
-    }
-    
-    _commentArray = [tempArray copy];
+//    //造数据
+//    _commentArray = nil;
+//    NSMutableArray *tempArray = [NSMutableArray array];
+//
+//    for(int i=0; i<10;i++){
+//
+//        NSInteger index = i+1;
+//
+//        NSDictionary *dic = @{
+//            @"index":@(index),
+//            @"title":@"标题标题标题标题标题标题",
+//            @"content":@"进入电脑后突然出现黑屏, 是什么原因?是电脑额问题吗?我需要找人修电脑吗?",
+//            @"likeNum":@"123",
+//            @"commentNum":@"765",
+//            @"seeNum":@"123",
+//            @"time":@"10月6日 13:38"
+//        };
+//        MineVenuePostModel *model = [MineVenuePostModel modelWithDict:dic];
+//        [tempArray addObject:model];
+//    }
+//
+//    _commentArray = [tempArray copy];
     
 }
 
@@ -145,5 +152,68 @@
     [AvalonsoftToast showWithMessage:@"阅读全文"];
 }
 //**********    tableView代理 end   **********//
+
+
+#pragma mark - 网络请求
+- (void)getMyPostList
+{
+    __weak typeof(self) weakSelf = self;
+    [AvalonsoftHasNetwork avalonsoft_hasNetwork:^(bool has) {
+        if (has) {
+            NSMutableDictionary *root = [NSMutableDictionary dictionary];
+            [root setValue:[_UserInfo accountId] forKey:@"accountId"];
+            [root setValue:[NSString stringWithFormat:@"%ld",(long)pageNum++] forKey:@"pageNum"];
+            [root setValue:@"10" forKey:@"pageSize"];
+            
+            [[AvalonsoftHttpClient avalonsoftHttpClient] requestWithAction:COMMON_SERVER_URL actionName:MINE_MY_POST_LIST method:HttpRequestPost paramenters:root prepareExecute:^{
+                
+            } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull responseObject) {
+                __strong typeof(weakSelf) strongSelf = weakSelf;
+                
+                NSLog(@"handleNetworkRequestWithResponseObject responseObject=%@",responseObject);
+                _M *responseModel = [_M createResponseJsonObj:responseObject];
+                NSLog(@"handleNetworkRequestWithResponseObject %ld %@",responseModel.rescode,responseModel.msg);
+                
+                @try {
+                    if(responseModel.rescode == 200){
+                        NSDictionary *data = responseModel.data;
+                        int count = [[NSString stringWithFormat:@"%@", data[@"count"]] intValue];
+
+//                        [userMessageNum setText:[NSString stringWithFormat:@"%d",count]];
+                    }
+                } @catch (NSException *exception) {
+                    @throw exception;
+                    //给出提示信息
+                    [AvalonsoftMsgAlertView showWithTitle:@"信息" content:@"系统发生错误，请与平台管理员联系解决。"  buttonTitles:@[@"关闭"] buttonClickedBlock:nil];
+                }
+                
+            } failure:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error) {
+                //请求失败
+                NSLog(@"%@",error);
+            }];
+            
+        } else {
+            //没网
+            //            [AvalonsoftMsgAlertView showWithTitle:@"信息" content:@"请检查网络" buttonTitles:@[@"关闭"] buttonClickedBlock:nil];
+        }
+    }];
+}
+
+
+#pragma mark - 上拉加载更多
+- (void)loadMorePostList
+{
+    __weak typeof(self) weakSelf = self;
+    [self.commentTableView addFooterWithWithHeaderWithAutomaticallyRefresh:NO loadMoreBlock:^(NSInteger pageIndex) {
+        __strong typeof(weakSelf) strongSelf = weakSelf;
+
+        [strongSelf getMyPostList];
+    }];
+}
+
+- (void)dealloc
+{
+    pageNum = 0;
+}
 
 @end

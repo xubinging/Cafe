@@ -11,10 +11,12 @@
 #import "MineVenueSchoolModel.h"
 #import "MineVenueSchoolTableViewCell.h"
 
+static NSInteger pageNum = 0;
+
 @interface MineVenueSchoolVC ()<UITableViewDelegate,UITableViewDataSource>
 
 @property (nonatomic,strong) UITableView *schoolTableView;
-@property (nonatomic,strong) NSArray *schoolArray;
+@property (nonatomic,strong) NSMutableArray *schoolArray;
 
 @end
 
@@ -28,32 +30,15 @@
     [self initView];
 }
 
+- (NSMutableArray *)schoolArray
+{
+    return _schoolArray?:(_schoolArray = [NSMutableArray array]);
+}
+
 #pragma mark - 初始化一些参数 -
 -(void)initVars
 {
     self.view.backgroundColor = RGBA_GGCOLOR(249, 249, 249, 1.0);
-    
-    //造数据
-    _schoolArray = nil;
-    NSMutableArray *tempArray = [NSMutableArray array];
-
-    for(int i=0; i<6;i++){
-        
-        UIImage *icon = [UIImage imageNamed:@"home_foreign_school_icon"];
-        NSInteger index = i+1;
-        
-        NSDictionary *dic = @{
-            @"schoolIndex":@(index),
-            @"schoolIcon":icon,
-            @"schoolNameCh":[NSString stringWithFormat:@"%@ %ld",@"塔斯马尼亚大学",(long)index],
-            @"schoolNameEn":[NSString stringWithFormat:@"%@ %ld",@"university of tasmania",(long)index]
-        };
-        MineVenueSchoolModel *model = [MineVenueSchoolModel modelWithDict:dic];
-        [tempArray addObject:model];
-    }
-    
-    _schoolArray = [tempArray copy];
-    
 }
 
 #pragma mark - 初始化数据 -
@@ -184,5 +169,72 @@
     
     [alertView setMainButtonIndex:1];
 }
+
+
+#pragma mark - 网络请求
+- (void)getMyAboardSelectList
+{
+    __weak typeof(self) weakSelf = self;
+    [AvalonsoftHasNetwork avalonsoft_hasNetwork:^(bool has) {
+        if (has) {
+            NSMutableDictionary *root = [NSMutableDictionary dictionary];
+            [root setValue:[_UserInfo accountId] forKey:@"accountId"];
+            [root setValue:[NSString stringWithFormat:@"%ld",(long)pageNum++] forKey:@"pageNum"];
+            [root setValue:@"10" forKey:@"pageSize"];
+            
+            [[AvalonsoftHttpClient avalonsoftHttpClient] requestWithAction:COMMON_SERVER_URL actionName:MINE_MY_ABOARD_SELECT_LIST method:HttpRequestPost paramenters:root prepareExecute:^{
+                
+            } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull responseObject) {
+                __strong typeof(weakSelf) strongSelf = weakSelf;
+                
+                NSLog(@"handleNetworkRequestWithResponseObject responseObject=%@",responseObject);
+                _M *responseModel = [_M createResponseJsonObj:responseObject];
+                NSLog(@"handleNetworkRequestWithResponseObject %ld %@",responseModel.rescode,responseModel.msg);
+                
+                @try {
+                    if(responseModel.rescode == 200){
+                        NSDictionary *rspData = responseModel.data;
+                        NSArray *rspDataArray = rspData[@"dataList"];
+                        for(int i=0; i<rspDataArray.count; i++){
+                            MineVenueSchoolModel *model = [MineVenueSchoolModel modelWithDict:rspDataArray[i]];
+                            model.schoolIndex = i;
+                            [strongSelf.schoolArray addObject:model];
+                        }
+                        [strongSelf.schoolTableView reloadData];
+                    }
+                } @catch (NSException *exception) {
+                    @throw exception;
+                    //给出提示信息
+                    [AvalonsoftMsgAlertView showWithTitle:@"信息" content:@"系统发生错误，请与平台管理员联系解决。"  buttonTitles:@[@"关闭"] buttonClickedBlock:nil];
+                }
+                
+            } failure:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error) {
+                //请求失败
+                NSLog(@"%@",error);
+            }];
+            
+        } else {
+            //没网
+            //            [AvalonsoftMsgAlertView showWithTitle:@"信息" content:@"请检查网络" buttonTitles:@[@"关闭"] buttonClickedBlock:nil];
+        }
+    }];
+}
+
+#pragma mark - 上拉加载更多
+- (void)loadMoreAboardSelectList
+{
+    __weak typeof(self) weakSelf = self;
+    [self.schoolTableView addFooterWithWithHeaderWithAutomaticallyRefresh:NO loadMoreBlock:^(NSInteger pageIndex) {
+        __strong typeof(weakSelf) strongSelf = weakSelf;
+
+        [strongSelf getMyAboardSelectList];
+    }];
+}
+
+- (void)dealloc
+{
+    pageNum = 0;
+}
+
 
 @end

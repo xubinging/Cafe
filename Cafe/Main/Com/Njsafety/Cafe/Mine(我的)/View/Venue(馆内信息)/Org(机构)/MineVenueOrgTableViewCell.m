@@ -86,10 +86,10 @@
 - (void)updateCellWithModel:(MineVenueOrgModel *)model
 {
 
-    UIImage *companyIcon = model.companyIcon;
-    NSString *companyName = model.companyName;
+    NSString *companyIcon = model.logo;
+    NSString *companyName = model.instnamecn;
     
-    [_companyIconImageView setImage:companyIcon];
+    [_companyIconImageView sd_setImageWithURL:[NSURL URLWithString:[_F createFileLoadUrl:companyIcon]]];
     
     //标题
     NSMutableAttributedString *nameString = [[NSMutableAttributedString alloc] initWithString:companyName attributes: @{NSFontAttributeName: [UIFont fontWithName:@"PingFangSC-Medium" size: 15],NSForegroundColorAttributeName: [UIColor colorWithRed:34/255.0 green:34/255.0 blue:34/255.0 alpha:1.0]}];

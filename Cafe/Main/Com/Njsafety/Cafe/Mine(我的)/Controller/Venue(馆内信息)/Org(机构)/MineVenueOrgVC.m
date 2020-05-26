@@ -11,10 +11,12 @@
 #import "MineVenueOrgModel.h"
 #import "MineVenueOrgTableViewCell.h"
 
+static NSInteger pageNum = 0;
+
 @interface MineVenueOrgVC ()<UITableViewDelegate,UITableViewDataSource>
 
 @property (nonatomic,strong) UITableView *companyTableView;
-@property (nonatomic,strong) NSArray *companyArray;
+@property (nonatomic,strong) NSMutableArray *companyArray;
 
 @end
 
@@ -28,31 +30,15 @@
     [self initView];
 }
 
+- (NSMutableArray *)companyArray
+{
+    return _companyArray?:(_companyArray = [NSMutableArray array]);
+}
+
 #pragma mark - 初始化一些参数 -
 -(void)initVars
 {
-    self.view.backgroundColor = RGBA_GGCOLOR(249, 249, 249, 1.0);
-    
-    //造数据
-    _companyArray = nil;
-    NSMutableArray *tempCompanyArray = [NSMutableArray array];
-
-    for(int i=0; i<6;i++){
-        
-        UIImage *icon = [UIImage imageNamed:@"home_foreign_school_icon"];
-        NSInteger index = i+1;
-    
-        NSDictionary *dic = @{
-            @"companyIndex":@(index),
-            @"companyIcon":icon,
-            @"companyName":[NSString stringWithFormat:@"%@ %ld",@"**留学公司",(long)index]
-        };
-        MineVenueOrgModel *model = [MineVenueOrgModel modelWithDict:dic];
-        [tempCompanyArray addObject:model];
-    }
-    
-    _companyArray = [tempCompanyArray copy];
-    
+    self.view.backgroundColor = RGBA_GGCOLOR(249, 249, 249, 1.0);    
 }
 
 #pragma mark - 初始化数据 -
@@ -182,6 +168,72 @@
     }];
     
     [alertView setMainButtonIndex:1];
+}
+
+
+#pragma mark - 网络请求
+- (void)getMyInternalSelectList
+{
+    __weak typeof(self) weakSelf = self;
+    [AvalonsoftHasNetwork avalonsoft_hasNetwork:^(bool has) {
+        if (has) {
+            NSMutableDictionary *root = [NSMutableDictionary dictionary];
+            [root setValue:[_UserInfo accountId] forKey:@"accountId"];
+            [root setValue:[NSString stringWithFormat:@"%ld",(long)pageNum++] forKey:@"pageNum"];
+            [root setValue:@"10" forKey:@"pageSize"];
+            
+            [[AvalonsoftHttpClient avalonsoftHttpClient] requestWithAction:COMMON_SERVER_URL actionName:MINE_MY_INTERNAL_SELECT_LIST method:HttpRequestPost paramenters:root prepareExecute:^{
+                
+            } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull responseObject) {
+                __strong typeof(weakSelf) strongSelf = weakSelf;
+                
+                NSLog(@"handleNetworkRequestWithResponseObject responseObject=%@",responseObject);
+                _M *responseModel = [_M createResponseJsonObj:responseObject];
+                NSLog(@"handleNetworkRequestWithResponseObject %ld %@",responseModel.rescode,responseModel.msg);
+                
+                @try {
+                    if(responseModel.rescode == 200){
+                        NSDictionary *rspData = responseModel.data;
+                        NSArray *rspDataArray = rspData[@"dataList"];
+                        for(int i=0; i<rspDataArray.count; i++){
+                            MineVenueOrgModel *model = [MineVenueOrgModel modelWithDict:rspDataArray[i]];
+                            model.companyIndex = i;
+                            [strongSelf.companyArray addObject:model];
+                        }
+                        [strongSelf.companyTableView reloadData];
+                    }
+                } @catch (NSException *exception) {
+                    @throw exception;
+                    //给出提示信息
+                    [AvalonsoftMsgAlertView showWithTitle:@"信息" content:@"系统发生错误，请与平台管理员联系解决。"  buttonTitles:@[@"关闭"] buttonClickedBlock:nil];
+                }
+                
+            } failure:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error) {
+                //请求失败
+                NSLog(@"%@",error);
+            }];
+            
+        } else {
+            //没网
+            //            [AvalonsoftMsgAlertView showWithTitle:@"信息" content:@"请检查网络" buttonTitles:@[@"关闭"] buttonClickedBlock:nil];
+        }
+    }];
+}
+
+#pragma mark - 上拉加载更多
+- (void)loadMoreInternalSelectList
+{
+    __weak typeof(self) weakSelf = self;
+    [self.companyTableView addFooterWithWithHeaderWithAutomaticallyRefresh:NO loadMoreBlock:^(NSInteger pageIndex) {
+        __strong typeof(weakSelf) strongSelf = weakSelf;
+
+        [strongSelf getMyInternalSelectList];
+    }];
+}
+
+- (void)dealloc
+{
+    pageNum = 0;
 }
 
 @end

@@ -54,6 +54,12 @@
 //标签栏每个按钮高度
 @property (nonatomic, assign) CGFloat buttonHeight;
 
+@property (nonatomic, strong) MineVenueCommentReceiveVC *venueCommentReceiveVC;
+@property (nonatomic, strong) MineVenueCommentPostVC *venueCommentPostVC;
+@property (nonatomic, strong) MineVenuePostVC *venuePostVC;
+@property (nonatomic, strong) MineVenueSchoolVC *venueSchoolVC;
+@property (nonatomic, strong) MineVenueOrgVC *venueOrgVC;
+    
 @end
 
 @implementation MineVenueViewController
@@ -205,6 +211,7 @@
         if (index == 0) {
             segmentBtn.selected = YES;
             self.selectIndex = segmentBtn.tag;
+            [self btnClick:segmentBtn];
         }
         
         titleButtonWidth += [_buttonWidthArray[index] doubleValue];
@@ -270,6 +277,18 @@
 {
     [_mainScrollView scrollRectToVisible:CGRectMake((button.tag - HEADBTN_TAG) *SCREEN_WIDTH, 0, SCREEN_WIDTH, _mainScrollView.frame.size.height) animated:YES];
     [self didSelectSegmentIndex:button.tag];
+    
+    if ((button.tag - HEADBTN_TAG) == 0) {
+        [self.venueCommentReceiveVC getMyReceiveReplyList];
+    } else if ((button.tag - HEADBTN_TAG) == 1) {
+        [self.venueCommentPostVC getMyPostReplyList];
+    } else if ((button.tag - HEADBTN_TAG) == 2) {
+        [self.venuePostVC getMyPostList];
+    } else if ((button.tag - HEADBTN_TAG) == 3) {
+        [self.venueSchoolVC getMyAboardSelectList];
+    } else if ((button.tag - HEADBTN_TAG) == 4) {
+        [self.venueOrgVC getMyInternalSelectList];
+    }
 }
 
 //设置顶部选中button下方线条位置
@@ -335,29 +354,28 @@
         }
         
         if([_titleArray[i] isEqualToString:@"收到评论"]){
-            MineVenueCommentReceiveVC *viewController = [MineVenueCommentReceiveVC new];
-            [controlArray addObject:viewController];
+            self.venueCommentReceiveVC =  [MineVenueCommentReceiveVC new];
+            [controlArray addObject:self.venueCommentReceiveVC];
             
         }else if([_titleArray[i] isEqualToString:@"发布评论"]){
-            MineVenueCommentPostVC *viewController = [MineVenueCommentPostVC new];
-            [controlArray addObject:viewController];
+            self.venueCommentPostVC = [MineVenueCommentPostVC new];
+            [controlArray addObject:self.venueCommentPostVC];
             
         }else if([_titleArray[i] isEqualToString:@"发布"]){
-            MineVenuePostVC *viewController = [MineVenuePostVC new];
-            [controlArray addObject:viewController];
+            self.venuePostVC = [MineVenuePostVC new];
+            [controlArray addObject:self.venuePostVC];
             
         }else if([_titleArray[i] isEqualToString:@"已加入群"]){
             MineVenueGroupVC *viewController = [MineVenueGroupVC new];
             [controlArray addObject:viewController];
             
         }else if([_titleArray[i] isEqualToString:@"关注学校"]){
-            MineVenueSchoolVC *viewController = [MineVenueSchoolVC new];
-            [controlArray addObject:viewController];
+            self.venueSchoolVC = [MineVenueSchoolVC new];
+            [controlArray addObject:self.venueSchoolVC];
             
         }else if([_titleArray[i] isEqualToString:@"关注机构"]){
-            MineVenueOrgVC *viewController = [MineVenueOrgVC new];
-            [controlArray addObject:viewController];
-            
+            self.venueOrgVC = [MineVenueOrgVC new];
+            [controlArray addObject:self.venueOrgVC];
         }
     }
     

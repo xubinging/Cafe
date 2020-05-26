@@ -12,6 +12,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface MineVenueCommentReceiveVC : UIViewController
 
+- (void)getMyReceiveReplyList;
+
 @end
 
 NS_ASSUME_NONNULL_END
