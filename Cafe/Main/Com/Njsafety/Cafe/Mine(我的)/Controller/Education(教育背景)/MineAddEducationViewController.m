@@ -8,6 +8,7 @@
 
 #import "MineAddEducationViewController.h"
 #import "AvalonsoftImagePicker.h"
+#import "Header.h"
 
 #define TEXTFIELD_TAG 10000
 
@@ -32,6 +33,9 @@
     @private UITextField *gradesTextField;      //成绩
 }
 
+@property (nonatomic, assign) NSInteger keyBoardHeight;
+@property (nonatomic, strong) UITextField *selectedTextField;
+
 @end
 
 @implementation MineAddEducationViewController
@@ -50,6 +54,8 @@
 -(void)initVars
 {
     self.view.backgroundColor = RGBA_GGCOLOR(249, 249, 249, 1);
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
 }
 
 #pragma mark - 初始化数据 -
@@ -175,6 +181,7 @@
     [contentScrollView setBackgroundColor:[UIColor clearColor]];
     contentScrollView.showsVerticalScrollIndicator = NO;
     [contentScrollView setContentSize:CGSizeMake(SCREEN_WIDTH-20, 1050)];
+    contentScrollView.keyboardDismissMode = UIScrollViewKeyboardDismissModeOnDrag;
     
         
     UILabel *Label1 = [[UILabel alloc] initWithFrame:CGRectMake(15, 28, SCREEN_WIDTH - 20 - 30, 20)];
@@ -868,6 +875,44 @@
             //            [AvalonsoftMsgAlertView showWithTitle:@"信息" content:@"请检查网络" buttonTitles:@[@"关闭"] buttonClickedBlock:nil];
         }
     }];
+}
+
+
+#pragma mark  键盘出现时调用
+- (void)keyboardWillShow:(NSNotification *)aNotification
+{
+    //获取键盘的高度
+    NSDictionary *userInfo = [aNotification userInfo];
+    NSValue *aValue = [userInfo objectForKey:UIKeyboardFrameEndUserInfoKey];
+    CGRect keyboardRect = [aValue CGRectValue];
+    self.keyBoardHeight = keyboardRect.size.height;
+    //注意下句代码，为了避免键盘第一次出现时，输入框的位置不发生改变
+    [self textFieldDidBeginEditing:self.selectedTextField];
+}
+
+#pragma mark 改变输入框的坐标
+- (void)textFieldDidBeginEditing:(UITextField *)textField {
+    self.selectedTextField = textField;
+    [UIView animateWithDuration:0.3 animations:^{
+        CGRect frame = self.view.frame;
+        frame.origin.y = -(self.keyBoardHeight);
+        self.view.frame = frame;
+    }];
+}
+
+#pragma mark 恢复输入框的位置
+
+- (void)textFieldDidEndEditing:(UITextField *)textField {
+    [UIView animateWithDuration:0.1 animations:^{
+        CGRect frame = self.view.frame;
+        frame.origin.y = 0;
+        self.view.frame = frame;
+    }];
+}
+
+- (void)dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 @end
