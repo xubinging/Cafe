@@ -161,7 +161,7 @@ static NSInteger pageNum = 0;
     [AvalonsoftHasNetwork avalonsoft_hasNetwork:^(bool has) {
         if (has) {
             NSMutableDictionary *root = [NSMutableDictionary dictionary];
-            [root setValue:[_UserInfo accountId] forKey:@"accountId"];
+            [root setValue:[_UserInfo accountId] forKey:@"accountid"];
             [root setValue:[NSString stringWithFormat:@"%ld",(long)pageNum++] forKey:@"pageNum"];
             [root setValue:@"10" forKey:@"pageSize"];
             

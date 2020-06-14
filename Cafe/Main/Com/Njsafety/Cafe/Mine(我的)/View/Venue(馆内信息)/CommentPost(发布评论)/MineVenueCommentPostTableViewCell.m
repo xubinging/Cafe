@@ -117,13 +117,13 @@
 
 - (void)updateCellWithModel:(MineVenueCommentPostModel *)model
 {
-    UIImage *iconImage = model.iconImage;
-    NSString *time = model.time;
+    NSString *iconImage = model.logo;
+    NSString *time = model.createTime;
     NSString *title = model.title;
-    NSString *subTitle = model.subTitle;
+    NSString *subTitle = model.originTitle;
     NSString *content = model.content;
     
-    [_iconImageView setImage:iconImage];
+    [_iconImageView sd_setImageWithURL:[NSURL URLWithString:[_F createFileLoadUrl:iconImage]]];
     
     [_timeLabel setText:time];
     

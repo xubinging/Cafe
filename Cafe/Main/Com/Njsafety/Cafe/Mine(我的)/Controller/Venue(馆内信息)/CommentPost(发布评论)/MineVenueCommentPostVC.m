@@ -161,7 +161,7 @@ static NSInteger pageNum = 0;
     [AvalonsoftHasNetwork avalonsoft_hasNetwork:^(bool has) {
         if (has) {
             NSMutableDictionary *root = [NSMutableDictionary dictionary];
-            [root setValue:[_UserInfo accountId] forKey:@"accountId"];
+            [root setValue:[_UserInfo accountId] forKey:@"accountid"];
             [root setValue:[NSString stringWithFormat:@"%ld",(long)pageNum++] forKey:@"pageNum"];
             [root setValue:@"10" forKey:@"pageSize"];
             
@@ -176,10 +176,14 @@ static NSInteger pageNum = 0;
                 
                 @try {
                     if(responseModel.rescode == 200){
-                        NSDictionary *data = responseModel.data;
-                        int count = [[NSString stringWithFormat:@"%@", data[@"count"]] intValue];
-
-//                        [userMessageNum setText:[NSString stringWithFormat:@"%d",count]];
+                        NSDictionary *rspData = responseModel.data;
+                        NSArray *rspDataArray = rspData[@"dataList"];
+                        for(int i=0; i<rspDataArray.count; i++){
+                            MineVenueCommentPostModel *model = [MineVenueCommentPostModel modelWithDict:rspDataArray[i]];
+                            model.index = i;
+                            [strongSelf.commentArray addObject:model];
+                        }
+                        [strongSelf.commentTableView reloadData];
                     }
                 } @catch (NSException *exception) {
                     @throw exception;
