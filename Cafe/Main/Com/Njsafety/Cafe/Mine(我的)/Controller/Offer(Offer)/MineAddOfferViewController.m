@@ -12,6 +12,7 @@
 #import "AvalonsoftImagePicker.h"
 #import "MineSelectOfferViewController.h"
 #import "MineResultShowViewController.h"
+#import "Header.h"
 
 #define TEXTFIELD_TAG 10000
 #define K_ScoreTableView_CellHeight     114
@@ -53,6 +54,8 @@
 
 @property (nonatomic,strong) UITableView *scoreTableView;
 @property (nonatomic,strong) NSMutableArray *scoreArray;
+@property (nonatomic, assign) NSInteger keyBoardHeight;
+@property (nonatomic, strong) UITextView *selectedTextView;
 
 
 @end
@@ -81,6 +84,8 @@
 -(void)initVars
 {
     self.view.backgroundColor = RGBA_GGCOLOR(249, 249, 249, 1);
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
 }
 
 #pragma mark - 初始化数据 -
@@ -154,6 +159,7 @@
     }];
     [contentView setBackgroundColor:[UIColor clearColor]];
     contentView.showsVerticalScrollIndicator = NO;
+    contentView.keyboardDismissMode = UIScrollViewKeyboardDismissModeOnDrag;
     
     
     UIView *contentView1 = [UIView new];
@@ -890,6 +896,7 @@
     [agentCompanyTextField resignFirstResponder];
     [internationalSchoolTextField resignFirstResponder];
     [gpaTextField resignFirstResponder];
+    [contentTextView resignFirstResponder];
 }
 
 #pragma mark - 上传图片
@@ -1018,4 +1025,45 @@
         }
     }];
 }
+
+#pragma mark  键盘出现时调用
+- (void)keyboardWillShow:(NSNotification *)aNotification
+{
+    //获取键盘的高度
+    NSDictionary *userInfo = [aNotification userInfo];
+    NSValue *aValue = [userInfo objectForKey:UIKeyboardFrameEndUserInfoKey];
+    CGRect keyboardRect = [aValue CGRectValue];
+    self.keyBoardHeight = keyboardRect.size.height;
+    //注意下句代码，为了避免键盘第一次出现时，输入框的位置不发生改变
+    [self textViewDidBeginEditing:self.selectedTextView];
+}
+
+#pragma mark 改变输入框的坐标
+- (void)textViewDidBeginEditing:(UITextView *)textView
+{
+    self.selectedTextView = textView;
+    [UIView animateWithDuration:0.3 animations:^{
+       CGRect frame = self.view.frame;
+       frame.origin.y = -(self.keyBoardHeight + 50);
+       self.view.frame = frame;
+    }];
+}
+
+
+#pragma mark 恢复输入框的位置
+- (void)textViewDidEndEditing:(UITextView *)textView
+{
+    [contentTextView resignFirstResponder];
+    [UIView animateWithDuration:0.1 animations:^{
+        CGRect frame = self.view.frame;
+        frame.origin.y = 0;
+        self.view.frame = frame;
+    }];
+}
+
+- (void)dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
 @end
