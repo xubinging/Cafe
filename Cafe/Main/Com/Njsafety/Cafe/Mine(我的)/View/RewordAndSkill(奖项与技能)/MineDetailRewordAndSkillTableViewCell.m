@@ -168,13 +168,8 @@
     
     _nameLabel.text = name;
     _levelLabel.text = level;
-    
-    if ([date isKindOfClass:[NSString class]]) {
-        _dateLabel.text = date;
-    } else { ///TODO:xubing 测试发现，date有时是long类型，待平台修正返回类型
-        _dateLabel.text = [NSString stringWithFormat:@"%@",date];;
-    }
-    
+    _dateLabel.text = date;
+        
     if([showLanguage isEqualToString:@"ZH"] || showLanguage.length == 0){
         _nameTitleLabel.text = @"名称";
         _dateTitleLabel.text = @"日期";

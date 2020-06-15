@@ -372,7 +372,6 @@
             __weak typeof(self) weakSelf = self;
             [AvalonsoftPickerView showDatePickerWithTitle:@"" DateType:UIDatePickerModeDate DefaultSelValue:@"" MinDateStr:@"1900-01-01 00:00:00" MaxDateStr:nowStr IsAutoSelect:NO Manager:nil ResultBlock:^(NSString *selectValue){
                 __strong typeof(weakSelf) strongSelf = weakSelf;
-                ///TODO:xubing date格式不用转换，否则接口不通
 //                strongSelf->date = [selectValue stringByReplacingOccurrencesOfString:@"-" withString:@"/"];
 //                strongSelf->dateTextField.text = [selectValue stringByReplacingOccurrencesOfString:@"-" withString:@"/"];
                 

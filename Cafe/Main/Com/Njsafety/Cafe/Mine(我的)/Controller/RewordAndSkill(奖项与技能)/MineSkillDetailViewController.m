@@ -272,7 +272,6 @@
             NSMutableDictionary *root = [NSMutableDictionary dictionary];
             NSString *url = [[NSString alloc] init];
             NSString *ID = strongSelf->slctModel.ID;
-            ///TODO:xubing 代码中，参数拼接形式发请求时，采用如下格式stringByAppendingFormat:@"/%@\%@"，接口报错201，故使用stringByAppendingFormat:@"/%@=%@"
             url = [COMMON_SERVER_URL stringByAppendingFormat:@"/%@=%@",MINE_MY_EDU_SKILL_DETAILS, ID];
             
             [[AvalonsoftHttpClient avalonsoftHttpClient] requestWithActionUrlAndParam:url method:HttpRequestPost paramenters:root prepareExecute:^{
