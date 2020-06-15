@@ -29,19 +29,20 @@
         model.ID = [NSString stringWithFormat:@"%@",ID];
     }
     
-    
-    NSString *programStartDate = dict[@"programStartDate"];
-    if ([programStartDate isKindOfClass:[NSString class]]) {
-        model.programStartDate = programStartDate;
+    NSString *date = dict[@"programStartDate"];
+    if ([date isKindOfClass:[NSString class]]) {
+        model.programStartDate = [_F ConvertStrToDate:date];
     } else {
-        model.programStartDate = [NSString stringWithFormat:@"%@",programStartDate];;
+        date = [NSString stringWithFormat:@"%@",date];
+        model.programStartDate = [_F ConvertStrToDate:date];
     }
     
-    NSString *programEndDate = dict[@"programEndDate"];
-    if ([programEndDate isKindOfClass:[NSString class]]) {
-        model.programEndDate = programEndDate;
+    NSString *date2 = dict[@"programEndDate"];
+    if ([date2 isKindOfClass:[NSString class]]) {
+        model.programEndDate = [_F ConvertStrToDate:date2];
     } else {
-        model.programEndDate = [NSString stringWithFormat:@"%@",programEndDate];;
+        date2 = [NSString stringWithFormat:@"%@",date2];
+        model.programEndDate = [_F ConvertStrToDate:date2];
     }
     
     return model;
