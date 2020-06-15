@@ -182,18 +182,8 @@
     NSString *showLanguage = model.showLanguage;
     
     _nameLabel.text = name;
-    
-    if ([startTime isKindOfClass:[NSString class]]) {
-        _startTimeLabel.text = startTime;
-    } else { ///TODO:xubing 测试发现，startTime有时是long类型，待平台修正返回类型
-        _startTimeLabel.text = [NSString stringWithFormat:@"%@",startTime];;
-    }
-    
-    if ([endTime isKindOfClass:[NSString class]]) {
-         _endTimeLabel.text = endTime;
-     } else { ///TODO:xubing 测试发现，endTime有时是long类型，待平台修正返回类型
-         _endTimeLabel.text = [NSString stringWithFormat:@"%@",endTime];;
-    }
+    _startTimeLabel.text = startTime;
+    _endTimeLabel.text = endTime;
         
     if([showLanguage isEqualToString:@"ZH"] || showLanguage.length == 0){
         _nameTitleLabel.text = @"社团/项目/活动名称:";

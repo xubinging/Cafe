@@ -30,6 +30,22 @@
         model.ID = [NSString stringWithFormat:@"%@",ID];
     }
     
+    NSString *date = dict[@"eventStartDate"];
+    if ([date isKindOfClass:[NSString class]]) {
+        model.eventStartDate = [_F ConvertStrToDate:date];
+    } else {
+        date = [NSString stringWithFormat:@"%@",date];
+        model.eventStartDate = [_F ConvertStrToDate:date];
+    }
+    
+    NSString *date2 = dict[@"eventEndDate"];
+    if ([date2 isKindOfClass:[NSString class]]) {
+        model.eventEndDate = [_F ConvertStrToDate:date2];
+    } else {
+        date2 = [NSString stringWithFormat:@"%@",date2];
+        model.eventEndDate = [_F ConvertStrToDate:date2];
+    }
+    
     return model;
 }
 

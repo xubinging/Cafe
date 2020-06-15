@@ -30,7 +30,7 @@
         model.ID = [NSString stringWithFormat:@"%@",ID];
     }
     
-    NSString *date = dict[@"skillDate"];
+    NSString *date = dict[@"awardDate"];
     if ([date isKindOfClass:[NSString class]]) {
         model.awardDate = [_F ConvertStrToDate:date];
     } else {
