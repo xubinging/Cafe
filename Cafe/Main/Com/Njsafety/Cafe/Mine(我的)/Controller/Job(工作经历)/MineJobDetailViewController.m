@@ -181,7 +181,6 @@
 #pragma mark - 设置参数 -
 -(void)setData
 {
-    //造数据
     _detailArray = nil;
     NSMutableArray *tempArray = [NSMutableArray array];
     
@@ -272,7 +271,6 @@
     }else{
         NSMutableAttributedString *string = [[NSMutableAttributedString alloc] initWithString:@"您可以在这里输入内容…"attributes: @{NSFontAttributeName: [UIFont fontWithName:@"PingFangSC-Regular" size: 16],NSForegroundColorAttributeName: [UIColor colorWithRed:203/255.0 green:207/255.0 blue:217/255.0 alpha:1.0]}];
         [contentTextView setAttributedText:string];
-
     }
 }
 

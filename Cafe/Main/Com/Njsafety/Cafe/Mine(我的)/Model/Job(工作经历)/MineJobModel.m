@@ -22,7 +22,6 @@
     //对model进行批量赋值，将dict传入
     [model setValuesForKeysWithDictionary:dict];
     
-    ///TODO:xubing 建议平台不要使用 id 字段，可用大写 ID，同时下发的数据类型，建议用字符串
     NSString *ID = dict[@"id"];
     if ([ID isKindOfClass:[NSString class]]) {
         model.ID = ID;
@@ -30,7 +29,22 @@
         model.ID = [NSString stringWithFormat:@"%@",ID];
     }
     
-    ///TODO:xubing 建议平台不要使用description字段
+    NSString *date = dict[@"workStartDate"];
+    if ([date isKindOfClass:[NSString class]]) {
+        model.workStartDate = [_F ConvertStrToDate:date];
+    } else {
+        date = [NSString stringWithFormat:@"%@",date];
+        model.workStartDate = [_F ConvertStrToDate:date];
+    }
+    
+    NSString *date2 = dict[@"workEndDate"];
+    if ([date2 isKindOfClass:[NSString class]]) {
+        model.workEndDate = [_F ConvertStrToDate:date2];
+    } else {
+        date2 = [NSString stringWithFormat:@"%@",date2];
+        model.workEndDate = [_F ConvertStrToDate:date2];
+    }
+    
     NSString *Description = dict[@"description"];
     model.Description = Description;
     
